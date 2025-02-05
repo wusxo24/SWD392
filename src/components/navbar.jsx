@@ -1,5 +1,6 @@
 import React from 'react';
 import { Hero } from '../hero/hero';
+import { Link } from 'react-router-dom';
 export default function Navbar() {
   return (
     <div>
@@ -13,8 +14,8 @@ export default function Navbar() {
           <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">Our Team</li>
           <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">Our Blog</li>
           <li className="px-3 py-2 hover:text-blue-500 cursor-pointer">
-            <button className="bg-[#0DBFFF] text-white px-6 py-2 rounded-full hover:bg-[#0BB0E0] transition">
-          Login</button></li>          
+            <Link><button className="bg-[#0DBFFF] text-white px-6 py-2 rounded-full hover:bg-[#0BB0E0] transition cursor-pointer" >
+            Login</button></Link></li>          
         </ul>    
       </div>
     </nav>
