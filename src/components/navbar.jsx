@@ -1,7 +1,8 @@
 import React from 'react';
-
+import { Hero } from '../hero/hero';
 export default function Navbar() {
   return (
+    <div>
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
         <ul className="flex flex-1 justify-center space-x-30 text-gray-700">
@@ -17,5 +18,7 @@ export default function Navbar() {
         </ul>    
       </div>
     </nav>
+    <Hero/>
+    </div>
   );
 }
