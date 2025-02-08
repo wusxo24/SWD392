@@ -1,13 +1,16 @@
 import React from 'react';
 import { Hero } from '../hero/hero';
 import { Link } from 'react-router-dom';
+import Logo from '../assets/Logo.png'
 export default function Navbar() {
   return (
     <div>
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
         <ul className="flex flex-1 justify-center space-x-30 text-gray-700">
-          <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">LOGO</li>
+          <li className="px-3 hover:text-blue-500 cursor-pointer">
+            <img src={Logo} style={{height:"60px",width:"auto"}}>
+            </img></li>
           <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">Home</li>
           <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">About Us</li>
           <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">Pricing</li>
