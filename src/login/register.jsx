@@ -1,13 +1,13 @@
 import React from 'react';
-import login from '../assets/Login_image.png';
+import register from '../assets/Login_image.png';
 import { Link } from 'react-router-dom';
 
-export default function Login() {
+export default function Register() {
   return (
     <div className="flex items-center justify-center bg-gray-100">
         {/* Left Side - Input Fields */}
         <div className="w-1/2 flex flex-col justify-center items-center p-8">
-          <h2 className="text-3xl font-bold mb-8 text-gray-700">Login</h2>
+          <h2 className="text-3xl font-bold mb-8 text-gray-700">Register</h2>
 
           <form className="w-full max-w-sm">
             {/* User Name */}
@@ -33,7 +33,7 @@ export default function Login() {
             </div>
 
             {/* Password */}
-            <div className="mb-8">
+            <div className="mb-6">
               <label htmlFor="Password" className="block text-gray-600 mb-2 font-bold">Password</label>
               <input 
                 type="password" 
@@ -42,18 +42,31 @@ export default function Login() {
                 placeholder="Enter your password" 
               />
             </div>
-            <div style={{marginBottom:'30px'}} className='text-blue-400'><Link to={'/register'}>Register</Link></div>
 
-            {/* Login Button */}
+            {/* Confirm Password */}
+            <div className="mb-8">
+              <label htmlFor="ConfirmPassword" className="block text-gray-600 mb-2 font-bold">Confirm Password</label>
+              <input 
+                type="password" 
+                id="ConfirmPassword" 
+                className="w-full border-b-2 border-gray-300 focus:border-blue-400 outline-none py-2" 
+                placeholder="Confirm your password" 
+              />
+              
+            </div>
+            
+            <div style={{marginBottom:'30px'}} className='text-blue-400'><Link to={'/login'} >Sign in</Link></div>
+
+            {/* Register Button */}
             <button className="w-1/2 h-auto bg-[#0DBFFF] text-white py-3 rounded-full hover:bg-[#0BB0E0] transition">
-              Login
+              Register
             </button>
           </form>
         </div>
 
         {/* Right Side - Image */}
         <div className="w-1/2 flex items-center justify-center">
-          <img src={login} alt="Login Illustration" className="w-full h-auto object-cover" />
+          <img src={register} alt="Register Illustration" className="w-full h-auto object-cover" />
         </div>
     </div>
   );
