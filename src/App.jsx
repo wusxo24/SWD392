@@ -1,22 +1,27 @@
-import { useState } from 'react'
 import React from 'react';
-import Navbar from './components/navbar'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Navbar from './components/navbar';
 import Login from './login/login';
 import Register from './login/register';
-function App() {
+import { Hero } from './hero/hero';
+import { AboutUs } from './hero/aboutUs';
+import { Pricing } from './hero/pricing';
 
+function App() {
   return (
     <div className="App">
-  <BrowserRouter>
-  <Navbar/>
-    <Routes>
-        <Route path='/login' element={<Login/>}></Route>
-        <Route path='/register' element={<Register/>}></Route>
-      </Routes>
-  </BrowserRouter>
-  </div>
-  )
+      <BrowserRouter>
+        {/* Navbar is now outside Routes, so it will show on all pages */}
+        <Navbar />
+
+        <Routes>
+          <Route path="/" element={<><Hero /> <AboutUs/> <Pricing/></>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
 
-export default App
+export default App;

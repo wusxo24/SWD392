@@ -2,6 +2,7 @@ import React from 'react';
 import { Hero } from '../hero/hero';
 import { Link } from 'react-router-dom';
 import Logo from '../assets/Logo.png'
+import NavLinkWithScroll from './NavLinkWithScroll';
 export default function Navbar() {
   return (
     <div>
@@ -11,18 +12,17 @@ export default function Navbar() {
           <li className="px-3 hover:text-blue-500 cursor-pointer">
             <img src={Logo} style={{height:"60px",width:"auto"}}>
             </img></li>
-          <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">Home</li>
-          <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">About Us</li>
-          <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">Pricing</li>
-          <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">Our Team</li>
-          <li className="px-3 py-4 hover:text-blue-500 cursor-pointer">Our Blog</li>
+          <NavLinkWithScroll to="hero" label="Home" />
+          <NavLinkWithScroll to="about" label="About Us" />
+          <NavLinkWithScroll to="pricing" label="Pricing" />
+          <NavLinkWithScroll to="team" label="Our Team" />
+          <NavLinkWithScroll to="blog" label="Our Blog" />
           <li className="px-3 py-2 hover:text-blue-500 cursor-pointer">
-            <Link><button className="bg-[#0DBFFF] text-white px-6 py-2 rounded-full hover:bg-[#0BB0E0] transition cursor-pointer" >
+            <Link to={'/login'}><button className="bg-[#0DBFFF] text-white px-6 py-2 rounded-full hover:bg-[#0BB0E0] transition cursor-pointer" >
             Login</button></Link></li>          
         </ul>    
       </div>
     </nav>
-    <Hero/>
     </div>
   );
 }
