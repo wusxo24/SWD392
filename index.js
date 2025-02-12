@@ -1,3 +1,4 @@
+
 const express = require("express");
 require("dotenv").config(); 
 const connectDB = require("./config/db");
@@ -5,8 +6,10 @@ const applyMiddleware = require("./middleware");
 
 const app = express();
 
+
 // Apply middleware
 applyMiddleware(app);
+
 
 // Use routes
 // app.use(routes);
@@ -22,3 +25,4 @@ connectDB().then(() => {
     console.log(`Server is running on port ${PORT}`);
   });
 });
+
