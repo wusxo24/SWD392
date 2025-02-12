@@ -42,7 +42,8 @@ export default function Login() {
                 placeholder="Enter your password" 
               />
             </div>
-            <div style={{marginBottom:'30px'}} className='text-blue-400'><Link to={'/register'}>Register</Link></div>
+            
+            <div style={{marginBottom:'30px'}}> Don't have account yet ? <Link to={'/register'} className='text-blue-400'>Register</Link></div>
 
             {/* Login Button */}
             <button className="w-1/2 h-auto bg-[#0DBFFF] text-white py-3 rounded-full hover:bg-[#0BB0E0] transition">
