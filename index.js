@@ -3,6 +3,7 @@ const express = require("express");
 require("dotenv").config(); 
 const connectDB = require("./config/db");
 const applyMiddleware = require("./middleware");
+const authRoute = require("./routes/auth.route");
 
 const app = express();
 
@@ -10,7 +11,7 @@ const app = express();
 // Apply middleware
 applyMiddleware(app);
 
-
+app.use("/api/auth", authRoute);
 // Use routes
 // app.use(routes);
 
