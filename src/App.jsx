@@ -6,6 +6,7 @@ import Register from './login/register';
 import { Hero } from './hero/hero';
 import { AboutUs } from './hero/aboutUs';
 import { Pricing } from './hero/pricing';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       <BrowserRouter>
         {/* Navbar is now outside Routes, so it will show on all pages */}
         <Navbar />
-
+        <ScrollToTop/>
         <Routes>
           <Route path="/" element={<><Hero /> <AboutUs/> <Pricing/></>} />
           <Route path="/login" element={<Login />} />
