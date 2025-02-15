@@ -7,6 +7,7 @@ import { Hero } from './hero/hero';
 import { AboutUs } from './hero/aboutUs';
 import { Pricing } from './hero/pricing';
 import ScrollToTop from './components/ScrollToTop';
+import { OurBest } from './hero/ourBest';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         <Navbar />
         <ScrollToTop/>
         <Routes>
-          <Route path="/" element={<><Hero /> <AboutUs/> <Pricing/></>} />
+          <Route path="/" element={<><Hero /> <OurBest/> <AboutUs/> <Pricing/></>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>

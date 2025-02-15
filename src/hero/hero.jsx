@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Link as ScrollLink } from 'react-scroll';
 export const Hero = () => {
   return (
-    <div id="hero" className="hero mb-32 relative w-full h-screen">
+    <div id="hero" className="hero relative">
       {/* Blue Background */}
       <img src={blue} alt="Blue Background" className="w-full h-[500px] object-cover" />
 
