@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import Auth Context
+import { useAuth } from '../context/authContext'; // Import Auth Context
 import Logo from '../assets/Logo.png';
 import NavLinkWithScroll from './NavLinkWithScroll';
 import { FaUserCircle } from "react-icons/fa"; // Import Account Icon
