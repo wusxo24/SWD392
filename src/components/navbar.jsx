@@ -48,7 +48,7 @@ export default function Navbar() {
         </div>
         <div className='py-1'>
         <button 
-                      onClick={() => { logout(); setIsDropdownOpen(false); }} 
+                      onClick={() => { logout();}} 
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
                     >
                       Logout
