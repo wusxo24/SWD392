@@ -8,7 +8,7 @@ import { AboutUs } from './hero/aboutUs';
 import { Pricing } from './hero/pricing';
 import ScrollToTop from './components/ScrollToTop';
 import { OurBest } from './hero/ourBest';
-import { AuthProvider } from './context/authContext';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
