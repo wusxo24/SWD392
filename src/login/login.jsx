@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import login from '../assets/Login_image.png';
+import { useAuth } from '../context/AuthContext';  // Import useAuth
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -8,20 +10,21 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { setUser } = useAuth();  // Get setUser from AuthContext
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     try {
-      const response = await fetch('https://66722715e083e62ee43e2228.mockapi.io/UserExample');
-      const users = await response.json();
-      
+      const response = await axios.get('https://66722715e083e62ee43e2228.mockapi.io/UserExample');
+      const users = response.data;
       const user = users.find(u => u.username === username && u.email === email && u.password === password);
-      
+
       if (user) {
-        localStorage.setItem('user', JSON.stringify(user)); // Store user data
-        
+        setUser(user); // Update AuthContext state
+        localStorage.setItem('user', JSON.stringify(user)); // Store in localStorage
+
         // Redirect based on role
         switch (user.role) {
           case 'admin':
@@ -34,7 +37,7 @@ export default function Login() {
             navigate('/manager-dashboard');
             break;
           default:
-            navigate('/customer-dashboard');
+            navigate('/');
         }
       } else {
         setError('Invalid credentials. Please try again.');
@@ -84,7 +87,7 @@ export default function Login() {
             />
           </div>
           <div className="mb-6"> Don't have an account? <a href='/register' className='text-blue-400'>Register</a></div>
-          <button className="w-1/2 bg-[#0DBFFF] text-white py-3 rounded-full hover:bg-[#0BB0E0] transition">
+          <button className="w-1/2 bg-[#0DBFFF] text-white py-3 rounded-full hover:bg-[#0BB0E0] transition cursor-pointer">
             Login
           </button>
         </form>
