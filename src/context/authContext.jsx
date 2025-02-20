@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(API_URL);
       const users = response.data;
       const foundUser = users.find((u) => u.username === username && u.password === password);
-
       if (foundUser) {
         setUser(foundUser);
         localStorage.setItem("user", JSON.stringify(foundUser));
