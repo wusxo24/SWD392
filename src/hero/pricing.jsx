@@ -2,7 +2,7 @@ import React from "react";
 
 export const Pricing = () => {
   return (
-    <div className="pricing flex flex-col items-center justify-center min-h-screen bg-[#2BC6FF26] p-6">
+    <div className="pricing flex flex-col min-h-screen items-center justify-center bg-[#2BC6FF26] p-6 mb-200">
       <h2 className="text-6xl font-bold text-gray-800 mb-10">Our Pricing <span className="text-[#0DBFFF]">Plans</span> </h2>
       <p className="mb-20 text-3xl max-w-[1000px] text-center">
         A list of service packages categorized by each package, accompanied by a transparent and clear pricing table

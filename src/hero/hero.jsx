@@ -19,14 +19,14 @@ export const Hero = () => {
         </h1>
 
         {/* Buttons */}
-        <div className="mt-8 flex space-x-4 mt-[80px]">
+        <div className="mt-8 flex space-x-4 mt-[80px] list-none">
           <button className="bg-white text-black px-6 py-3 rounded-full border border-black hover:bg-gray-100 transition duration-300">
              <ScrollLink to="pricing" smooth={true} duration={500}>
                  Discover More
              </ScrollLink>
           </button>
 
-          <button className="bg-[#0DBFFF] text-white rounded-full hover:bg-[#0BB0E0] transition duration-300">
+          <button className="bg-[#0DBFFF] px-6 text-white rounded-full hover:bg-[#0BB0E0] transition duration-300">
              <NavLinkWithScroll to="pricing" label="Join Us Today" />
           </button>
         </div>

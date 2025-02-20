@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { scroller } from 'react-scroll';
 
-const NavLinkWithScroll = ({ to, label, offset = -70 }) => {
+const NavLinkWithScroll = ({ to, label, offset = 0 }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
