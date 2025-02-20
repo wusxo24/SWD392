@@ -58,7 +58,7 @@ export default function Register() {
             <div style={{marginBottom:'30px'}} > Don't have account yet ? <Link to={'/login'} className='text-blue-400'>Sign in</Link></div>
 
             {/* Register Button */}
-            <button className="w-1/2 h-auto bg-[#0DBFFF] text-white py-3 rounded-full hover:bg-[#0BB0E0] transition">
+            <button className="w-1/2 h-auto bg-[#0DBFFF] text-white py-3 rounded-full hover:bg-[#0BB0E0] transition cursor-pointer">
               Register
             </button>
           </form>
