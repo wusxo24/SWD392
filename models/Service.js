@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const serviceSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
-    image: { type: String, required: true },
+    image: { type: String},
     price: { type: Number, required: true },
     duration: { type: Number, required: true },
     plan_code: { type: String, required: false },
