@@ -3,6 +3,7 @@ import blue from '../assets/Blue_screen.png';
 import kid from '../assets/baby_background.png';
 import { Link } from 'react-router-dom';
 import { Link as ScrollLink } from 'react-scroll';
+import NavLinkWithScroll from '../components/NavLinkWithScroll';
 export const Hero = () => {
   return (
     <div id="hero" className="hero relative">
@@ -25,8 +26,8 @@ export const Hero = () => {
              </ScrollLink>
           </button>
 
-          <button className="bg-[#0DBFFF] text-white px-6 py-3 rounded-full hover:bg-[#0BB0E0] transition duration-300">
-            <Link to={"/login"}>Join Us Today</Link>
+          <button className="bg-[#0DBFFF] text-white rounded-full hover:bg-[#0BB0E0] transition duration-300">
+             <NavLinkWithScroll to="pricing" label="Join Us Today" />
           </button>
         </div>
       </div>
