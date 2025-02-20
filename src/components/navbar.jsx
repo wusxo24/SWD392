@@ -39,12 +39,21 @@ export default function Navbar() {
            transition
            className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
         >
+        <div className='py1'>
+          <button
+          className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+          >
+              Profile
+          </button>
+        </div>
+        <div className='py-1'>
         <button 
                       onClick={() => { logout(); setIsDropdownOpen(false); }} 
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
                     >
                       Logout
-                    </button>
+       </button>
+        </div>
         </MenuItems>
                     
         </Menu>
