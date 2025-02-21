@@ -11,10 +11,10 @@ const getAllServices = async (req, res) => {
 
 const createService = async (req, res) => {
     try {
-        const { name, description, image, price, duration, plan_code } = req.body;
-        const newService = new Service({ name, description, image, price, duration, plan_code });
-        await newService.save();
-        res.status(201).json(newService);
+        const { name, description, features, image, price, duration, plan_code } = req.body;
+        const newService = new Service({ name, description, features, image, price, duration, plan_code });
+        const savedService = await newService.save();
+        res.status(201).json(savedService);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -22,8 +22,8 @@ const createService = async (req, res) => {
 const updateService = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, image, price, duration, plan_code } = req.body;
-        const updatedService = await Service.findByIdAndUpdate(id, { name, description, image, price, duration, plan_code }, { new: true });
+        const { name, description, features,image, price, duration, plan_code } = req.body;
+        const updatedService = await Service.findByIdAndUpdate(id, { name, description, features, image, price, duration, plan_code }, { new: true });
         res.status(200).json(updatedService);
     } catch (error) {
         res.status(500).json({ message: error.message });
