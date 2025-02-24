@@ -4,8 +4,11 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const applyMiddleware = require("./middleware");
 const routes = require("./routes/_registerRoutes.js");
+const cors = require('cors');
 const app = express();
 
+// Enable CORS
+app.use(cors());
 
 // Apply middleware
 applyMiddleware(app);
