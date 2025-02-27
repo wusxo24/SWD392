@@ -8,6 +8,7 @@ import { AboutUs } from './hero/aboutUs';
 import { Pricing } from './hero/pricing';
 import ScrollToTop from './components/ScrollToTop';
 import { OurBest } from './hero/ourBest';
+import { Footer } from './components/footer';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
+        <Footer/>
       </BrowserRouter>
     </div>
   );
