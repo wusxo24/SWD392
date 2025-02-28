@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const Member = require("../models/Member");
 const SECRET_KEY = "mysecretkey";
 
 /**
@@ -25,11 +25,16 @@ const registerUser = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            role,
+            role: "Member",
             status: "Active",  // Mặc định tài khoản được kích hoạt
         });
 
+
+
         await newUser.save();
+        const newMember = new Member({ user_id: newUser._id });
+        await newMember.save();
+
         res.status(201).json({ message: "Đăng ký thành công" });
 
     } catch (error) {
