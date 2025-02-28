@@ -1,5 +1,5 @@
 const Children = require("../models/Children");
-const Member = require("../models/Member");
+const Member = require("../models/MemberInfo");
 
 // Tạo thành viên mới
 const createMember = async (req, res) => {

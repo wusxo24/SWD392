@@ -11,7 +11,7 @@ const MemberSchema = new mongoose.Schema({
     blood_type: { type: String },
     allergy: { type: String },
     notes: { type: String },
-}, { timestamps: true });
+});
 
-const Member = mongoose.model("Member", MemberSchema);
+const Member = mongoose.model("MemberInfo", MemberSchema);
 module.exports = Member;

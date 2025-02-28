@@ -7,7 +7,6 @@ const childrenRoutes = require("./ChildrenRoutes");
 const licenseRoutes = require("./LicenseRoutes");
 const accountRoutes = require("./AccountRoutes");
 
-
 const router = express.Router();
 
 router.use("/api/auth", authRoute);
