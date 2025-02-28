@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const childrenController = require("../controllers/ChildrenController");
+const authMiddleware = require("../middleware/authMiddleware");
 
-router.post("/", childrenController.createChild); // Tạo mới
-router.get("/", childrenController.getAllChildren); // Lấy danh sách
-router.get("/:id", childrenController.getChildById); // Lấy 1 trẻ
+router.post("/", authMiddleware, childrenController.createChild); // Tạo mới
+router.get("/", authMiddleware,childrenController.getChildByMemberId); // Lấy trẻ theo phụ huynh
 router.put("/:id", childrenController.updateChild); // Cập nhật
 router.delete("/:id", childrenController.deleteChild); // Xóa
 
