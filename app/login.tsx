@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default function NotFoundScreen() {
+export default function LoginScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Hello</Text>
+      <Text style={styles.text}>Hello Login</Text>
     </View>
   );
 }
