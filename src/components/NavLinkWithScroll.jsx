@@ -27,7 +27,7 @@ const NavLinkWithScroll = ({ to, label, offset = 0 }) => {
   };
 
   return (
-    <li className="px-3 py-4 hover:text-blue-500 cursor-pointer" onClick={handleClick}>
+    <li className="px-3 py-4 hover:text-blue-500 cursor-pointer z-10" onClick={handleClick}>
       {label}
     </li>
   );
