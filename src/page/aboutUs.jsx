@@ -7,7 +7,7 @@ import au4 from '../assets/au4.png'
 import { Link } from 'react-router-dom';
 export const AboutUs = () => {
   return (
-    <div id="about" className="hero mb-200 pt-15">
+    <div id="about" className="hero pt-15">
       <div className="flex justify-center mb-20">
         <h1 className="text-5xl">About Us</h1>
       </div>
@@ -18,7 +18,7 @@ export const AboutUs = () => {
         <div className="flex-[0.8] mt-10">
           <p className="text-xl font-semibold">Monitor Your Child's Growth</p>
           <p className="text-5xl font-bold mt-2">Stay informed about your child's growth with our easy-to-use tracking tools.</p>
-          <button> <Link to={'/blog'}> Explore Growth Insights</Link></button>
+          <button className='bg-white mt-10 rounded-2xl p-2 outline outline-1 outline-gray-400 hover:bg-gray-100 '><Link to={'/blog'}> Explore Growth Insights</Link></button>
         </div>
 
         {/* Middle Section */}

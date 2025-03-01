@@ -3,11 +3,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Login from './login/login';
 import Register from './login/register';
-import { Hero } from './hero/hero';
-import { AboutUs } from './hero/aboutUs';
-import { Pricing } from './hero/pricing';
+import { Hero } from './page/hero';
+import { AboutUs } from './page/aboutUs';
+import { Pricing } from './page/pricing';
 import ScrollToTop from './components/ScrollToTop';
-import { OurBest } from './hero/ourBest';
+import { OurBest } from './page/ourBest';
 import { Footer } from './components/footer';
 
 function App() {
