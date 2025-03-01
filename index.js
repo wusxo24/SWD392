@@ -17,7 +17,7 @@ app.use(routes);
 
 // Test route
 app.get("/", (req, res) => {
-  res.send("Hello from Node API Server lmao");
+  res.send("Who read this is gay and we accept you");
 });
 
 // Connect to database and start server
