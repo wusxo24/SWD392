@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const LicenseController = require("../controllers/licenseController");
+const LicenseController = require("../controllers/LicenseController");
 
 router.post("/", LicenseController.createLicense);
 router.get("/", LicenseController.getAllLicenses);
