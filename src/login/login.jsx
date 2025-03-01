@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import login from '../assets/Login_image.png';
-import { useAuth } from '../context/AuthContext';  // Import useAuth
+import { useAuth } from '../context/authContext';  // Import useAuth
 
 export default function Login() {
   const [username, setUsername] = useState('');

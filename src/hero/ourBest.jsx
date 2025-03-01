@@ -1,8 +1,11 @@
 import React from 'react'
+import ractangle from '../assets/Rectangle.png'
 import ourb1 from '../assets/ourb1.png'
 import ourb2 from '../assets/ourb2.png'
 import ourb3 from '../assets/ourb3.png'
 import ourb4 from '../assets/ourb4.png'
+import ourb5 from '../assets/ourb5.png'
+import ourb6 from '../assets/ourb6.png'
 export const OurBest = () => {
   return (
     <div className='container'>
@@ -30,6 +33,17 @@ export const OurBest = () => {
     <img src={ourb4} alt="" className="object-cover mx-auto"/>
     <p className="mt-10 text-lg max-w-[240px] mx-auto">Our platform integrates a e for every user!</p>
     </div>
+    </div>
+    <div className='relative mt-50'>
+      <img src={ractangle} className='object-cover'/>
+      <div className='absolute inset-0 flex flex-col items-center mt-10'>
+        <h1 className='text-4xl font-bold text-[#0DBFFF]'>Track, Nurture, Grow - Every Step of the Way!</h1>
+        <h1 className='text-2xl font-bold text-[#7B6F6F] mt-7'>every parent deserves a simple and reliable way to track their child’s growth with care!</h1>
+      </div>
+      <div className='absolute inset-0 flex justify-center items-center gap-40 mt-50'>
+         <img src={ourb5} className="w-[600px] h-[240px] object-cover" alt="Best Feature 1" />
+          <img src={ourb6} className="w-[500px] object-cover" alt="Best Feature 2" />
+      </div> 
     </div>
     </div>
 

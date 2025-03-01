@@ -8,12 +8,11 @@ import { AboutUs } from './hero/aboutUs';
 import { Pricing } from './hero/pricing';
 import ScrollToTop from './components/ScrollToTop';
 import { OurBest } from './hero/ourBest';
-import { AuthProvider } from './context/authContext';
+import { Footer } from './components/footer';
 
 function App() {
   return (
     <div className="App">
-      <AuthProvider>
       <BrowserRouter>
         {/* Navbar is now outside Routes, so it will show on all pages */}
         <Navbar />
@@ -23,8 +22,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
+        <Footer/>
       </BrowserRouter>
-      </AuthProvider>
     </div>
   );
 }

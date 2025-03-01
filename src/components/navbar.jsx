@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import Auth Context
+import { useAuth } from '../context/authContext'; // Import Auth Context
 import Logo from '../assets/Logo.png';
 import NavLinkWithScroll from './NavLinkWithScroll';
 import { FaUserCircle } from "react-icons/fa"; // Import Account Icon
@@ -48,7 +48,7 @@ export default function Navbar() {
         </div>
         <div className='py-1'>
         <button 
-                      onClick={() => { logout(); setIsDropdownOpen(false); }} 
+                      onClick={() => { logout();}} 
                       className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
                     >
                       Logout
