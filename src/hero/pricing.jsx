@@ -8,7 +8,7 @@ export const Pricing = () => {
 
   useEffect(() => {
     axios
-      .get("https://child-tracking.vercel.app/api/services")
+      .get("https://swd-392-api.vercel.app/api/services")
       .then((response) => {
         
         setPlans(response.data); // Store API response in state
@@ -30,7 +30,7 @@ export const Pricing = () => {
   }
 
   return (
-    <div className="pricing flex flex-col min-h-screen items-center justify-center bg-[#2BC6FF26] p-6 mb-20">
+    <div className="pricing flex flex-col min-h-screen items-center justify-center bg-[#2BC6FF26] p-6">
       <h2 className="text-6xl font-bold text-gray-800 mb-10">
         Our Pricing <span className="text-[#0DBFFF]">Plans</span>
       </h2>
