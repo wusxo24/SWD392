@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const DoctorSchema = new mongoose.Schema({
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "Account", required: true }, // 🔹 Đảm bảo tham chiếu đúng
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // 🔹 Đảm bảo tham chiếu đúng
     picture: { type: String },
     gender: { type: String, enum: ["Male", "Female", "Other"], default: undefined },
     date: { type: Date, default: null },

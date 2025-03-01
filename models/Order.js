@@ -4,7 +4,7 @@ const orderSchema = new mongoose.Schema({
     memberId : {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     serviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Service"},
     createdAt: { type: Date, default: Date.now },
-    status: { type: String, enum: ["Pending", "Completed", "Cancelled"], default: "Pending" },
+    status: { type: String, enum: ["Pending", "Paid", "Canceled"], default: "Pending" },
     orderCode: { type: String, unique: true },
     amount: { type: Number },
     description: { type: String },
@@ -19,3 +19,5 @@ const orderSchema = new mongoose.Schema({
     transactionDateTime: { type: Date },
 
 })
+
+module.exports = mongoose.model("Order", orderSchema);
