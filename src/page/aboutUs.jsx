@@ -9,7 +9,7 @@ export const AboutUs = () => {
   return (
     <div id="about" className="hero pt-15">
       <div className="flex justify-center mb-20">
-        <h1 className="text-5xl">About Us</h1>
+        <p className="text-5xl">About Us</p>
       </div>
       {/* Use 'gap-x-10' for horizontal spacing */}
       <div className="flex flex-col lg:flex-row items-center lg:items-start bg-[#2BC6FF26] pb-70 px-10 lg:gap-x-10 mt-10">
