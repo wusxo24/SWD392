@@ -6,7 +6,7 @@ const memberRoutes = require("./MemberRoutes");
 const childrenRoutes = require("./ChildrenRoutes");
 const licenseRoutes = require("./LicenseRoutes");
 const accountRoutes = require("./AccountRoutes");
-
+const orderRoutes = require("./OrderRoutes");
 const router = express.Router();
 
 router.use("/api/auth", authRoute);
@@ -16,5 +16,5 @@ router.use("/api/members", memberRoutes);
 router.use("/api/children", childrenRoutes);
 router.use("/api/licenses", licenseRoutes);
 router.use("/api/accounts", accountRoutes);
-
+router.use("/api/orders", orderRoutes);
 module.exports = router;
