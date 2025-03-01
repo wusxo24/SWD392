@@ -1,5 +1,5 @@
 const express = require("express");
-require("dotenv").config(); 
+require("dotenv").config();
 const connectDB = require("./config/db");
 const applyMiddleware = require("./middleware");
 const routes = require("./routes/_registerRoutes.js");
@@ -20,12 +20,16 @@ app.get("/", (req, res) => {
   res.send("Who read this is gay and we accept you");
 });
 
-// Connect to database and start server
-connectDB().then(() => {
+// Connect to database
+connectDB();
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
-});
+}
 
+// Export for Vercel
 module.exports = app;
