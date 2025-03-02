@@ -22,7 +22,7 @@ const ScrollToTop = () => {
     showButton && (
       <button
         onClick={() => scroll.scrollToTop({ duration: 500 })}
-        className="fixed bottom-10 right-10 bg-[#0DBFFF] text-white p-4 rounded-full shadow-lg hover:bg-[#0BB0E0] transition duration-300"
+        className="fixed bottom-10 right-10 bg-[#0DBFFF] text-white p-4 rounded-full shadow-lg hover:bg-[#0BB0E0] transition duration-300 z-10"
       >
         <FaArrowUp size={24} />
       </button>
