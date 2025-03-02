@@ -8,7 +8,7 @@ export const Pricing = () => {
 
   useEffect(() => {
     axios
-      .get("https://swd-392-api.vercel.app/api/services")
+      .get("/api/services")
       .then((response) => {
         
         setPlans(response.data); // Store API response in state
