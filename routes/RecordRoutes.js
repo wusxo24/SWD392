@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const recordController = require("../controllers/RecordController");
-const authMiddleware = require("../middleware/authMiddleware");
+const { authMiddleware} = require("../middleware/authMiddleware");
 
 router.post("/", authMiddleware, recordController.createRecord);
 router.put("/activate", authMiddleware, recordController.activateRecord);

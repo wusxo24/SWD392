@@ -8,6 +8,8 @@ const licenseRoutes = require("./LicenseRoutes");
 const accountRoutes = require("./AccountRoutes");
 const orderRoutes = require("./OrderRoutes");
 const recordRoutes = require("./RecordRoutes");
+const trackingRoutes = require("./TrackingRoutes");
+
 const router = express.Router();
 
 router.use("/api/auth", authRoute);
@@ -19,4 +21,6 @@ router.use("/api/licenses", licenseRoutes);
 router.use("/api/accounts", accountRoutes);
 router.use("/api/orders", orderRoutes);
 router.use("/api/records", recordRoutes);
+router.use("/api/trackings", trackingRoutes);
+
 module.exports = router;

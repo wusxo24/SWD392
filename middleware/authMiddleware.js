@@ -3,8 +3,6 @@ const Children = require("../models/Children");
 
 // Middleware to authenticate users
 const authMiddleware = (req, res, next) => {
-    console.log(`[AUTH] Incoming request: ${req.method} ${req.url}`);
-
     const token = req.header("Authorization")?.split(" ")[1]; // Ensure "Bearer <token>" format
     if (!token) {
         console.log(`[AUTH] ❌ No token provided`);
@@ -12,10 +10,8 @@ const authMiddleware = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = { id: decoded.id, role: decoded.role };
-
-        console.log(`[AUTH] ✅ User authenticated: ID=${req.user.id}, Role=${req.user.role}`);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        req.user = decoded;
         next();
     } catch (error) {
         if (error.name === "TokenExpiredError") {
