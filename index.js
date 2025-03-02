@@ -9,14 +9,14 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', process.env.FRONT_END_URL);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
+// Enable CORS
+app.use(cors({
+  origin: process.env.FRONT_END_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
+
 
 // Apply middleware
 applyMiddleware(app);
