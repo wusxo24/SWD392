@@ -17,7 +17,7 @@ export const OurBest = () => {
         </h1>
       </div>
       <p className="text-center pt-5 max-w-2xl mx-auto">
-        We are the best in the world at tracking your child's growth using professional methods. Lmao
+        We are the best in the world at tracking your child's growth using professional methods.
       </p>
 
       {/* Features Section */}
