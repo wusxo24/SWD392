@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import login from '../assets/Login_image.png';
-import { useAuth } from '../context/authContext';  // Import useAuth
 import { FaArrowLeft } from 'react-icons/fa';
 
 export default function Login() {
@@ -11,14 +10,13 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { setUser } = useAuth();  // Get setUser from AuthContext
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      const response = await axios.get('https://66722715e083e62ee43e2228.mockapi.io/UserExample');
+      const response = await axios.get('/api/auth/login');
       const users = response.data;
       const user = users.find(u => u.username === username && u.email === email && u.password === password);
 
