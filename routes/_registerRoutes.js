@@ -20,6 +20,6 @@ router.use("/children", childrenRoutes);
 router.use("/licenses", licenseRoutes);
 router.use("/accounts", accountRoutes);
 router.use("/orders", orderRoutes);
-router.use("/api/records", recordRoutes);
+router.use("/records", recordRoutes);
 router.use("/trackings", trackingRoutes);
 module.exports = router;
