@@ -1,10 +1,18 @@
 import React from 'react';
 import register from '../assets/Login_image.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 
 export default function Register() {
+  const navigate = useNavigate();
   return (
-    <div className="flex items-center justify-center bg-gray-100">
+    <div className="flex items-center justify-center bg-gray-100 min-h-screen">
+        <button 
+              onClick={() => navigate('/')} 
+              className="absolute top-5 left-5 flex items-center text-gray-700 hover:text-blue-500 transition cursor-pointer"
+            >
+              <FaArrowLeft className="mr-2" /> Back
+        </button>
         {/* Left Side - Input Fields */}
         <div className="w-1/2 flex flex-col justify-center items-center p-8">
           <h2 className="text-3xl font-bold mb-8 text-gray-700">Register</h2>

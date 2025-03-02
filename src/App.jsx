@@ -1,29 +1,30 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import {Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Login from './login/login';
 import Register from './login/register';
-import { Hero } from './hero/hero';
-import { AboutUs } from './hero/aboutUs';
-import { Pricing } from './hero/pricing';
+import { Hero } from './page/hero';
+import { AboutUs } from './page/aboutUs';
+import { Pricing } from './page/pricing';
 import ScrollToTop from './components/ScrollToTop';
-import { OurBest } from './hero/ourBest';
+import { OurBest } from './page/ourBest';
 import { Footer } from './components/footer';
+import { OurTeam } from './page/ourTeam';
 
 function App() {
+  const location = useLocation();  
+  const hideNavFooter = location.pathname === "/login" || location.pathname === "/register";
   return (
     <div className="App">
-      <BrowserRouter>
         {/* Navbar is now outside Routes, so it will show on all pages */}
-        <Navbar />
+        {!hideNavFooter && <Navbar />}  
         <ScrollToTop/>
         <Routes>
-          <Route path="/" element={<><Hero /> <OurBest/> <AboutUs/> <Pricing/></>} />
+          <Route path="/" element={<><Hero /> <OurBest/> <AboutUs/> <OurTeam/> <Pricing/></>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
-        <Footer/>
-      </BrowserRouter>
+        {!hideNavFooter && <Footer />}
     </div>
   );
 }
