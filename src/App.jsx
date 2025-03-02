@@ -12,6 +12,7 @@ import { Footer } from "./components/footer";
 import {OurTeam} from "./page/ourTeam";
 import axios from "axios";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Profile from "./page/profile";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
@@ -58,7 +59,8 @@ function App() {
 
         {/* Member Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Member"]} />}></Route>
-
+        
+        <Route path="/profile/:id"element={<Profile/>}/>
         {/* Manager Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Manager"]} />}></Route>
 

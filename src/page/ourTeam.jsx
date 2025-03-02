@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Pagination, IconButton } from '@mui/material';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { Pagination } from '@mui/material';
 import founder from '../assets/founder.png';
 import cofounder from '../assets/cofounder.png';
 import goat from '../assets/goat.png';
