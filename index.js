@@ -1,5 +1,5 @@
 const express = require("express");
-require("dotenv").config();
+const dotenv =require("dotenv");
 const connectDB = require("./config/db");
 const applyMiddleware = require("./middleware");
 const routes = require("./routes/_registerRoutes.js");
