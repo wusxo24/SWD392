@@ -7,7 +7,6 @@ const RecordSchema = new mongoose.Schema({
     ModifiedDate: { type: Date, default: Date.now },
     Status: { type: String, enum: ["Activated", "Inactivated", "Expired"], default: "Inactivated" },
     ExpiredDate: { type: Date },
-    TrackingId: { type: mongoose.Schema.Types.ObjectId, ref: "Tracking" },
 });
 
 module.exports = mongoose.model("Record", RecordSchema);
