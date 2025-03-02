@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 
 export const Pricing = () => {
   const [plans, setPlans] = useState([]);
@@ -7,18 +6,24 @@ export const Pricing = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("/api/services")
-      .then((response) => {
-        
-        setPlans(response.data); // Store API response in state
-        setLoading(false);
-      })
-      .catch((error) => {
+    const fetchPlans = async () => {
+      try {
+        const response = await fetch("/api/services");
+        if (!response.ok) {
+          throw new Error("Failed to fetch pricing plans");
+        }
+
+        const data = await response.json();
+        setPlans(data); // Store API response in state
+      } catch (error) {
         console.error("Error fetching pricing plans:", error);
         setError("Failed to load pricing plans");
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchPlans();
   }, []);
 
   if (loading) {
@@ -35,7 +40,7 @@ export const Pricing = () => {
         Our Pricing <span className="text-[#0DBFFF]">Plans</span>
       </h2>
       <p className="mb-20 text-3xl max-w-[1000px] text-center">
-        A list of service packages categorized by each package, accompanied by a transparent and clear pricing table
+        A list of service packages categorized by each package, accompanied by a transparent and clear pricing table.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-6xl">
