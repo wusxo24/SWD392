@@ -9,22 +9,11 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', process.env.FRONT_END_URL);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
-// Enable CORS
-app.use(cors({
-  origin: process.env.FRONT_END_URL,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
 
 
 // Apply middleware
