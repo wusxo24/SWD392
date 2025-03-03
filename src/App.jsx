@@ -25,7 +25,7 @@ function App() {
   // Define default pages for each role
   const roleRoutes = {
     Guest: "/",
-    Member: "/",
+    Member: "/Home",
     Manager: "/dashboard",
     Admin: "/Doctor-management",
     Doctor: "/view-medical-request",
@@ -58,9 +58,10 @@ function App() {
         ></Route>
 
         {/* Member Pages */}
-        <Route element={<ProtectedRoute allowedRoles={["Member"]} />}></Route>
-        
+        <Route element={<ProtectedRoute allowedRoles={["Member"]} />}>
         <Route path="/profile/:id"element={<Profile/>}/>
+        </Route>
+        
         {/* Manager Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Manager"]} />}></Route>
 
