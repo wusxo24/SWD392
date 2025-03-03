@@ -75,5 +75,31 @@ const loginUser = async (req, res) => {
     }
 };
 
+const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("authToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
+    });
 
-module.exports = { registerUser, loginUser };
+    if (req.session) {
+      await new Promise((resolve, reject) => {
+        req.session.destroy((err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+    }
+
+    res.json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Unexpected error during logout:", error);
+    res.status(500).json({ message: "An error occurred during logout" });
+  }
+};
+
+module.exports = { registerUser, loginUser, logoutUser };
