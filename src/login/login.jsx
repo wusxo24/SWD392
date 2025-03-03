@@ -170,7 +170,7 @@ export default function Login() {
         <br></br>
         <div className="mb-6">
           {" "}
-          Don't have an account?
+          Don't have an account? {" "}
           <a href="/register" className="text-blue-400">
             Register
           </a>
