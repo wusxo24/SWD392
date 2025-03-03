@@ -5,7 +5,6 @@ import login from '../assets/Login_image.png';
 import { FaArrowLeft } from 'react-icons/fa';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -58,17 +57,6 @@ export default function Login() {
         <h2 className="text-3xl font-bold mb-8 text-gray-700">Login</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <form onSubmit={handleLogin} className="w-full max-w-sm">
-          <div className="mb-6">
-            <label className="block text-gray-600 mb-2 font-bold">User Name</label>
-            <input 
-              type="text" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full border-b-2 border-gray-300 focus:border-blue-400 outline-none py-2"
-              placeholder="Enter your username" 
-              required 
-            />
-          </div>
           <div className="mb-6">
             <label className="block text-gray-600 mb-2 font-bold">Email</label>
             <input 
