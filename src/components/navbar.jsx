@@ -13,19 +13,31 @@ export default function Navbar() {
   );
   const userName =
     localStorage.getItem("userName") || sessionStorage.getItem("userName");
-  const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
+  const userId =
+    localStorage.getItem("userId") || sessionStorage.getItem("userId");
 
   useEffect(() => {
     const handleStorageChange = () => {
-      setToken(localStorage.getItem("authToken") || sessionStorage.getItem("authToken"));
-      setUserName(localStorage.getItem("userName") || sessionStorage.getItem("userName"));
-      setUserId(localStorage.getItem("userId") || sessionStorage.getItem("userId"));
+      setToken(
+        localStorage.getItem("authToken") || sessionStorage.getItem("authToken")
+      );
+      setUserName(
+        localStorage.getItem("userName") || sessionStorage.getItem("userName")
+      );
+      setUserId(
+        localStorage.getItem("userId") || sessionStorage.getItem("userId")
+      );
     };
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  const isLoginPage = ["/login", "/register", '/profile/${userId}', "/forgot-password"].includes(location.pathname);
+  const isLoginPage = [
+    "/login",
+    "/register",
+    "/profile/${userId}",
+    "/forgot-password",
+  ].includes(location.pathname);
 
   const handleLogout = () => {
     if (!window.confirm("Are you sure you want to log out?")) return;
@@ -39,7 +51,10 @@ export default function Navbar() {
         navigate("/login");
       })
       .catch((error) => {
-        console.error("Logout failed:", error.response?.data?.message || error.message);
+        console.error(
+          "Logout failed:",
+          error.response?.data?.message || error.message
+        );
       });
   };
 
@@ -51,20 +66,21 @@ export default function Navbar() {
       </NavLink>
 
       {/* Navigation */}
-        <ul className="flex space-x-6 text-gray-700 hidden md:flex">
-          <NavLinkWithScroll to="hero" label="Home" />
-          <NavLinkWithScroll to="about" label="About Us" />
-          <NavLinkWithScroll to="pricing" label="Pricing" />
-          <NavLinkWithScroll to="team" label="Our Team" />
-          <NavLinkWithScroll to="blog" label="Our Blog" />
-          {!token && (
-            <Link to="/login">
-              <button className="bg-[#0DBFFF] text-white px-6 py-2 rounded-full hover:bg-[#0BB0E0] transition">
-                Login
-              </button>
-            </Link>
-          )}
-        </ul>
+      <ul className="flex space-x-6 text-gray-700 hidden md:flex">
+        <NavLinkWithScroll to="hero" label="Home" />
+        <NavLinkWithScroll to="about" label="About Us" />
+        <NavLinkWithScroll to="pricing" label="Pricing" />
+        <NavLinkWithScroll to="team" label="Our Team" />
+        <NavLinkWithScroll to="blog" label="Our Blog" />
+      </ul>
+
+      {!token && (
+        <Link to="/login">
+          <button className="bg-[#0DBFFF] text-white px-6 py-2 rounded-full hover:bg-[#0BB0E0] transition">
+            Login
+          </button>
+        </Link>
+      )}
 
       {/* Profile Section */}
       {!isLoginPage && token && (
@@ -75,10 +91,16 @@ export default function Navbar() {
           {isProfilePopupOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
               <div className="px-4 py-2 text-gray-800">Welcome, {userName}</div>
-              <NavLink to='/profile/${userId}' className="block px-4 py-2 hover:bg-gray-100">
+              <NavLink
+                to="/profile/${userId}"
+                className="block px-4 py-2 hover:bg-gray-100"
+              >
                 Profile
               </NavLink>
-              <button onClick={handleLogout} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
                 Log out
               </button>
             </div>
