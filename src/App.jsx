@@ -15,7 +15,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./page/profile";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = false;
 
 function App() {
   const location = useLocation();  
