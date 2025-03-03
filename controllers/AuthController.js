@@ -68,7 +68,7 @@ const loginUser = async (req, res) => {
             process.env.JWT_SECRET_KEY,
             { expiresIn: "1h" }
         )
-        res.status(200).json({ message: "Đăng nhập thành công", token });
+        res.status(200).json({ message: "Đăng nhập thành công", token , user: { id: user._id, email: user.email, role: user.role, userName: user.userName } });
 
     } catch (error) {
         res.status(500).json({ message: "Lỗi server", error: error.message });
