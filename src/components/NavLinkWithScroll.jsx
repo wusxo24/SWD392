@@ -6,7 +6,7 @@ const NavLinkWithScroll = ({ to, label, offset = 0 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (location.pathname === '/') {
+    if (location.pathname === '/Home') {
       // If on the homepage, scroll to the section
       scroller.scrollTo(to, {
         duration: 500,
