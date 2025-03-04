@@ -1,18 +1,7 @@
 const Member = require("../models/MemberInfo");
+const User = require("../models/User");
+const mongoose = require("mongoose");
 
-// Tạo thành viên mới
-const createMember = async (req, res) => {
-    try {
-        const newMember = new Member(req.body);
-        await newMember.save();
-        res.status(201).json({
-            memberID: newMember._id, // Lấy _id làm memberID
-            ...newMember.toObject()
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Lỗi khi tạo member", error });
-    }
-};
 
 // Lấy danh sách tất cả thành viên
 const getAllMembers = async (req, res) => {
@@ -28,13 +17,45 @@ const getAllMembers = async (req, res) => {
 const getMemberById = async (req, res) => {
     try {
         const { id } = req.params;
-        const member = await Member.findById(id);
-        if (!member) {
-            return res.status(404).json({ message: "Thành viên không tồn tại!" });
+
+        // Validate ID format
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid user ID format" });
         }
-        res.status(200).json(member);
+
+        const member = await User.aggregate([
+            { $match: { _id: new mongoose.Types.ObjectId(id), role : "Member" } }, // Find user by ID
+            {
+                $lookup: {
+                    from: "memberinfos", // Collection name of Member model (Mongoose converts model name to lowercase + 's')
+                    localField: "_id", // User ID in User collection
+                    foreignField: "user_id", // Reference field in Member collection
+                    as: "memberData"
+                }
+            },
+            { $unwind: { path: "$memberData", preserveNullAndEmptyArrays: true } }, // Unwind member data
+            {
+                $project: {
+                    _id: 1,
+                    username: 1,
+                    email: 1,
+                    fullname: "$memberData.fullname",
+                    birthdate: "$memberData.birthdate",
+                    phone: "$memberData.phone",
+                    gender: "$memberData.gender",
+                    address: "$memberData.address"
+                }
+            }
+        ]);
+
+        if (!member.length) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(member[0]); // Return the first element from the aggregated result
     } catch (error) {
-        res.status(500).json({ message: "Lỗi khi lấy thông tin thành viên", error: error.message });
+        console.error("Error fetching user:", error);
+        res.status(500).json({ message: "Error fetching user", error: error.message });
     }
 };
 
@@ -42,33 +63,57 @@ const getMemberById = async (req, res) => {
 const updateMember = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedMember = await Member.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid member ID format" });
+        }
+
+        // Loại bỏ _id khỏi request body để tránh lỗi cập nhật immutable field
+        const updateData = { ...req.body };
+        delete updateData._id;
+
+        // Cập nhật thông tin thành viên trong MemberInfo dựa trên user_id
+        const updatedMember = await Member.findOneAndUpdate(
+            { user_id: id }, // Đúng collection cần tìm
+            updateData,
+            { new: true, runValidators: true }
+        );
+
         if (!updatedMember) {
             return res.status(404).json({ message: "Thành viên không tồn tại!" });
         }
+
         res.status(200).json({ message: "Cập nhật thành công!", member: updatedMember });
     } catch (error) {
+        console.error("Lỗi khi cập nhật thành viên:", error);
         res.status(500).json({ message: "Lỗi khi cập nhật thành viên", error: error.message });
     }
 };
+
 
 // Xóa thành viên theo ID
 const deleteMember = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedMember = await Member.findByIdAndDelete(id);
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid member ID format" });
+        }
+
+        const deletedMember = await Member.findOneAndDelete({ user_id: id });
         if (!deletedMember) {
             return res.status(404).json({ message: "Thành viên không tồn tại!" });
         }
+
         res.status(200).json({ message: "Xóa thành viên thành công!" });
     } catch (error) {
+        console.error("Lỗi khi xóa thành viên:", error);
         res.status(500).json({ message: "Lỗi khi xóa thành viên", error: error.message });
     }
 };
 
 // Xuất tất cả các function
-module.exports = {
-    createMember, 
+module.exports = { 
     getAllMembers,
     getMemberById,
     updateMember,
