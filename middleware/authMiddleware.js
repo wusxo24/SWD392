@@ -3,7 +3,12 @@ const Children = require("../models/Children");
 
 // Middleware to authenticate users
 const authMiddleware = (req, res, next) => {
+     // Log the incoming request and check for token
+     console.log('Incoming request for authentication:', req.method, req.url);
+
     const token = req.header("Authorization")?.split(" ")[1]; // Ensure "Bearer <token>" format
+    console.log('Authorization token:', token ? '[TOKEN PRESENT]' : '[NO TOKEN]');
+
     if (!token) {
         console.log(`[AUTH] ❌ No token provided`);
         return res.status(401).json({ message: "Access denied. No token provided." });
@@ -11,33 +16,35 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        console.log('Decoded token:', decoded);
+
         req.user = decoded;
+        console.log(`User authenticated: ${req.user.id}, Role: ${req.user.role}`);
+        
         next();
     } catch (error) {
-        if (error.name === "TokenExpiredError") {
-            console.error("[AUTH] ❌ Token expired");
-            return res.status(401).json({ message: "Token expired. Please log in again." });
-        }
-        console.error("[AUTH] ❌ Invalid token");
+        console.error('Token verification failed:', error.message);
         res.status(400).json({ message: "Invalid token." });
     }
 };
 
 // Middleware to check user roles (Admin, User, etc.)
-const authorize = (...roles) => {
-    return (req, res, next) => {
+const authorize = (allowedRoles) => (req, res, next) => {
         if (!req.user) {
             console.log(`[AUTH] ❌ No user object found`);
             return res.status(401).json({ message: "Unauthorized. Please log in." });
         }
-        if (!roles.includes(req.user.role)) {
+        // Log user role and allowed roles for the request
+        console.log('Authorizing user with role:', req.user.role);
+        console.log('Allowed roles for this route:', allowedRoles.join(', '));
+
+        if (!allowedRoles.includes(req.user.role)) {
             console.log(`[AUTH] ❌ Access denied for role: ${req.user.role}`);
             return res.status(403).json({ message: "Bạn không có quyền truy cập vào tài nguyên này." });
         }
         console.log(`[AUTH] ✅ Access granted for role: ${req.user.role}`);
         next();
     };
-};
 
 // Middleware to check if the user owns the child
 const authorizeChildOwner = async (req, res, next) => {
