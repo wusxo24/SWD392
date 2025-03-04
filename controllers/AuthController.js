@@ -40,6 +40,7 @@ const registerUser = async (req, res) => {
         const savedUser = await newUser.save();
 
         const newMember = new Member({ user_id: savedUser._id });
+        
         await newMember.save();
 
             // Gửi email xác thực
@@ -204,7 +205,7 @@ const loginUser = async (req, res) => {
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET_KEY,
-            { expiresIn: "1h" }
+            { expiresIn: "7d" }
         )
         res.status(200).json({ message: "Đăng nhập thành công", token , user: { id: user._id, email: user.email, role: user.role, userName: user.username } });
 
