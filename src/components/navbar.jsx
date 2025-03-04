@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios"; // ✅ Added axios import
 import Logo from "../assets/Logo.png";
@@ -11,6 +11,22 @@ export default function Navbar() {
   const [token, setToken] = useState(
     localStorage.getItem("authToken") || sessionStorage.getItem("authToken")
   );
+  const profileRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfilePopupOpen(false); // Close the dropdown
+      }
+    };
+
+    // Add the event listener when the component mounts
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Clean up the event listener when the component unmounts
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  },);
+
   const userName = localStorage.getItem("userName") || sessionStorage.getItem("userName");
   const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
 
@@ -81,12 +97,12 @@ export default function Navbar() {
 
       {/* Profile Section */}
       {!isLoginPage && token && (
-        <div className="relative">
+        <div className="relative " ref={profileRef}>
           <button onClick={() => setIsProfilePopupOpen(!isProfilePopupOpen)}>
             <i className="fas fa-user text-[#0DBFFF] text-[30px] cursor-pointer"></i>
           </button>
           {isProfilePopupOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+            <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg transition-all duration-300 ease-in-out">
               <div className="px-4 py-2 text-gray-800">Welcome, {userName}</div>
 
               <NavLink
