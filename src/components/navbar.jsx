@@ -11,10 +11,8 @@ export default function Navbar() {
   const [token, setToken] = useState(
     localStorage.getItem("authToken") || sessionStorage.getItem("authToken")
   );
-  const userName =
-    localStorage.getItem("userName") || sessionStorage.getItem("userName");
-  const userId =
-    localStorage.getItem("userId") || sessionStorage.getItem("userId");
+  const userName = localStorage.getItem("userName") || sessionStorage.getItem("userName");
+  const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
 
   useEffect(() => {
     const handleStorageChange = () => {
