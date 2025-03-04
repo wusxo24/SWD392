@@ -73,7 +73,6 @@ export default function Navbar() {
         <NavLinkWithScroll to="team" label="Our Team" />
         <NavLinkWithScroll to="blog" label="Our Blog" />
       </ul>
-
       {!token && (
         <Link to="/login">
           <button className="bg-[#0DBFFF] text-white px-6 py-2 rounded-full hover:bg-[#0BB0E0] transition">
@@ -86,11 +85,12 @@ export default function Navbar() {
       {!isLoginPage && token && (
         <div className="relative">
           <button onClick={() => setIsProfilePopupOpen(!isProfilePopupOpen)}>
-            <i className="fas fa-user text-[#0DBFFF] text-[30px]"></i>
+            <i className="fas fa-user text-[#0DBFFF] text-[30px] cursor-pointer"></i>
           </button>
           {isProfilePopupOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
               <div className="px-4 py-2 text-gray-800">Welcome, {userName}</div>
+
               <NavLink
                 to="/profile/${userId}"
                 className="block px-4 py-2 hover:bg-gray-100"
