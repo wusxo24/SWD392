@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const API_URL = "https://67c2b6951851890165ad0915.mockapi.io/account";
+const API_URL = "https://67c2b6951851890165ad0915.mockapi.io/account"; // API endpoint for account management
 
 const Notification = ({ message, onClose }) =>
   message && (
@@ -22,6 +22,7 @@ const AccountForm = ({ form, setForm, handleCreateOrUpdate, isEditing }) => {
     <form
       className="bg-white p-5 rounded shadow-md"
       onSubmit={handleCreateOrUpdate}
+      id="account-form"
     >
       <p className="text-lg font-medium mb-3">
         {isEditing ? "Edit Account" : "Create Account"}
@@ -101,7 +102,8 @@ const AccountTable = ({ accounts, handleEditClick, handleDelete }) => (
             <td className="py-2 px-4">{account.fullname}</td>
             <td className="py-2 px-4">{account.username}</td>
             <td className="py-2 px-4">{account.email}</td>
-            <td className="py-2 px-4">{account.password}</td>
+            <td className="py-2 px-4">******</td>{" "}
+            {/* Hide password for security */}
             <td className="py-2 px-4">{account.role}</td>
             <td className="py-2 px-4 space-x-2">
               <button
@@ -133,6 +135,7 @@ const AccountTable = ({ accounts, handleEditClick, handleDelete }) => (
 const ManageAccounts = () => {
   const [accounts, setAccounts] = useState([]);
   const [form, setForm] = useState({
+    id: null,
     fullname: "",
     username: "",
     email: "",
@@ -158,17 +161,35 @@ const ManageAccounts = () => {
   };
 
   const handleCreateOrUpdate = async (e) => {
+    // Handles account creation and updates
+
     e.preventDefault();
+    const isDuplicate = accounts.some(
+      (acc) =>
+        (acc.username === form.username || acc.email === form.email) &&
+        acc.id !== form.id
+    );
+    if (isDuplicate) {
+      showNotification("Username or email already exists.");
+      return;
+    }
     try {
       const method = isEditing ? "PUT" : "POST";
-      const url = isEditing ? `${API_URL}/${form.id}` : API_URL;
-      await fetch(url, {
+      const url = isEditing ? `${API_URL}/${form.id}` : API_URL; // Use account ID for updates
+
+      const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to save account");
+      }
+
       fetchAccounts();
       setForm({
+        id: null,
         fullname: "",
         username: "",
         email: "",
@@ -177,6 +198,7 @@ const ManageAccounts = () => {
       });
       setIsEditing(false);
       showNotification(
+        // Show notification based on action result
         isEditing
           ? "Account updated successfully!"
           : "Account created successfully!"
@@ -190,15 +212,21 @@ const ManageAccounts = () => {
   const handleEditClick = (account) => {
     setForm(account);
     setIsEditing(true);
+    const formElement = document.getElementById("account-form");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      await fetch(`${API_URL}/${id}`, { method: "DELETE" }); // Send DELETE request to API
+
       fetchAccounts();
       showNotification("Account deleted successfully!");
     } catch (error) {
-      console.error("Failed to delete account:", error);
+      console.error("Failed to delete account:", error); // Log error if deletion fails
+
       showNotification("Failed to delete account.");
     }
   };
