@@ -5,6 +5,7 @@ import Dashboard from "./pages/Admin/Dashboard";
 import AllApointments from "./pages/Admin/AllApointments";
 import AddDoctor from "./pages/Admin/AddDoctor";
 import DoctorList from "./pages/Admin/DoctorList";
+import ManagerAccount from "./pages/Admin/ManagerAccount";
 // import { useContext } from "react";
 // import { AdminContext } from "./context/AdminContext";
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<></>} />
           <Route path="/admin-dashboard" element={<Dashboard />} />
+          <Route path="/manager-account" element={<ManagerAccount />} />
           <Route path="/all-appointments" element={<AllApointments />} />
           <Route path="/add-doctor" element={<AddDoctor />} />
           <Route path="/doctor-list" element={<DoctorList />} />

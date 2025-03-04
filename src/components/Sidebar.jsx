@@ -33,6 +33,18 @@ const Sidebar = () => {
               isActive ? "bg-[#f2f3ff] border-r-4 border-blue-400" : ""
             }`
           }
+          to="/manager-account"
+        >
+          <HiChartBarSquare className="text-xl" />
+          <p>Manager Account</p>
+        </NavLink>
+
+        <NavLink
+          className={({ isActive }) =>
+            `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+              isActive ? "bg-[#f2f3ff] border-r-4 border-blue-400" : ""
+            }`
+          }
           to={"/all-appointments"}
         >
           <HiCalendar className="text-xl" />
