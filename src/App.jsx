@@ -13,6 +13,9 @@ import {OurTeam} from "./page/ourTeam";
 import axios from "axios";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./page/profile";
+import ForgotPassword from "./login/forgotpassword";
+import ResetPassword from "./login/resetpassword";
+import VerifiedEmail from "./login/verifiedemail";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = false;
@@ -52,6 +55,9 @@ function App() {
         />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify" element={<VerifiedEmail />} />
         {/* Guest & MemberMember Shared Pages */}
         <Route
           element={<ProtectedRoute allowedRoles={["Guest", "Member"]} />}
