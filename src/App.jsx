@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
-import Dashboard from "./pages/Admin/Dashboard";
-import AllApointments from "./pages/Admin/AllApointments";
-import AddDoctor from "./pages/Admin/AddDoctor";
-import DoctorList from "./pages/Admin/DoctorList";
+import Dashboard from "./pages/Manage/Dashboard";
+import AllApointments from "./pages/Manage/AllApointments";
+import DoctorList from "./pages/Manage/DoctorList";
 import ManagerAccount from "./pages/Admin/ManagerAccount";
+import AddInfo from "./pages/Doctor/AddInfo";
 // import { useContext } from "react";
 // import { AdminContext } from "./context/AdminContext";
 const App = () => {
@@ -17,10 +17,10 @@ const App = () => {
         <Sidebar />
         <Routes>
           <Route path="/" element={<></>} />
-          <Route path="/admin-dashboard" element={<Dashboard />} />
+          <Route path="/manage-dashboard" element={<Dashboard />} />
           <Route path="/manager-account" element={<ManagerAccount />} />
           <Route path="/all-appointments" element={<AllApointments />} />
-          <Route path="/add-doctor" element={<AddDoctor />} />
+          <Route path="/add-info" element={<AddInfo />} />
           <Route path="/doctor-list" element={<DoctorList />} />
         </Routes>
       </div>

@@ -2,13 +2,13 @@ import { useState } from "react";
 import icon from "/src/assets/upload_area.svg";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const AddDoctor = () => {
+const AddInfo = () => {
   const [docImg, setDocImg] = useState(false);
 
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
   const [experience, setExperience] = useState("");
   const [fees, setFess] = useState("");
 
@@ -30,7 +30,7 @@ const AddDoctor = () => {
       formData.append("name", name);
       formData.append("gender", gender);
       formData.append("email", email);
-      formData.append("password", password);
+
       formData.append("experience", experience);
       formData.append("fees", fees);
       formData.append("address", address);
@@ -104,18 +104,6 @@ const AddDoctor = () => {
                 className="border rounded px-3 py-2"
                 type="email"
                 placeholder="Email"
-                required
-              />
-            </div>
-
-            <div className="flex-1 flex flex-col gap-1">
-              <p>Doctor Password</p>
-              <input
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-                className="border rounded px-3 py-2"
-                type="password"
-                placeholder="Password"
                 required
               />
             </div>
@@ -213,4 +201,4 @@ const AddDoctor = () => {
   );
 };
 
-export default AddDoctor;
+export default AddInfo;
