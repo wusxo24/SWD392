@@ -10,6 +10,8 @@ import {
   import axios from "../utils/axiosInstance";
   import { SideBarProfile } from "@/components/SideBarProfile";
   import EmailIcon from '@mui/icons-material/Email';
+  import { toast } from "react-toastify";
+  import { ToastContainer } from "react-toastify";
   export const UserProfile = () => {
     const userId =
       localStorage.getItem("userId") || sessionStorage.getItem("userId");
@@ -73,15 +75,15 @@ import {
   
     const handleSave = async () => {
       if (!formData.fullname || formData.fullname.length < 3) {
-        alert("Full name must be at least 3 characters long.");
+        toast.error("Full name must be at least 3 characters long.");
         return;
       }
       if (!/^[0-9]{10,15}$/.test(formData.phone)) {
-        alert("Phone number must be 10-15 digits.");
+        toast.error("Phone number must be 10-15 digits.");
         return;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        alert("Invalid email format.");
+        toast.error("Invalid email format.");
         return;
       }
   
@@ -92,9 +94,9 @@ import {
         });
         setMember({ ...formData, picture: file });
         setIsEditing(false);
-        alert("Profile updated successfully!");
+        toast.success("Profile updated successfully!");
       } catch (err) {
-        alert("Failed to update profile.");
+        toast.error("Failed to update profile.");
       }
     };
   
@@ -104,6 +106,7 @@ import {
   
     return (
       <div className="flex">
+        <ToastContainer />
         <SideBarProfile />
         <div className="p-10 shadow-lg bg-[#f9f9f9] w-full">
           {/* Banner */}
@@ -206,7 +209,6 @@ import {
   }}
   sx={{ mt: 2 }}
 />
-
 
                 </Grid>
   

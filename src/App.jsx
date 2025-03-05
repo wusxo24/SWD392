@@ -19,7 +19,7 @@ import NewsPage from "./page/NewsPage";
 import NewsDetailPage from "./page/NewsDetailPage";
 import { UserProfile } from "./page/userProfile";
 import { ChildrenProfile } from "./page/childrenProfile";
-
+import 'react-toastify/dist/ReactToastify.css';
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = false;
 
