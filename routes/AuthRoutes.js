@@ -10,4 +10,5 @@ router.get('/verify', verifyEmail);   // route xac thuc
 router.post('/forgot-password', forgotPassword); // route quen mat khau
 router.post('/reset-password', resetPassword); // route reset mat khau
 
+
 module.exports = router;

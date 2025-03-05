@@ -11,6 +11,7 @@ const MemberSchema = new mongoose.Schema({
     blood_type: { type: String },
     allergy: { type: String },
     notes: { type: String },
+    picture: { type: String },
 });
 
 const Member = mongoose.model("MemberInfo", MemberSchema);
