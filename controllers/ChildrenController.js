@@ -4,7 +4,7 @@ const Children = require("../models/Children");
 exports.createChild = async (req, res) => {
     try {
         const {fname,lname,birthdate, gender, picture, blood_type, allergy, notes} = req.body;
-        const memberId = req.user.id;
+        const memberId = req.params.userId;
         const newChild = new Children({
             fname,
             lname,
