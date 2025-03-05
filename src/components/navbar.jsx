@@ -106,7 +106,7 @@ export default function Navbar() {
               <div className="px-4 py-2 text-gray-800">Welcome, {userName}</div>
 
               <NavLink
-                to="/profile/${userId}"
+                to="/userProfile/:id"
                 className="block px-4 py-2 hover:bg-gray-100"
               >
                 Profile

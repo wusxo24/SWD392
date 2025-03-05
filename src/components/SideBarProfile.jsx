@@ -7,7 +7,7 @@ export const SideBarProfile = () => {
     <div className="p-4 w-64 h-full">
       {/* User Section */}
       <div className=" p-2">
-      <Link to="/userProfile">
+      <Link to="/userProfile/:id">
         <button className="text-lg cursor-pointer px-4 py-2 w-full text-left rounded hover:bg-gray-100">
         <AccountCircleIcon/> User
         </button>
