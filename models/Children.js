@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const ChildrenSchema = new mongoose.Schema({
     fname: { type: String, required: true },
@@ -11,9 +10,8 @@ const ChildrenSchema = new mongoose.Schema({
     blood_type: { type: String, enum: ["A", "B", "AB", "O"] },
     allergy: { type: String },
     notes: { type: String }
-}, { timestamps: true });
+});
 
-ChildrenSchema.plugin(AutoIncrement, { inc_field: "childID" });
 
 const Children = mongoose.model("Children", ChildrenSchema);
 module.exports = Children;

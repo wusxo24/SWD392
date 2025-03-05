@@ -13,7 +13,11 @@ const UserSchema = new mongoose.Schema({
         type: String, 
         enum: ["Active", "Inactive"], 
         default: "Active" 
-    }
+    },
+    verificationToken: { type: String },
+    verificationTokenCreatedAt: { type: Date },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date }
 });
 
 module.exports = mongoose.model("User", UserSchema);

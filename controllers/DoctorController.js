@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const DoctorInfo = require("../models/DoctorInfo");
-const User = require("../models/Account");
+const User = require("../models/User");
 const License = require("../models/License");
 const { v4: uuidv4 } = require("uuid");
 

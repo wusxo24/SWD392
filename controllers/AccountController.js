@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const User = require("../models/Account");
+const User = require("../models/User");
 const DoctorInfo = require("../models/DoctorInfo");
 
 exports.createAccount = async (req, res) => {
