@@ -18,36 +18,33 @@ const getMemberById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Validate ID format
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid user ID format" });
         }
 
         const member = await User.aggregate([
-            { $match: { _id: new mongoose.Types.ObjectId(id), role : "Member" } }, // Find user by ID
+            { $match: { _id: new mongoose.Types.ObjectId(id), role: "Member" } },
             {
                 $lookup: {
-                    from: "memberinfos", // Collection name of Member model (Mongoose converts model name to lowercase + 's')
-                    localField: "_id", // User ID in User collection
-                    foreignField: "user_id", // Reference field in Member collection
+                    from: "memberinfos",
+                    localField: "_id",
+                    foreignField: "user_id",
                     as: "memberData"
                 }
             },
-            { $unwind: { path: "$memberData", preserveNullAndEmptyArrays: true } }, // Unwind member data
+            { $unwind: { path: "$memberData", preserveNullAndEmptyArrays: true } },
             {
                 $project: {
                     _id: 1,
                     username: 1,
                     email: 1,
-                    fullname: "$memberData.fullname",
-                    birthdate: "$memberData.birthdate",
-                    phone: "$memberData.phone",
-                    gender: "$memberData.gender",
-                    address: "$memberData.address",
-                    blood_type: "$memberData.blood_type",
-                    allergy: "$memberData.allergy",
-                    notes: "$memberData.notes",
-                    picture: "$memberData.picture"
+                    fullname: { $ifNull: ["$memberData.fullname", ""] },
+                    birthdate: { $ifNull: ["$memberData.birthdate", null] },
+                    phone: { $ifNull: ["$memberData.phone", ""] },
+                    gender: { $ifNull: ["$memberData.gender", ""] },
+                    address: { $ifNull: ["$memberData.address", ""] },
+                    picture: { $ifNull: ["$memberData.picture", ""] },
+                    nickname: { $ifNull: ["$memberData.nickname", ""] }
                 }
             }
         ]);
@@ -56,7 +53,7 @@ const getMemberById = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        res.json(member[0]); // Return the first element from the aggregated result
+        res.json(member[0]);
     } catch (error) {
         console.error("Error fetching user:", error);
         res.status(500).json({ message: "Error fetching user", error: error.message });
@@ -72,14 +69,14 @@ const updateMember = async (req, res) => {
             return res.status(400).json({ message: "Invalid member ID format" });
         }
 
-        // Loại bỏ _id khỏi request body để tránh lỗi cập nhật immutable field
         const updateData = { ...req.body };
         delete updateData._id;
 
-        // Cập nhật thông tin thành viên trong MemberInfo dựa trên user_id
+        console.log("Updating member with data:", updateData);
+
         const updatedMember = await Member.findOneAndUpdate(
-            { user_id: id }, // Đúng collection cần tìm
-            updateData,
+            { user_id: id },
+            { $set: updateData }, // Ensure we explicitly set the picture field
             { new: true, runValidators: true }
         );
 
