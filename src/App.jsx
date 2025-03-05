@@ -18,6 +18,8 @@ import ResetPassword from "./login/resetpassword";
 import VerifiedEmail from "./login/verifiedemail";
 import NewsPage from "./page/NewsPage";
 import NewsDetailPage from "./page/NewsDetailPage";
+import { UserProfile } from "./page/userProfile";
+import { ChildrenProfile } from "./page/childrenProfile";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = false;
@@ -60,6 +62,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify" element={<VerifiedEmail />} />
+        <Route path="/userProfile" element={<UserProfile/>}/>
+        <Route path="/childrenProfile" element={<ChildrenProfile/>}/>
         {/* Guest & MemberMember Shared Pages */}
         <Route
           element={<ProtectedRoute allowedRoles={["Guest", "Member"]} />}
@@ -67,7 +71,7 @@ function App() {
 
         {/* Member Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Member"]} />}>
-          <Route path="/profile/:id"element={<Profile/>}/>
+          <Route path="/profile/:id" element={<Profile/>}/>
           <Route path="/news/:id" element={<NewsDetailPage />} />
         </Route>
         
