@@ -4,7 +4,7 @@ const childrenController = require("../controllers/ChildrenController");
 const { authorizeChildOwner, authMiddleware } = require("../middleware/authMiddleware");
 
 // Tạo mới trẻ (chỉ cho phép người dùng đã đăng nhập)
-router.post("/", authMiddleware, childrenController.createChild);
+router.post("/:userId", authMiddleware, childrenController.createChild);
 
 // Lấy danh sách trẻ theo thành viên (chỉ chủ tài khoản xem được con họ)
 router.get("/", authMiddleware, childrenController.getChildByMemberId);
