@@ -12,12 +12,14 @@ import { Footer } from "./components/footer";
 import { OurTeam } from "./page/ourTeam";
 import axios from "axios";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Profile from "./page/profile";
 import ForgotPassword from "./login/forgotpassword";
 import ResetPassword from "./login/resetpassword";
 import VerifiedEmail from "./login/verifiedemail";
 import NewsPage from "./page/NewsPage";
 import NewsDetailPage from "./page/NewsDetailPage";
+import { UserProfile } from "./page/userProfile";
+import { ChildrenProfile } from "./page/childrenProfile";
+import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./Manage/Dashboard";
 import AllApointments from "./Manage/AllApointments";
 import DoctorList from "./Manage/DoctorList";
@@ -67,6 +69,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify" element={<VerifiedEmail />} />
+
         {/* Guest & MemberMember Shared Pages */}
         <Route
           element={<ProtectedRoute allowedRoles={["Guest", "Member"]} />}
@@ -74,7 +77,8 @@ function App() {
 
         {/* Member Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Member"]} />}>
-          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/userProfile/:id" element={<UserProfile />} />
+          <Route path="/childrenProfile" element={<ChildrenProfile />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
         </Route>
 
