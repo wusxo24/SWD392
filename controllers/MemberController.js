@@ -43,7 +43,11 @@ const getMemberById = async (req, res) => {
                     birthdate: "$memberData.birthdate",
                     phone: "$memberData.phone",
                     gender: "$memberData.gender",
-                    address: "$memberData.address"
+                    address: "$memberData.address",
+                    blood_type: "$memberData.blood_type",
+                    allergy: "$memberData.allergy",
+                    notes: "$memberData.notes",
+                    picture: "$memberData.picture"
                 }
             }
         ]);

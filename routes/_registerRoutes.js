@@ -9,6 +9,9 @@ const accountRoutes = require("./AccountRoutes");
 const orderRoutes = require("./OrderRoutes");
 const recordRoutes = require("./RecordRoutes");
 const trackingRoutes = require("./TrackingRoutes");
+const newsRoutes = require("./NewsRoutes");
+const adminRoutes = require("./AdminRoute");
+const managerRoutes = require("./ManagerRoutes");
 
 const router = express.Router();
 
@@ -22,4 +25,8 @@ router.use("/accounts", accountRoutes);
 router.use("/orders", orderRoutes);
 router.use("/records", recordRoutes);
 router.use("/trackings", trackingRoutes);
+router.use("/news", newsRoutes);
+router.use("/admins", adminRoutes);
+router.use("/managers", managerRoutes);
+
 module.exports = router;
