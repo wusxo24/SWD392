@@ -85,7 +85,7 @@ export default function Navbar() {
         <NavLinkWithScroll to="about" label="About Us" />
         <NavLinkWithScroll to="pricing" label="Pricing" />
         <NavLinkWithScroll to="team" label="Our Team" />
-        <NavLinkWithScroll to="blog" label="Our Blog" />
+        <NavLinkWithScroll to="news" label="Our News" />
       </ul>
       {!token && (
         <Link to="/login">

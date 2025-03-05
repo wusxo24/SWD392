@@ -18,10 +18,9 @@ const Profile = () => {
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
-  const [imageUrl, setImageUrl] = useState(
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZ3aF4GtX_wOJ75UD0DAwM2yjUmzRIOO6ssA&s"
-  );
-
+  const [image, setImage] = useState(""); 
+  const {file, setFile} = useState(null);
+  
   // Add Child state variables
   const [showChildrenPopup, setShowChildrenPopup] = useState(false);
   const [childFname, setChildFname] = useState("");
@@ -39,7 +38,7 @@ const Profile = () => {
         const response = await axios.get(`api/members/${userId}`);
         setMember(response.data);
         setFormData(response.data);
-        setImageUrl(response.data.avatar); // Set image URL from member data
+        setImage(response.data.picture);
       } catch (err) {
         setError("Failed to fetch member.");
       } finally {
@@ -56,13 +55,30 @@ const Profile = () => {
     setIsEditing(true);
   };
 
-  const handleImageChange = (event) => {
-    setImageUrl(event.target.value);
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+  const handleFileChange = async (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile); // Store file in state
+
+    if (!selectedFile) return;
+
+    const toBase64 = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result); // Convert file to Base64 string
+        reader.onerror = (error) => reject(error);
+      });
+
+    try {
+      const base64String = await toBase64(selectedFile);
+      setFile(base64String); // Save Base64 string instead of the file
+    } catch (error) {
+      console.error("Error converting file to Base64:", error);
+    }
   };
 
   const handleSave = async () => {
@@ -83,9 +99,9 @@ const Profile = () => {
       // Assuming your backend updates the avatar URL as well
       await axios.put(`api/members/${userId}`, {
         ...formData,
-        avatar: imageUrl,
+        picture: file, // Save Base64 image to backend
       });
-      setMember({ ...formData, avatar: imageUrl });
+      setMember({ ...formData, picture: file });
       setIsEditing(false);
       alert("Profile updated successfully!");
     } catch (err) {
@@ -138,9 +154,7 @@ const Profile = () => {
     return <p className="text-center text-lg font-semibold">Loading...</p>;
   if (error)
     return (
-      <p className="text-center text-red-500 text-lg font-semibold">
-        {error}
-      </p>
+      <p className="text-center text-red-500 text-lg font-semibold">{error}</p>
     );
   if (!member)
     return <p className="text-center text-gray-500">No member found.</p>;
@@ -150,12 +164,25 @@ const Profile = () => {
       <div className="bg-gradient-to-r from-[#b8d3f1] to-[#fcf5e2] h-[100px] rounded-t-[20px] p-2 " />
       <div className="p-6 rounded-lg bg-white">
         <div className="flex gap-4 items-center mb-4">
-          <img
-            src={imageUrl}
-            alt="Avatar"
-            className="rounded-full w-30 h-30 object-cover bg-[#f9f9f9] shadow-md"
-          />
+          {/* Display the Base64 Image */}
+          {member.picture || image ? (
+            <img
+              src={
+                member.picture
+                  ? `data:image/png;base64,${member.picture}`
+                  : image
+              }
+              alt="Avatar"
+              className="rounded-full w-30 h-30 object-cover bg-[#f9f9f9] shadow-md"
+            />
+          ) : (
+            <p>No Image</p>
+          )}
 
+          {/* Image Upload Input */}
+          {isEditing && (
+            <input type="file" accept="image/*" onChange={handleFileChange} />
+          )}
           <div>
             <h3 className="text-xl font-semibold">
               {member.fullname || "No Name"}
@@ -164,6 +191,34 @@ const Profile = () => {
               {member.email || "No Email Provided"}
             </p>
           </div>
+          <TextField
+            className="top-3.5"
+            size="medium"
+            sx={{ width: "150px", height: "40px" }}
+            label="Nickname"
+            name="nickname"
+            value={formData.nickname || ""}
+            onChange={handleInputChange}
+            fullWidth
+            disabled={!isEditing}
+            style={{ marginBottom: "30px", backgroundColor: "#f9f9f9" }}
+          />
+          <TextField
+            size="medium"
+            sx={{ width: "150px", height: "40px" }}
+            variant="outlined"
+            label="Gender"
+            name="gender"
+            select
+            value={formData.gender || ""}
+            onChange={handleInputChange}
+            fullWidth
+            disabled={!isEditing}
+          >
+            <MenuItem value="Male">Male</MenuItem>
+            <MenuItem value="Female">Female</MenuItem>
+            <MenuItem value="Other">Other</MenuItem>
+          </TextField>
           <div style={{ marginLeft: "auto" }}>
             {isEditing ? (
               <Button variant="contained" color="success" onClick={handleSave}>
@@ -184,7 +239,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mt-10">
+        <div className="grid grid-cols-3 gap-4 mt-10">
           <div>
             <TextField
               label="Full Name"
@@ -225,6 +280,20 @@ const Profile = () => {
               disabled={!isEditing}
               className="mt-4"
               style={{ backgroundColor: "#f9f9f9" }}
+            />
+          </div>
+          <div>
+            <TextField
+              label="Birthdate"
+              type="date"
+              id="birthdate"
+              name="birthdate"
+              value={formData.birthdate || ""}
+              onChange={handleInputChange}
+              fullWidth
+              disabled={!isEditing}
+              className="mt-4"
+              max={new Date().toISOString().split("T")[0]} // Limits selection to today or earlier
             />
           </div>
         </div>

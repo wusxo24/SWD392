@@ -16,6 +16,8 @@ import Profile from "./page/profile";
 import ForgotPassword from "./login/forgotpassword";
 import ResetPassword from "./login/resetpassword";
 import VerifiedEmail from "./login/verifiedemail";
+import NewsPage from "./page/NewsPage";
+import NewsDetailPage from "./page/NewsDetailPage";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = false;
@@ -49,7 +51,7 @@ function App() {
           path="/home"
           element={
             <>
-              <Hero /> <OurBest /> <AboutUs /> <OurTeam /> <Pricing />
+              <Hero /> <OurBest /> <AboutUs /> <OurTeam /> <Pricing /> <NewsPage />
             </>
           }
         />
@@ -65,7 +67,8 @@ function App() {
 
         {/* Member Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Member"]} />}>
-        <Route path="/profile/:id"element={<Profile/>}/>
+          <Route path="/profile/:id"element={<Profile/>}/>
+          <Route path="/news/:id" element={<NewsDetailPage />} />
         </Route>
         
         {/* Manager Pages */}
