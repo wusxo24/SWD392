@@ -12,11 +12,7 @@ const MedicalRequestSchema = new mongoose.Schema({
     DoctorId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     AssignedDate: { type: Date },
     Reason: { type: String, required: true },
-    Notes: { type: String },
-    StatusHistory: [{
-        Status: { type: String },
-        ChangedAt: { type: Date, default: Date.now }
-    }] 
+    Notes: { type: String }
 });
 
 
