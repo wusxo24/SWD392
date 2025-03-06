@@ -20,6 +20,7 @@ import NewsDetailPage from "./page/NewsDetailPage";
 import { UserProfile } from "./page/userProfile";
 import { ChildrenProfile } from "./page/childrenProfile";
 import 'react-toastify/dist/ReactToastify.css';
+import { ChildrenDetails } from "./page/childrenDetails";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = false;
 
@@ -71,7 +72,8 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={["Member"]} />}>
         <Route path="/userProfile/:id" element={<UserProfile/>}/>
         <Route path="/childrenProfile" element={<ChildrenProfile/>}/>
-          <Route path="/news/:id" element={<NewsDetailPage />} />
+        <Route path="/childrenDetails/:id" element={<ChildrenDetails/>}/>
+        <Route path="/news/:id" element={<NewsDetailPage />} />
         </Route>
         
         {/* Manager Pages */}

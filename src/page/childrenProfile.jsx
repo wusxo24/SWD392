@@ -3,6 +3,7 @@ import { SideBarProfile } from '@/components/SideBarProfile';
 import { Button, Card, CardContent, Typography, Avatar, IconButton, Pagination, Stack } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { Link } from 'react-router-dom';
 
 export const ChildrenProfile = () => {
   const [children, setChildren] = useState([]);
@@ -48,12 +49,13 @@ export const ChildrenProfile = () => {
                 <Typography variant="h6">{child.fname} {child.lname}</Typography>
               </CardContent>
               {/* Show Details Button Aligned to the Right */}
+              <Link to={`/childrenDetails/${child.id}`}>
               <Button 
                 color="primary" 
-                onClick={() => alert(`Showing details for ${child.fname} ${child.lname}`)}
               >
                 Show Details <NavigateNextIcon/>
               </Button>
+              </Link>
             </Card>
           ))}
         </Stack>
