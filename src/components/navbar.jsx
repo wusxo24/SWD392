@@ -3,6 +3,8 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios"; // ✅ Added axios import
 import Logo from "../assets/Logo.png";
 import NavLinkWithScroll from "./NavLinkWithScroll";
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 export default function Navbar() {
   const location = useLocation();
@@ -97,30 +99,42 @@ export default function Navbar() {
 
       {/* Profile Section */}
       {!isLoginPage && token && (
-        <div className="relative " ref={profileRef}>
-          <button onClick={() => setIsProfilePopupOpen(!isProfilePopupOpen)}>
+        <div className="relative" ref={profileRef}>
+          <button
+            onClick={() => setIsProfilePopupOpen(!isProfilePopupOpen)}
+            className="focus:outline-none"
+          >
             <i className="fas fa-user text-[#0DBFFF] text-[30px] cursor-pointer"></i>
           </button>
-          {isProfilePopupOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg transition-all duration-300 ease-in-out">
-              <div className="px-4 py-2 text-gray-800">Welcome, {userName}</div>
 
-              <NavLink
-                to="/userProfile/:id"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
-                Profile
-              </NavLink>
-              <button
-                onClick={handleLogout}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                Log out
-              </button>
+          {/* Dropdown Menu with Smooth Tailwind Transition */}
+          <div
+            className={`absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg divide-y divide-gray-100
+            transition-transform duration-200 ease-in-out transform ${
+              isProfilePopupOpen ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none "
+            }`}
+          >
+            <div className="py-1" role="none">
+            <div className="px-4 py-2 text-gray-800 text-center">Welcome, {userName}</div>  
             </div>
-          )}
-        </div>
-      )}
-    </div>
+            
+            <div className="py-1" role="none">
+            <NavLink
+              to={`/userProfile/${userId}`}
+              className="block px-4 py-2 hover:bg-gray-100"
+            >
+            <AssignmentIndIcon/>  Profile
+            </NavLink>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100 my-1"
+            >
+            <LogoutIcon/>  Log out
+            </button>
+          </div>
+        </div>       
+            )}
+      </div>
   );
 }
