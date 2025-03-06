@@ -4,7 +4,7 @@ const childrenController = require("../controllers/ChildrenController");
 const { authorizeChildOwner, authMiddleware } = require("../middleware/authMiddleware");
 
 // Tạo mới trẻ (chỉ cho phép người dùng đã đăng nhập)
-router.post("/:userId", authMiddleware, childrenController.createChild);
+router.post("/", authMiddleware, childrenController.createChild);
 
 // Lấy danh sách trẻ theo thành viên (chỉ chủ tài khoản xem được con họ)
 router.get("/", authMiddleware, childrenController.getChildByMemberId);
@@ -14,5 +14,9 @@ router.put("/:id", authMiddleware, authorizeChildOwner, childrenController.updat
 
 // Xóa trẻ (chỉ chủ tài khoản mới có quyền xóa)
 router.delete("/:id", authMiddleware, authorizeChildOwner, childrenController.deleteChild);
+
+// Lấy thông tin trẻ theo childID
+router.get("/:id", authMiddleware, authorizeChildOwner, childrenController.getChildById);
+
 
 module.exports = router;
