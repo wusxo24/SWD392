@@ -1,20 +1,28 @@
 const express = require("express");
-require("dotenv").config();
+const dotenv =require("dotenv");
 const connectDB = require("./config/db");
 const applyMiddleware = require("./middleware");
 const routes = require("./routes/_registerRoutes.js");
 const cors = require('cors');
 
+dotenv.config();
+
 const app = express();
 
 // Enable CORS
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONT_END_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
+
 
 // Apply middleware
 applyMiddleware(app);
 
-// Register routes
-app.use(routes);
+// Use routes with /api prefix
+app.use('/api', routes);  // All API routes will now be prefixed with /api
 
 // Test route
 app.get("/", (req, res) => {

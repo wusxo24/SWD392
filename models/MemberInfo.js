@@ -8,9 +8,7 @@ const MemberSchema = new mongoose.Schema({
     birthdate: { type: Date},
     phone: { type: String },
     address: { type: String },
-    blood_type: { type: String },
-    allergy: { type: String },
-    notes: { type: String },
+    picture: { type: String },
 });
 
 const Member = mongoose.model("MemberInfo", MemberSchema);
