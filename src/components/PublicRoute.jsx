@@ -7,7 +7,7 @@ const PublicRoute = ({ user }) => {
 
   // Redirect users based on their role
   const roleRedirects = {
-    Member: "/",
+    Member: "/home",
     Manager: "/dashboard",
     Admin: "/Doctor-management",
     Doctor: "/view-medical-request",// Optional: Redirect customers to their main page
