@@ -88,3 +88,8 @@
 body{
     margin:0;
 }
+
+.nav-link {
+  display: inline-flex; /* Ensure same display as other links */
+  align-items: center;
+}

@@ -19,9 +19,8 @@ import NewsPage from "./page/NewsPage";
 import NewsDetailPage from "./page/NewsDetailPage";
 import { UserProfile } from "./page/userProfile";
 import { ChildrenProfile } from "./page/childrenProfile";
-import 'react-toastify/dist/ReactToastify.css';
-import { ChildrenDetails } from "./page/childrenDetails";
 import "react-toastify/dist/ReactToastify.css";
+import { ChildrenDetails } from "./page/childrenDetails";
 import Dashboard from "./Manage/Dashboard";
 import AllApointments from "./Manage/AllApointments";
 import DoctorList from "./Manage/DoctorList";
@@ -40,7 +39,7 @@ function App() {
   // Define default pages for each role
   const roleRoutes = {
     Guest: "/",
-    Member: "/Home",
+    Member: "/home",
     Manager: "/dashboard",
     Admin: "/Doctor-management",
     Doctor: "/view-medical-request",
@@ -61,17 +60,17 @@ function App() {
           path="/home"
           element={
             <>
-              <Hero /> <OurBest /> <AboutUs /> <OurTeam /> <Pricing />{" "}
-              <NewsPage />
+              <Hero /> <OurBest /> <AboutUs /> <OurTeam /> <Pricing />
             </>
           }
         />
+        <Route path="/news" element={<NewsPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify" element={<VerifiedEmail />} />
-
+        <Route path="/news/:id" element={<NewsDetailPage />} />
         {/* Guest & MemberMember Shared Pages */}
         <Route
           element={<ProtectedRoute allowedRoles={["Guest", "Member"]} />}
@@ -79,11 +78,11 @@ function App() {
 
         {/* Member Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Member"]} />}>
-        <Route path="/userProfile/:id" element={<UserProfile/>}/>
-        <Route path="/childrenProfile" element={<ChildrenProfile/>}/>
-        <Route path="/childrenDetails/:id" element={<ChildrenDetails/>}/>
-        <Route path="/servicesHistory/:id" element={<ServicesHistory/>}/>
-        <Route path="/news/:id" element={<NewsDetailPage />} />
+          <Route path="/userProfile/:id" element={<UserProfile />} />
+          <Route path="/childrenProfile" element={<ChildrenProfile />} />
+          <Route path="/childrenDetails/:id" element={<ChildrenDetails />} />
+          <Route path="/servicesHistory/:id" element={<ServicesHistory />} />
+          <Route path="/news/:id" element={<NewsDetailPage />} />
         </Route>
 
         {/* Manager Pages */}

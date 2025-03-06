@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios"; // ✅ Added axios import
 import Logo from "../assets/Logo.png";
 import NavLinkWithScroll from "./NavLinkWithScroll";
@@ -36,12 +36,6 @@ export default function Navbar() {
     const handleStorageChange = () => {
       setToken(
         localStorage.getItem("authToken") || sessionStorage.getItem("authToken")
-      );
-      setUserName(
-        localStorage.getItem("userName") || sessionStorage.getItem("userName")
-      );
-      setUserId(
-        localStorage.getItem("userId") || sessionStorage.getItem("userId")
       );
     };
     window.addEventListener("storage", handleStorageChange);
@@ -87,7 +81,9 @@ export default function Navbar() {
         <NavLinkWithScroll to="about" label="About Us" />
         <NavLinkWithScroll to="pricing" label="Pricing" />
         <NavLinkWithScroll to="team" label="Our Team" />
-        <NavLinkWithScroll to="news" label="Our News" />
+        <NavLink to="/news" className="nav-link cursor-pointer hover:text-gray-900">
+        Our News
+        </NavLink>
       </ul>
       {!token && (
         <Link to="/login">
