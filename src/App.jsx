@@ -27,6 +27,7 @@ import AllApointments from "./Manage/AllApointments";
 import DoctorList from "./Manage/DoctorList";
 import ManagerAccount from "./Admin/ManagerAccount";
 import AddInfo from "./Doctor/AddInfo";
+import { ServicesHistory } from "./page/servicesHistory";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = false;
 
@@ -81,6 +82,7 @@ function App() {
         <Route path="/userProfile/:id" element={<UserProfile/>}/>
         <Route path="/childrenProfile" element={<ChildrenProfile/>}/>
         <Route path="/childrenDetails/:id" element={<ChildrenDetails/>}/>
+        <Route path="/servicesHistory/:id" element={<ServicesHistory/>}/>
         <Route path="/news/:id" element={<NewsDetailPage />} />
         </Route>
 

@@ -5,7 +5,7 @@ import Logo from "../assets/Logo.png";
 import NavLinkWithScroll from "./NavLinkWithScroll";
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -109,9 +109,9 @@ export default function Navbar() {
 
           {/* Dropdown Menu with Smooth Tailwind Transition */}
           <div
-            className={`absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg divide-y divide-gray-100
+            className={`absolute right-0 mt-5 w-48 bg-white rounded-lg shadow-lg divide-y divide-gray-100
             transition-transform duration-200 ease-in-out transform ${
-              isProfilePopupOpen ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none "
+              isProfilePopupOpen ? "scale-100 opacity-100" : "scale-80 opacity-0 pointer-events-none "
             }`}
           >
             <div className="py-1" role="none">
@@ -119,16 +119,21 @@ export default function Navbar() {
             </div>
             
             <div className="py-1" role="none">
-            <NavLink
+            <Link
               to={`/userProfile/${userId}`}
-              className="block px-4 py-2 hover:bg-gray-100"
+              className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
             >
             <AssignmentIndIcon/>  Profile
-            </NavLink>
+            </Link>
+            <Link
+             to={`/servicesHistory/${userId}`}
+            className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
+            <ShoppingCartIcon/>  Service History
+            </Link>
             </div>
             <button
               onClick={handleLogout}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-100 my-1"
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100 my-1 cursor-pointer"
             >
             <LogoutIcon/>  Log out
             </button>
