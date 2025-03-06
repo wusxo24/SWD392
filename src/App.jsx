@@ -19,13 +19,14 @@ import NewsPage from "./page/NewsPage";
 import NewsDetailPage from "./page/NewsDetailPage";
 import { UserProfile } from "./page/userProfile";
 import { ChildrenProfile } from "./page/childrenProfile";
+import 'react-toastify/dist/ReactToastify.css';
+import { ChildrenDetails } from "./page/childrenDetails";
 import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./Manage/Dashboard";
 import AllApointments from "./Manage/AllApointments";
 import DoctorList from "./Manage/DoctorList";
 import ManagerAccount from "./Admin/ManagerAccount";
 import AddInfo from "./Doctor/AddInfo";
-
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = false;
 
@@ -77,9 +78,10 @@ function App() {
 
         {/* Member Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Member"]} />}>
-          <Route path="/userProfile/:id" element={<UserProfile />} />
-          <Route path="/childrenProfile" element={<ChildrenProfile />} />
-          <Route path="/news/:id" element={<NewsDetailPage />} />
+        <Route path="/userProfile/:id" element={<UserProfile/>}/>
+        <Route path="/childrenProfile" element={<ChildrenProfile/>}/>
+        <Route path="/childrenDetails/:id" element={<ChildrenDetails/>}/>
+        <Route path="/news/:id" element={<NewsDetailPage />} />
         </Route>
 
         {/* Manager Pages */}
