@@ -1,32 +1,19 @@
 import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
-import { useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation } from "@react-navigation/native";
+import { UserCenter } from "@/components/index/userCenter.component";
 
 export default function HomeScreen() {
+  const route = useRoute();
   const navigation = useNavigation();
 
+  console.log(route.name);
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Hello FCare</Text>
-      <Button
-        title="Login"
-        onPress={() => {
-          navigation.navigate('login' as never);
-        }}
+    <div>
+      <UserCenter
+        avatar="https://picsum.photos/150"
+        name="John Doe"
+        subscriptionPlan="Silver"
       />
-    </View>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
