@@ -12,7 +12,6 @@ const orderSchema = new mongoose.Schema({
     buyerEmail: { type: String },
     buyerPhone: { type: String },
     buyerAddress: { type: String },
-    items: [ { type: mongoose.Schema.Types.ObjectId, ref: "Service" } ],
     currency: { type: String },
     paymentMethod: { type: String },
     paymentStatus: { type: String }, //desc
