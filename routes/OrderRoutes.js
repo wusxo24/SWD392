@@ -11,4 +11,6 @@ router.get("/member", authMiddleware, orderController.getOrdersByMemberId);
 
 // Lấy tất cả đơn hàng (Chỉ Admin mới có quyền truy cập)
 router.get("/", authMiddleware, authorize(["Admin"]), orderController.getAllOrders);
+
+router.delete("/:id", orderController.deleteOrder);
 module.exports = router;

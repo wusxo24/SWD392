@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", getAllServices); // Public route - anyone can view services
 router.post("/", authMiddleware, authorize(["Admin"]), createService); // Only Admins can create
-router.put("/:id", authMiddleware, authorize(["Admin"]), updateService); // Only Admins can update
+router.put("/:id", authMiddleware, updateService); // Only Admins can update
 router.delete("/:id", authMiddleware, authorize(["Admin"]), deleteService); // Only Admins can delete
 
 module.exports = router;
