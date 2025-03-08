@@ -27,6 +27,8 @@ import DoctorList from "./Manage/DoctorList";
 import ManagerAccount from "./Admin/ManagerAccount";
 import AddInfo from "./Doctor/AddInfo";
 import { ServicesHistory } from "./page/servicesHistory";
+import { SuccessPaid } from "./page/successPaid";
+import { FaildedPaid } from "./page/failedPaid";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = false;
 
@@ -83,6 +85,8 @@ function App() {
           <Route path="/childrenDetails/:id" element={<ChildrenDetails />} />
           <Route path="/servicesHistory/:id" element={<ServicesHistory />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
+          <Route path="/successPaid/" element={<SuccessPaid />} />
+          <Route path="/failedPaid/" element={<FaildedPaid />} />
         </Route>
 
         {/* Manager Pages */}
