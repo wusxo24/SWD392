@@ -36,14 +36,14 @@ function App() {
   const location = useLocation();
   const hideNavFooter =
     location.pathname === "/login" || location.pathname === "/register";
-  const userRole = localStorage.getItem("roleName"); // Get user role
+  const userRole = localStorage.getItem("roleName") || sessionStorage.getItem("roleName"); // Get user role
 
   // Define default pages for each role
   const roleRoutes = {
-    Guest: "/",
+    Guest: "/home",
     Member: "/home",
     Manager: "/dashboard",
-    Admin: "/Doctor-management",
+    Admin: "/manager-account",
     Doctor: "/view-medical-request",
   };
 
@@ -57,26 +57,21 @@ function App() {
       <Routes>
         {/* Root path redirects based on role */}
         <Route path="/" element={<Navigate to={defaultPage} replace />} />
+
         {/* Public Pages */}
-        <Route
-          path="/home"
-          element={
-            <>
-              <Hero /> <OurBest /> <AboutUs /> <OurTeam /> <Pricing />
-            </>
-          }
-        />
-        <Route path="/news" element={<NewsPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify" element={<VerifiedEmail />} />
-        <Route path="/news/:id" element={<NewsDetailPage />} />
+
         {/* Guest & MemberMember Shared Pages */}
         <Route
-          element={<ProtectedRoute allowedRoles={["Guest", "Member"]} />}
-        ></Route>
+          element={<ProtectedRoute allowedRoles={["Guest", "Member"]} />}>
+             <Route path="/home" element={<><Hero /> <OurBest /> <AboutUs /> <OurTeam /> <Pricing /></>}/>
+             <Route path="/news" element={<NewsPage />} />
+             <Route path="/news/:id" element={<NewsDetailPage />} />
+        </Route>
 
         {/* Member Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Member"]} />}>
@@ -108,10 +103,9 @@ function App() {
 
         {/* Company Shared Pages */}
         <Route
-          element={
-            <ProtectedRoute allowedRoles={["Manager", "Admin", "Doctor"]} />
-          }
-        ></Route>
+          element={<ProtectedRoute allowedRoles={["Manager", "Admin", "Doctor"]} />}>
+
+        </Route>
 
         {/* 404 Fallback */}
         <Route path="*" element={<Navigate to={defaultPage} replace />} />
