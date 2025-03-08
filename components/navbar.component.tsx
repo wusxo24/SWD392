@@ -1,8 +1,8 @@
 import React from "react";
 import tw from "twrnc";
-import HomeIcon from "@/assets/icons/home.icon";
-import AccountIcon from "@/assets/icons/account.icon";
-import SupportIcon from "@/assets/icons/support.icon";
+import HomeIcon from "@/assets/icons/Home.icon";
+import AccountIcon from "@/assets/icons/Account.icon";
+import SupportIcon from "@/assets/icons/Support.icon";
 import { View, TouchableOpacity, Text } from "react-native";
 
 const NavBar = () => {

@@ -8,13 +8,7 @@ interface SilverIconProps {
 
 const SilverIcon = ({ style }: SilverIconProps) => {
   return (
-    <Svg
-      style={style}
-      width="18"
-      height="12"
-      viewBox="0 0 18 12"
-      fill="none"
-    >
+    <Svg style={style} width="18" height="12" viewBox="0 0 18 12" fill="none">
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
