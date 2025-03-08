@@ -62,9 +62,27 @@ const deleteOrder = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+// Get order by orderCode
+const getOrderByOrderCode = async (req, res) => {
+    try {
+        const { orderCode } = req.params;
+        const order = await Order.findOne({ orderCode });
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.status(200).json(order);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createOrder,
     getOrdersByMemberId,
     getAllOrders,
+    getOrderByOrderCode,
     deleteOrder
 }
