@@ -28,7 +28,7 @@ const getOrdersByMemberId = async (req, res) => {
     try {
         const memberId = req.user.id;
         // find orders by member id where orders status is Paid
-        const orders = await Order.find({ memberId, status: "Paid" });
+        const orders = await Order.find({ memberId});
         if (!orders) {
             return res.status(404).json({ message: "No orders found" });
         }
