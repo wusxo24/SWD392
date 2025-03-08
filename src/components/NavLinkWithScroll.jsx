@@ -15,7 +15,7 @@ const NavLinkWithScroll = ({ to, label, offset = 0 }) => {
       });
     } else {
       // If on a different page, navigate to the homepage and scroll after loading
-      navigate('/');
+      navigate('/home');
       setTimeout(() => {
         scroller.scrollTo(to, {
           duration: 500,
