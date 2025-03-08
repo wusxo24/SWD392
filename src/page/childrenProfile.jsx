@@ -23,6 +23,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Link } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export const ChildrenProfile = () => {
   const [children, setChildren] = useState([]);
@@ -48,6 +49,7 @@ export const ChildrenProfile = () => {
       .get("/api/children/")
       .then((response) => setChildren(response.data))
       .catch((error) => console.error("Error fetching children:", error));
+      toast.success("Children List");
   }, []);
 
   const handleAddChildren = () => {
@@ -67,8 +69,10 @@ export const ChildrenProfile = () => {
           allergy: "",
           notes: "",
         });
+        toast.success("Child added successfully");
       })
       .catch((error) => console.error("Error adding child:", error));
+      toast.error("Child added failed");
   };
 
   // Pagination logic
@@ -79,6 +83,7 @@ export const ChildrenProfile = () => {
 
   return (
     <div className="flex">
+      <ToastContainer />
       <SideBarProfile />
       <div className="p-4 w-full bg-[#f9f9f9]">
         {/* Header Section with Title and Add Button */}

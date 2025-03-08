@@ -8,11 +8,12 @@ export const SuccessPaid = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const orderCode = sessionStorage.getItem("orderCode") || localStorage.getItem("orderCode");
 
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const response = await axios.get(`api/orders/member`);
+                const response = await axios.get(`api/orders/${orderCode}`);
                 setOrder(response.data);
             } catch (error) {
                 setError("Failed to fetch order details.");
