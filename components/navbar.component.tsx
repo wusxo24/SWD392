@@ -1,30 +1,34 @@
 import React from "react";
+import tw from "twrnc";
 import HomeIcon from "@/assets/icons/home.icon";
 import AccountIcon from "@/assets/icons/account.icon";
 import SupportIcon from "@/assets/icons/support.icon";
+import { View, TouchableOpacity, Text } from "react-native";
 
 const NavBar = () => {
   return (
-    <div className="absolute bottom-5 flex w-full items-center px-5">
-      <div className="flex justify-between w-full bg-white rounded-full px-10 pt-3 pb-1">
-        <button title="Home" className="flex flex-col items-center">
+    <View style={tw`absolute bottom-0 w-full px-4 pb-6`}>
+      <View
+        style={tw`flex flex-row justify-between w-full bg-white rounded-full px-11 pt-3 pb-2`}
+      >
+        <TouchableOpacity style={tw`flex flex-col items-center`}>
           <HomeIcon />
-          <div>Home</div>
-        </button>
-        <button title="Support" className="flex flex-col items-center">
-          <div className="absolute bottom-4 p-4 bg-white rounded-full">
-            <div className="bg-[#239AC6] rounded-full p-2">
+          <Text>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={tw`flex flex-col items-center`}>
+          <View style={tw`absolute bottom-4 p-3 bg-white rounded-full`}>
+            <View style={tw`rounded-full p-2 z-5 bg-[#239AC6]`}>
               <SupportIcon />
-            </div>
-          </div>
-          <div className="pt-6 z-10">Support</div>
-        </button>
-        <button title="Account" className="flex flex-col items-center">
+            </View>
+          </View>
+          <Text style={tw`pt-6 z-10`}>Support</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={tw`flex flex-col items-center`}>
           <AccountIcon />
-          <div>Account</div>
-        </button>
-      </div>
-    </div>
+          <Text>Account</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
