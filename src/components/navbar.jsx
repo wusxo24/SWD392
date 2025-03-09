@@ -20,6 +20,7 @@ export default function Navbar() {
     localStorage.getItem("authToken") || sessionStorage.getItem("authToken")
   );
   const profileRef = useRef(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -60,7 +61,6 @@ export default function Navbar() {
   ].includes(location.pathname);
 
   const handleLogout = () => {
-    if (!window.confirm("Are you sure you want to log out?")) return;
     axios
       .post("/api/auth/logout")
       .then(() => {
@@ -148,11 +148,36 @@ export default function Navbar() {
               </Link>
             </div>
             <button
-              onClick={handleLogout}
+              onClick={() => setShowLoginModal(true)}
               className="block w-full text-left px-4 py-2 hover:bg-gray-100 my-1 cursor-pointer"
             >
               <LogoutIcon /> Log out
             </button>
+          </div>
+        </div>
+      )}
+       {/* Custom Login Modal */}
+       {showLoginModal && (
+        <div className="fixed inset-0 backdrop-blur-md bg-white/30 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">
+              Log out confirmation
+            </h3>
+            <p className="text-gray-600">Are you sure you want to log out?</p>
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                className="py-2 px-6 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
+                onClick={() => setShowLoginModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="py-2 px-6 bg-[#0DBFFF] text-white rounded-lg hover:bg-[#0a6999] transition"
+                onClick={handleLogout}
+              >
+                Log out
+              </button>
+            </div>
           </div>
         </div>
       )}
