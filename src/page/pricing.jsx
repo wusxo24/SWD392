@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "../utils/axiosInstance";
+import { toast, ToastContainer } from "react-toastify";
 
 export const Pricing = () => {
   const [plans, setPlans] = useState([]);
@@ -37,10 +38,10 @@ export const Pricing = () => {
 
       // Redirect to PayOS payment page
       window.location.href = data.data.checkoutUrl;
-      alert(`Successfully subscribed to ${plan.name}!`);
+      toast.success(`Successfully subscribed to ${plan.name}!`);
     } catch (error) {
       console.error("Subscription error:", error);
-      alert("Failed to subscribe. Please try again.");
+      toast.error("Failed to subscribe. Please try again.");
     }
   };
 
@@ -68,6 +69,7 @@ export const Pricing = () => {
 
   return (
     <div id="pricing" className="flex flex-col min-h-screen items-center justify-center bg-[#2BC6FF26] p-6">
+      <ToastContainer/>
       <h2 className="text-6xl font-bold text-gray-800 mb-10">
         Our Pricing <span className="text-[#0DBFFF]">Plans</span>
       </h2>
@@ -92,7 +94,7 @@ export const Pricing = () => {
               ))}
             </ul>
             <button
-              className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all"
+              className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all cursor-pointer"
               onClick={() => handleSubscribe(plan)}
             >
               Choose Plan
