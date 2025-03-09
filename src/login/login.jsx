@@ -25,9 +25,9 @@ export default function Login() {
 
     if (token) {
       let redirectUrl = "/";
-      if (role === "Manager") redirectUrl = "/dashboard";
-      else if (role === "Doctor") redirectUrl = "/view-booking";
-      else if (role === "Admin") redirectUrl = "/staff-management";
+      if (role === "Manager") redirectUrl = "/manage-dashboard";
+      else if (role === "Doctor") redirectUrl = "/add-info";
+      else if (role === "Admin") redirectUrl = "/manager-account";
       else if (role === "Member") redirectUrl = "/home";
 
       navigate(redirectUrl);

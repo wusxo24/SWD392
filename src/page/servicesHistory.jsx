@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "../utils/axiosInstance";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -14,7 +14,7 @@ export const ServicesHistory = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("https://66722715e083e62ee43e2228.mockapi.io/Order");
+                const response = await axios.get("api/orders/member");
                 setData(response.data);
             } catch (error) {
                 setError("Failed to fetch service history.");
@@ -54,7 +54,7 @@ export const ServicesHistory = () => {
                             {/* Main Information Row */}
                             <div className="flex justify-between items-center">
                                 <p className="font-semibold">
-                                    {new Date(item.createdAt * 1000).toLocaleDateString()}
+                                    {new Date(item.createdAt).toLocaleDateString()}
                                 </p>
                                 <p className=" font-medium">
                                     {item.amount} {item.currency}
@@ -77,7 +77,7 @@ export const ServicesHistory = () => {
                                     <p><strong>Description:</strong> {item.description}</p>
                                     <p><strong>Payment Method:</strong> {item.paymentMethod}</p>
                                     <p><strong>Payment Status:</strong> {item.paymentStatus}</p>
-                                    <p><strong>Transaction Date:</strong> {new Date(item.transactionDateTime * 1000).toLocaleString()}</p>
+                                    <p><strong>Transaction Date:</strong> {new Date(item.transactionDateTime).toLocaleString()}</p>
                                 </div>
                             )}
                         </li>

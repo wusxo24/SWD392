@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  NavLink,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import axios from "axios"; // ✅ Added axios import
 import Logo from "../assets/Logo.png";
 import NavLinkWithScroll from "./NavLinkWithScroll";
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import LogoutIcon from '@mui/icons-material/Logout';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import LogoutIcon from "@mui/icons-material/Logout";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -27,10 +33,14 @@ export default function Navbar() {
 
     // Clean up the event listener when the component unmounts
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  },);
+  });
 
-  const userName = localStorage.getItem("userName") || sessionStorage.getItem("userName");
-  const userId = localStorage.getItem("userId") || sessionStorage.getItem("userId");
+  const userName =
+    localStorage.getItem("userName") || sessionStorage.getItem("userName");
+  const userId =
+    localStorage.getItem("userId") || sessionStorage.getItem("userId");
+  const role =
+    localStorage.getItem("roleName") || sessionStorage.getItem("roleName");
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -76,15 +86,20 @@ export default function Navbar() {
       </NavLink>
 
       {/* Navigation */}
-      <ul className="flex space-x-6 text-gray-700 hidden md:flex">
-        <NavLinkWithScroll to="hero" label="Home" />
-        <NavLinkWithScroll to="about" label="About Us" />
-        <NavLinkWithScroll to="pricing" label="Pricing" />
-        <NavLinkWithScroll to="team" label="Our Team" />
-        <NavLink to="/news" className="nav-link cursor-pointer hover:text-gray-900">
-        Our News
-        </NavLink>
-      </ul>
+      {role !== "Admin" && role !== "Manager" && (
+        <ul className="flex space-x-6 text-gray-700 hidden md:flex">
+          <NavLinkWithScroll to="hero" label="Home" />
+          <NavLinkWithScroll to="about" label="About Us" />
+          <NavLinkWithScroll to="pricing" label="Pricing" />
+          <NavLinkWithScroll to="team" label="Our Team" />
+          <NavLink
+            to="/news"
+            className="nav-link cursor-pointer hover:text-gray-900"
+          >
+            Our News
+          </NavLink>
+        </ul>
+      )}
       {!token && (
         <Link to="/login">
           <button className="bg-[#0DBFFF] text-white px-6 py-2 rounded-full hover:bg-[#0BB0E0] transition">
@@ -107,35 +122,40 @@ export default function Navbar() {
           <div
             className={`absolute right-0 mt-5 w-48 bg-white rounded-lg shadow-lg divide-y divide-gray-100
             transition-transform duration-200 ease-in-out transform ${
-              isProfilePopupOpen ? "scale-100 opacity-100" : "scale-80 opacity-0 pointer-events-none "
+              isProfilePopupOpen
+                ? "scale-100 opacity-100"
+                : "scale-80 opacity-0 pointer-events-none "
             }`}
           >
             <div className="py-1" role="none">
-            <div className="px-4 py-2 text-gray-800 text-center">Welcome, {userName}</div>  
+              <div className="px-4 py-2 text-gray-800 text-center">
+                Welcome, {userName}
+              </div>
             </div>
-            
+
             <div className="py-1" role="none">
-            <Link
-              to={`/userProfile/${userId}`}
-              className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
-            >
-            <AssignmentIndIcon/>  Profile
-            </Link>
-            <Link
-             to={`/servicesHistory/${userId}`}
-            className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-            <ShoppingCartIcon/>  Service History
-            </Link>
+              <Link
+                to={`/userProfile/${userId}`}
+                className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              >
+                <AssignmentIndIcon /> Profile
+              </Link>
+              <Link
+                to={`/servicesHistory/${userId}`}
+                className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              >
+                <ShoppingCartIcon /> Service History
+              </Link>
             </div>
             <button
               onClick={handleLogout}
               className="block w-full text-left px-4 py-2 hover:bg-gray-100 my-1 cursor-pointer"
             >
-            <LogoutIcon/>  Log out
+              <LogoutIcon /> Log out
             </button>
           </div>
-        </div>       
-            )}
-      </div>
+        </div>
+      )}
+    </div>
   );
 }

@@ -9,10 +9,12 @@ export const FaildedPaid = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const orderCode = sessionStorage.getItem("orderCode") || localStorage.getItem("orderCode");
+
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const response = await axios.get(`api/orders/member`);
+                const response = await axios.get(`api/orders/${orderCode}`);
                 setOrder(response.data);
             } catch (error) {
                 setError("Failed to fetch order details.");
@@ -49,13 +51,6 @@ export const FaildedPaid = () => {
                 <p className="text-sm text-gray-700 font-bold">Address:{order.buyerAddress}</p>
             </div>
 
-
-            <div className="border-t mt-4 pt-4">
-                <p className="text-lg font-semibold">Order Summary</p>
-                <p className="text-sm font-bold">Description:{order.description}</p>
-                <p className="text-sm font-bold">Payment Method:{order.paymentMethod}</p>
-                <p className="text-sm font-bold">Status:<span className="text-green-500">{order.paymentStatus}</span></p>
-            </div>
             <div className="flex justify-center mt-10">
                 <Link to={"/Home"} className="text-blue-600"> Return Home</Link>
             </div>

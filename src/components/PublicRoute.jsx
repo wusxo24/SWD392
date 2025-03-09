@@ -8,9 +8,9 @@ const PublicRoute = ({ user }) => {
   // Redirect users based on their role
   const roleRedirects = {
     Member: "/home",
-    Manager: "/dashboard",
-    Admin: "/Doctor-management",
-    Doctor: "/view-medical-request",// Optional: Redirect customers to their main page
+    Manager: "/manage-dashboard",
+    Admin: "/manager-account",
+    Doctor: "/add-info",// Optional: Redirect customers to their main page
   };
 
   return <Navigate to={roleRedirects[user.role] || "/"} replace />;
