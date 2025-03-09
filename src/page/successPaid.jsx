@@ -63,7 +63,7 @@ export const SuccessPaid = () => {
             <div className="border-t mt-4 pt-4">
                 <p className="text-lg font-semibold">Amount Paid</p>
                 <p className="text-2xl font-bold text-blue-600">
-                    {order.amount} {order.currency}
+                    {order.amount} ₫
                 </p>
             </div>
             <div className="flex justify-between mt-10">
