@@ -86,7 +86,7 @@ export default function Navbar() {
       </NavLink>
 
       {/* Navigation */}
-      {role !== "Admin" && (
+      {role !== "Admin" && role !== "Manager" && (
         <ul className="flex space-x-6 text-gray-700 hidden md:flex">
           <NavLinkWithScroll to="hero" label="Home" />
           <NavLinkWithScroll to="about" label="About Us" />
