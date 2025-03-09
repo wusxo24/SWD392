@@ -1,4 +1,3 @@
-import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
 import { Stack } from "expo-router";
@@ -8,7 +7,19 @@ import NavBar from "@/components/Navbar.component";
 import { usePathname } from "expo-router";
 import "../styles/global.css";
 
+import {
+  useFonts,
+  NotoSans_400Regular,
+  NotoSans_700Bold,
+} from "@expo-google-fonts/noto-sans";
+import AppLoading from "expo-app-loading";
+
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    NotoSans_400Regular,
+    NotoSans_700Bold,
+  });
+
   const currentRoute = usePathname();
   const routesWithNavBar = [
     "/index.screen",
@@ -18,6 +29,10 @@ export default function RootLayout() {
 
   const showNavBar = routesWithNavBar.includes(currentRoute);
 
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
     <View style={tw`flex-1 bg-sky-100 pt-4`}>
       <StatusBar style="dark" />
@@ -25,7 +40,9 @@ export default function RootLayout() {
         initialRouteName="index"
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: tw.color("bg-sky-100") },
+          contentStyle: {
+            backgroundColor: tw.color("bg-sky-100"),
+          },
         }}
       />
       {showNavBar && <NavBar />}

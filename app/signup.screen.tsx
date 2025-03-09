@@ -1,4 +1,4 @@
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import tw from "twrnc";
@@ -10,10 +10,9 @@ const GoogleLogo = require("../assets/images/GoogleLogo.png");
 const LogoSection = () => (
   <View style={tw`flex items-center`}>
     <Image source={Logo} style={tw`w-40 h-40`} />
-    <Text style={tw`text-2xl font-semibold mt-4`}>Welcome Back</Text>
+    <Text style={tw`text-2xl font-semibold`}>Create an Account</Text>
     <Text style={tw`text-lg font-light text-center mt-3 px-8`}>
-      Let's continue the journey of tracking your child's growth and well-being
-      together.
+      Join us and start tracking your child's growth and well-being today.
     </Text>
   </View>
 );
@@ -31,7 +30,7 @@ interface InputFieldProps {
   onSubmitEditing: () => void;
 }
 
-const InputField: React.FC<InputFieldProps> = ({
+const InputField = React.forwardRef<TextInput, InputFieldProps>(({
   label,
   value,
   onChangeText,
@@ -42,8 +41,8 @@ const InputField: React.FC<InputFieldProps> = ({
   isFocused,
   returnKeyType,
   onSubmitEditing,
-}) => (
-  <View style={tw`w-full px-8 mt-4`}>
+}, ref) => (
+  <View style={tw`w-full px-8 mt-2`}>
     <Text style={tw`px-4 my-2 font-semibold`}>{label}</Text>
     <TextInput
       style={[
@@ -59,73 +58,46 @@ const InputField: React.FC<InputFieldProps> = ({
       returnKeyType={returnKeyType}
       onSubmitEditing={onSubmitEditing}
       autoCapitalize="none"
+      ref={ref}
     />
   </View>
-);
+));
 
-const LoginButton: React.FC<{ onPress: () => void }> = ({ onPress }) => (
+const SignUpButton: React.FC<{ onPress: () => void }> = ({ onPress }) => (
   <View style={tw`w-full px-8 mt-6`}>
     <TouchableOpacity
       style={tw`bg-sky-500 rounded-full py-3`}
       onPress={onPress}
     >
-      <Text style={tw`text-white text-center font-semibold`}>Sign In</Text>
+      <Text style={tw`text-white text-center font-semibold`}>Sign Up</Text>
     </TouchableOpacity>
   </View>
 );
 
-const ForgotPasswordLink = () => (
-  <View style={tw`w-full px-8`}>
-    <Link style={tw`px-4 pt-1`} href="/forgot-password.screen">
-      <Text style={tw`text-sky-500 underline text-left font-semibold`}>
-        Forgot password?
+const LoginLink = () => (
+  <View style={tw`w-full px-8 mt-6`}>
+    <Link style={tw`px-4 pt-1`} href="/login.screen">
+      <Text style={tw`text-center font-semibold`}>
+        Already have an account?{" "}
+        <Text style={tw`text-sky-500 underline`}>Log In</Text>
       </Text>
     </Link>
   </View>
 );
 
-const Divider = () => (
-  <View style={tw`flex mt-6 w-full px-8`}>
-    <Text style={tw`font-light text-center z-1`}>or sign in using</Text>
-    <View style={tw`relative flex items-center top-[-2] h-[1px] bg-slate-600`}>
-      <View style={tw`bg-sky-100 h-[1px] w-30`} />
-    </View>
-  </View>
-);
-
-const GoogleLoginButton = () => (
-  <View style={tw`w-full px-8 mt-6`}>
-    <TouchableOpacity
-      style={tw`flex flex-row gap-3 items-center justify-center border border-sky-500 bg-white rounded-full py-3`}
-      onPress={() => {}}
-    >
-      <Image source={GoogleLogo} style={tw`w-6 h-6`} />
-      <Text style={tw`text-sky-500 text-center font-semibold`}>
-        Connect with Google
-      </Text>
-    </TouchableOpacity>
-  </View>
-);
-
-const SignUpLink = () => (
-  <View style={tw`w-full px-8 mt-6`}>
-    <Link style={tw`px-4 pt-1`} href="/signup.screen">
-      <Text style={tw` text-center font-semibold`}>
-        Don't have an account?{" "}
-        <Text style={tw`text-sky-500 underline`}>Sign Up</Text>
-      </Text>
-    </Link>
-  </View>
-);
-
-export default function LoginScreen() {
+export default function SignUpScreen() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isUsernameFocused, setIsUsernameFocused] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
 
+  const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
-  const router = useRouter();
+  const confirmPasswordInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();
@@ -134,11 +106,16 @@ export default function LoginScreen() {
     };
   }, []);
 
-  const handleLogin = () => {
-    // Handle login logic here
+  const handleSignUp = () => {
+    setIsUsernameFocused(false);
+    setIsEmailFocused(false);
+    setIsPasswordFocused(false);
+    setIsConfirmPasswordFocused(false);
+    // Handle sign-up logic here
     console.log("Username:", username);
+    console.log("Email:", email);
     console.log("Password:", password);
-    router.push("/home.screen");
+    console.log("Confirm Password:", confirmPassword);
   };
 
   return (
@@ -154,8 +131,22 @@ export default function LoginScreen() {
         isFocused={isUsernameFocused}
         returnKeyType="next"
         onSubmitEditing={() =>
+          emailInputRef.current && emailInputRef.current.focus()
+        }
+      />
+      <InputField
+        label="Your email"
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Email"
+        onFocus={() => setIsEmailFocused(true)}
+        onBlur={() => setIsEmailFocused(false)}
+        isFocused={isEmailFocused}
+        returnKeyType="next"
+        onSubmitEditing={() =>
           passwordInputRef.current && passwordInputRef.current.focus()
         }
+        ref={emailInputRef}
       />
       <InputField
         label="Your password"
@@ -166,14 +157,27 @@ export default function LoginScreen() {
         onFocus={() => setIsPasswordFocused(true)}
         onBlur={() => setIsPasswordFocused(false)}
         isFocused={isPasswordFocused}
-        returnKeyType="done"
-        onSubmitEditing={handleLogin}
+        returnKeyType="next"
+        onSubmitEditing={() =>
+          confirmPasswordInputRef.current && confirmPasswordInputRef.current.focus()
+        }
+        ref={passwordInputRef}
       />
-      <ForgotPasswordLink />
-      <LoginButton onPress={handleLogin} />
-      <Divider />
-      <GoogleLoginButton />
-      <SignUpLink />
+      <InputField
+        label="Confirm your password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        placeholder="••••••••"
+        secureTextEntry
+        onFocus={() => setIsConfirmPasswordFocused(true)}
+        onBlur={() => setIsConfirmPasswordFocused(false)}
+        isFocused={isConfirmPasswordFocused}
+        returnKeyType="done"
+        onSubmitEditing={handleSignUp}
+        ref={confirmPasswordInputRef}
+      />
+      <SignUpButton onPress={handleSignUp} />
+      <LoginLink />
     </View>
   );
 }

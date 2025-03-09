@@ -7,7 +7,11 @@ module.exports = {
     // Do the same with `components`, `hooks`, `styles`, or any other top-level directories
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Noto Sans', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 };

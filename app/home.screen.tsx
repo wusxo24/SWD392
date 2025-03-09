@@ -3,6 +3,9 @@ import tw from "twrnc";
 import { UserCenter } from "@/components/index/UserCenter.component";
 import { View, Text } from "react-native";
 
+const ChildSelector = () => {
+};
+
 export default function HomeScreen() {
   return (
     <View style={tw``}>
