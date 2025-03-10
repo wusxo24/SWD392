@@ -2,23 +2,26 @@ import React, { useEffect, useState } from "react";
 import { getRecordsByMemberId as getUserRecords, activateRecord, deactivateRecord } from "@/components/service";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getPricingPlans } from "@/components/service"; // Import the function to fetch plans
 
 export const UserRecord = () => {
   const [records, setRecords] = useState(null);
+  const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchRecords();
+    fetchPlans();
   }, []);
 
   const fetchRecords = async () => {
     try {
       const data = await getUserRecords();
       console.log("API Response:", data);
-  
+
       // Extract records from 'data' field
       setRecords(Array.isArray(data.data) ? data.data : []);
-  
+
       if (Array.isArray(data.data) && data.data.length > 0) {
         toast.success("Records loaded successfully");
       } else {
@@ -32,7 +35,21 @@ export const UserRecord = () => {
       setLoading(false);
     }
   };
-  
+
+  const fetchPlans = async () => {
+    try {
+      const data = await getPricingPlans(); // Fetch available plans
+      setPlans(data);
+      console.log(data)
+    } catch (error) {
+      console.error("Error fetching plans:", error);
+    }
+  };
+
+  const getPlanName = (orderId) => {
+    const plan = plans.find((plan) => plan._id === orderId);
+    return plan ? plan.name : "N/A";
+  };
 
   const handleActivate = async (id) => {
     try {
@@ -67,7 +84,7 @@ export const UserRecord = () => {
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead>
             <tr>
-              <th className="border p-2">Order ID</th>
+              <th className="border p-2">Plan Name</th>
               <th className="border p-2">Status</th>
               <th className="border p-2">Actions</th>
             </tr>
@@ -75,7 +92,7 @@ export const UserRecord = () => {
           <tbody>
             {records.map((record) => (
               <tr key={record._id}>
-                <td className="border p-2">{record.OrderId?._id || "N/A"}</td>
+                <td className="border p-2">{getPlanName(record.OrderId?.serviceId)}</td>
                 <td className="border p-2">{record.Status}</td>
                 <td className="border p-2">
                   {record.Status === "Inactivated" ? (
