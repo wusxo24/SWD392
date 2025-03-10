@@ -1,9 +1,9 @@
 import React from 'react';
-import aboutus from '../assets/AboutUS.png';
-import au1 from '../assets/au1.png'
-import au2 from '../assets/au2.png'
-import au3 from '../assets/au3.png'
-import au4 from '../assets/au4.png'
+import aboutus from '@/assets/AboutUS.png';
+import au1 from '@/assets/au1.png'
+import au2 from '@/assets/au2.png'
+import au3 from '@/assets/au3.png'
+import au4 from '@/assets/au4.png'
 import { Link } from 'react-router-dom';
 export const AboutUs = () => {
   return (

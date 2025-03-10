@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { Pagination } from '@mui/material';
-import founder from '../assets/founder.png';
-import cofounder from '../assets/cofounder.png';
-import goat from '../assets/goat.png';
-import Sgoat from '../assets/secondary-goat.jpg';
+import founder from '@/assets/founder.png';
+import cofounder from '@/assets/cofounder.png';
+import an from '@/assets/an.png';
+import thanh from '@/assets/thanh.jpg';
+import binh from '@/assets/binh.jpg';
+import minh from '@/assets/minh.jpg';
 
 const teamMembers = [
-  { img: founder, name: 'Lâm Nguyễn Huy Khôi', desc: 'Một trong những nhà sáng lập giàu nhất lịch sử Việt Nam sỡ hữu vạn anh em cùng sinh ra tử' },
-  { img: cofounder, name: 'Trịnh Trần Thế Thiện', desc: 'Cánh tay phải của boss HK nhưng fan 10 gió' },
-  { img: goat, name: 'Cristiano Ronaldo', desc: 'Goat' },
-  { img: Sgoat, name: 'Lionel Messi', desc: 'Child of FIFA' },
+  { img: founder, name: 'Lâm Nguyễn Huy Khôi', desc: 'Project Leader' },
+  { img: cofounder, name: 'Trịnh Trần Thế Thiện', desc: 'Backend Developer' },
+  { img: an, name: 'Trần Trọng An', desc: 'Frontend Developer' },
+  { img: thanh, name: 'Ngô Gia Thành', desc: 'Mobile Developer' },
+  { img: binh, name: 'Lê Trần Thúy Bình', desc: 'Frontend Developer' },
+  { img: minh, name: 'Lê Đức Nhật Minh', desc: 'Backend Developer' },
 ];
 
 export const OurTeam = () => {

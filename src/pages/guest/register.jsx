@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft} from 'react-icons/fa';
 import { EyeIcon } from "lucide-react";
 import { EyeOffIcon } from "lucide-react";
-import register from '../assets/Login_image.png';
+import register from '@/assets/Login_image.png';
 
 export default function Register() {
   const navigate = useNavigate();

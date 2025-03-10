@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import logo from "../assets/Logo.png";
-import { AdminContext } from "../context/AdminContext";
+import logo from "@/assets/Logo.png";
+import { AdminContext } from "@/context/AdminContext";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
