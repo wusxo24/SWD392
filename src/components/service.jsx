@@ -24,15 +24,22 @@ export const createRecord = async (recordData) => {
 };
 
 // Activate a record
-export const activateRecord = async (recordId) => {
+export const activateRecord = async (recordId, childId) => {
   try {
-    const response = await axios.put("/api/records/activate", { recordId });
+    console.log(childId)
+    console.log(recordId)
+    const response = await axios.put("/api/records/activate", {
+      recordId,
+      childId, // Include child ID in the request
+    });
+    console.log(response.data)
     return response.data;
   } catch (error) {
-    console.error("Error activating record:", error);
+    console.error("Error activating record:", error.response?.data || error);
     throw error;
   }
 };
+
 
 // Deactivate a record
 export const deactivateRecord = async (recordId) => {
@@ -62,6 +69,26 @@ export const subscribeToPlan = async (planId) => {
     return response.data;
   } catch (error) {
     console.error("Subscription error:", error);
+    throw error;
+  }
+};
+
+export const getChildren = async () => {
+  try {
+    const response = await axios.get("/api/children/");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching children:", error);
+    throw error;
+  }
+};
+
+export const addChild = async (childData) => {
+  try {
+    const response = await axios.post("/api/children/", childData);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding child:", error);
     throw error;
   }
 };

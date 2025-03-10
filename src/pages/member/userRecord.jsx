@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { getRecordsByMemberId as getUserRecords, activateRecord, deactivateRecord } from "@/components/service";
+import { getRecordsByMemberId as getUserRecords, activateRecord, deactivateRecord, getChildren } from "@/components/service";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getPricingPlans } from "@/components/service"; // Import the function to fetch plans
+import { getPricingPlans } from "@/components/service";
 
 export const UserRecord = () => {
   const [records, setRecords] = useState(null);
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [children, setChildren] = useState([]);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchRecords();
@@ -17,15 +20,7 @@ export const UserRecord = () => {
   const fetchRecords = async () => {
     try {
       const data = await getUserRecords();
-      console.log("API Response:", data);
-
       setRecords(Array.isArray(data.data) ? data.data : []);
-
-      if (Array.isArray(data.data) && data.data.length > 0) {
-        toast.success("Records loaded successfully");
-      } else {
-        toast.info("No records found");
-      }
     } catch (error) {
       console.error("Error fetching records:", error);
       toast.error("Failed to load records");
@@ -39,7 +34,6 @@ export const UserRecord = () => {
     try {
       const data = await getPricingPlans();
       setPlans(data);
-      console.log(data);
     } catch (error) {
       console.error("Error fetching plans:", error);
     }
@@ -52,32 +46,42 @@ export const UserRecord = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "Still not active yet"; // Handle missing values
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
   };
 
-  const handleActivate = async (id) => {
+  const openChildSelectionModal = async (record) => {
     try {
-      await activateRecord(id);
-      fetchRecords();
+      const data = await getChildren(); // Fetch children list
+      setChildren(Array.isArray(data) ? data : []);
+      console.log(data)
+      setSelectedRecord(record);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching children:", error);
+      toast.error("Failed to load children");
+    }
+  };
+
+  const handleSelectChild = async (childId) => {
+    if (!selectedRecord) return;
+  
+    try {
+      await activateRecord(selectedRecord._id, childId); // Pass both IDs
+      fetchRecords(); // Refresh the records
       toast.success("Record activated successfully");
+      setIsModalOpen(false);
     } catch {
       toast.error("Failed to activate record");
     }
   };
-
-  const handleDeactivate = async (id) => {
-    try {
-      await deactivateRecord(id);
-      fetchRecords();
-      toast.success("Record deactivated successfully");
-    } catch {
-      toast.error("Failed to deactivate record");
-    }
-  };
+  
 
   return (
     <div className="p-5 h-screen">
@@ -108,7 +112,7 @@ export const UserRecord = () => {
                   {record.Status === "Inactivated" ? (
                     <button
                       className="bg-green-500 text-white px-2 py-1 mr-2 cursor-pointer rounded-lg"
-                      onClick={() => handleActivate(record._id)}
+                      onClick={() => openChildSelectionModal(record)}
                     >
                       Activate
                     </button>
@@ -125,6 +129,36 @@ export const UserRecord = () => {
             ))}
           </tbody>
         </table>
+      )}
+
+      {/* Child Selection Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50">
+          <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
+            <h3 className="text-xl font-bold mb-3">Select a Child</h3>
+            {children.length === 0 ? (
+              <p>No children available.</p>
+            ) : (
+              <ul>
+                {children.map((child) => (
+                  <li
+                    key={child._id}
+                    className="p-2 cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSelectChild(child._id)}
+                  >
+                    {child.fname} {child.lname}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
