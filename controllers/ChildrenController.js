@@ -4,7 +4,7 @@ const Children = require("../models/Children");
 exports.createChild = async (req, res) => {
     try {
         const {fname,lname,birthdate, gender, picture, blood_type, allergy, notes} = req.body;
-        const memberId = req.params.userId;
+        const memberId = req.user.id;
         const newChild = new Children({
             fname,
             lname,
@@ -55,7 +55,7 @@ exports.getChildByMemberId = async (req, res) => {
 exports.updateChild = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedChild = await Children.findOneAndUpdate({ childID: id }, req.body, { new: true });
+        const updatedChild = await Children.findOneAndUpdate({ _id: id }, req.body, { new: true });
         if (!updatedChild) {
             return res.status(404).json({ message: "Child không tồn tại!" });
         }
@@ -69,12 +69,28 @@ exports.updateChild = async (req, res) => {
 exports.deleteChild = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedChild = await Children.findOneAndDelete({ childID: id });
+        const deletedChild = await Children.findOneAndDelete({ _id: id });
         if (!deletedChild) {
             return res.status(404).json({ message: "Child không tồn tại!" });
         }
         res.status(200).json({ message: "Xóa child thành công!" });
     } catch (error) {
         res.status(500).json({ message: "Lỗi khi xóa child", error: error.message });
+    }
+};
+
+// Lấy thông tin child theo childID
+exports.getChildById = async (req, res) => {
+    try {
+        const { id } = req.params; // Lấy ID từ URL
+        const child = await Children.findById(id);
+
+        if (!child) {
+            return res.status(404).json({ message: "Child không tồn tại!" });
+        }
+
+        res.status(200).json(child);
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi khi lấy thông tin child", error: error.message });
     }
 };

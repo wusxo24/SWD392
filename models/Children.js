@@ -7,7 +7,7 @@ const ChildrenSchema = new mongoose.Schema({
     birthdate: { type: Date, required: true },
     gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
     picture: { type: String },
-    blood_type: { type: String, enum: ["A", "B", "AB", "O"] },
+    blood_type: { type: String, enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"] },
     allergy: { type: String },
     notes: { type: String }
 });
