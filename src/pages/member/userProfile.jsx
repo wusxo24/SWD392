@@ -7,7 +7,7 @@ import {
     Avatar,
   } from "@mui/material";
   import React, { useEffect, useState } from "react";
-  import axios from "../utils/axiosInstance";
+  import axios from "@/utils/axiosInstance";
   import { SideBarProfile } from "@/components/SideBarProfile";
   import EmailIcon from '@mui/icons-material/Email';
   import { toast } from "react-toastify";

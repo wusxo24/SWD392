@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import login from "../assets/Login_image.png";
+import login from "@/assets/Login_image.png";
 import { FaArrowLeft } from "react-icons/fa";
 import { EyeIcon } from "lucide-react";
 import { EyeOffIcon } from "lucide-react";

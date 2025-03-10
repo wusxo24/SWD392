@@ -1,4 +1,4 @@
-import axios from "../utils/axiosInstance";
+import axios from "@/utils/axiosInstance";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';

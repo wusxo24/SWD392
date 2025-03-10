@@ -1,9 +1,9 @@
 import React from 'react';
-import blue from '../assets/Blue_screen.png';
-import kid from '../assets/baby_background.png';
+import blue from '@/assets/Blue_screen.png';
+import kid from '@/assets/baby_background.png';
 import { Link } from 'react-router-dom';
 import { Link as ScrollLink } from 'react-scroll';
-import NavLinkWithScroll from '../components/NavLinkWithScroll';
+import NavLinkWithScroll from '@/components/NavLinkWithScroll';
 export const Hero = () => {
   return (
     <div id="hero" className="hero relative">

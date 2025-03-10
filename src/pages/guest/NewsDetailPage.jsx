@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import axios from "../utils/axiosInstance";
+import axios from "axios";
 
 const NewsDetail = () => {
   const { id } = useParams();

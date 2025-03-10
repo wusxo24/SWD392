@@ -1,11 +1,11 @@
 import React from 'react'
-import ractangle from '../assets/Rectangle.png'
-import ourb1 from '../assets/ourb1.png'
-import ourb2 from '../assets/ourb2.png'
-import ourb3 from '../assets/ourb3.png'
-import ourb4 from '../assets/ourb4.png'
-import ourb5 from '../assets/ourb5.png'
-import ourb6 from '../assets/ourb6.png'
+import ractangle from '@/assets/Rectangle.png'
+import ourb1 from '@/assets/ourb1.png'
+import ourb2 from '@/assets/ourb2.png'
+import ourb3 from '@/assets/ourb3.png'
+import ourb4 from '@/assets/ourb4.png'
+import ourb5 from '@/assets/ourb5.png'
+import ourb6 from '@/assets/ourb6.png'
 
 export const OurBest = () => {
   return (
