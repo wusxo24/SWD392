@@ -7,7 +7,7 @@ import { View, TouchableOpacity, Text } from "react-native";
 
 const NavBar = () => {
   return (
-    <View style={tw`absolute bottom-0 w-full px-4 pb-6`}>
+    <View style={tw`absolute bottom-0 w-full px-4 pb-6 z-10`}>
       <View
         style={tw`flex flex-row justify-between w-full bg-white rounded-full px-11 pt-3 pb-2`}
       >

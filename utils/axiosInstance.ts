@@ -2,11 +2,11 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const axiosInstance = axios.create({
-  baseURL: "https://api.example.com",
-  timeout: 10000,
+  baseURL: "https://67c8f39e0acf98d070882af5.mockapi.io/",
+  timeout: 10000, 
 });
 
-// Request interceptor
+// Request interceptor to add the token to headers
 axiosInstance.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem("authToken");
@@ -20,17 +20,30 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Response interceptor to handle errors
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
+  (response) => response,
+  async (error) => {
     if (error.response && error.response.status === 401) {
-      // Handle 401 error
+      await AsyncStorage.removeItem("authToken");
+      // Handle redirection to login screen if needed
     }
     return Promise.reject(error);
   }
 );
 
-export default axiosInstance;
+export const get = async (url: string) => {
+  return axiosInstance.get(url);
+};
+
+export const post = async (url: string, data: any) => {
+  return axiosInstance.post(url, data);
+};
+
+export const put = async (url: string, data: any) => {
+  return axiosInstance.put(url, data);
+};
+
+export const del = async (url: string) => {
+  return axiosInstance.delete(url);
+};

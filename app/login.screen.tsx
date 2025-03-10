@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import tw from "twrnc";
 import * as SplashScreen from 'expo-splash-screen';
+import authService from '../service/auth.service';
 
 const Logo = require("../assets/images/Logo.png");
 const GoogleLogo = require("../assets/images/GoogleLogo.png");
@@ -134,11 +135,14 @@ export default function LoginScreen() {
     };
   }, []);
 
-  const handleLogin = () => {
-    // Handle login logic here
-    console.log("Username:", username);
-    console.log("Password:", password);
-    router.push("/home.screen");
+  const handleLogin = async () => {
+    const success = await authService.login(username, password);
+    if (success) {
+      router.replace("/home.screen"); // Use replace instead of push
+    } else {
+      console.log("Login failed");
+      // Optionally, show an error message to the user
+    }
   };
 
   return (

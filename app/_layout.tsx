@@ -22,7 +22,7 @@ export default function RootLayout() {
 
   const currentRoute = usePathname();
   const routesWithNavBar = [
-    "/index.screen",
+    "/home.screen",
     "/support.screen",
     "/profile.screen",
   ];
@@ -36,6 +36,7 @@ export default function RootLayout() {
   return (
     <View style={tw`flex-1 bg-sky-100 pt-4`}>
       <StatusBar style="dark" />
+      {showNavBar && <NavBar />}
       <Stack
         initialRouteName="index"
         screenOptions={{
@@ -45,7 +46,6 @@ export default function RootLayout() {
           },
         }}
       />
-      {showNavBar && <NavBar />}
     </View>
   );
 }
