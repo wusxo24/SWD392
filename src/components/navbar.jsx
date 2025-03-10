@@ -12,6 +12,7 @@ import NavLinkWithScroll from "./NavLinkWithScroll";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import InventoryIcon from '@mui/icons-material/Inventory';
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -145,6 +146,12 @@ export default function Navbar() {
                 className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
               >
                 <ShoppingCartIcon /> Service History
+              </Link>
+              <Link
+                to={`/userRecord/${userId}`}
+                className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              >
+                <InventoryIcon /> Your Purchase
               </Link>
             </div>
             <button
