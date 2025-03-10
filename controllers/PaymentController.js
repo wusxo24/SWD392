@@ -8,10 +8,12 @@ dotenv.config();
 const createEmmbeddedPaymentLink = async (req, res) => {
     try {
         const { serviceId } = req.params;
+        console.log('serviceId:', serviceId);
         const userId = req.user.id;
         const user = await User.findById(userId);
         const member = await Member.findOne({ user_id: userId });
         const service = await Service.findById(serviceId);
+        const transactionDateTime = new Date();
 
         let orderCode;
         let index = 0;
@@ -19,6 +21,7 @@ const createEmmbeddedPaymentLink = async (req, res) => {
         while (index < orderCodeCount) {
             index++;
             orderCode = Number(Date.now().toString().slice(-8) + Math.floor(Math.random() * 100).toString().padStart(2, '0'));
+            
             const existingOrderCodeOrder = await Order.findOne({ orderCode });
             if (!existingOrderCodeOrder) {
                 break;
@@ -43,6 +46,7 @@ const createEmmbeddedPaymentLink = async (req, res) => {
             buyerEmail: user.email,
             buyerPhone: member.phone,
             buyerAddress: member.address,
+            transactionDateTime : transactionDateTime
         });
         await newOrder.save();
 
@@ -113,7 +117,6 @@ const receivePayment = async (req, res) => {
                 order.currency = data.data.currency;
                 order.paymentMethod = "PayOS";
                 order.paymentStatus = data.data.desc || "Payment Successful";
-                order.transactionDateTime = new Date(data.data.transactionDateTime);
                 console.log(`Order ${orderCode} updated to Paid.`);
             } else {
                 order.status = "Canceled";

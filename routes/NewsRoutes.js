@@ -7,10 +7,10 @@ const { authMiddleware, authorize } = require("../middleware/authMiddleware");
 router.post("/", authMiddleware, authorize(["Manager"]), newsController.createNews);
 
 // Get all news
-router.get("/", authMiddleware,newsController.getAllNews);
+router.get("/",newsController.getAllNews);
 
 // Get a specific news article by ID
-router.get("/:newsId", authMiddleware, newsController.getNewsById);
+router.get("/:newsId", newsController.getNewsById);
 
 // Update a news article
 router.put("/:newsId", authMiddleware, authorize(["Manager"]), newsController.updateNews);

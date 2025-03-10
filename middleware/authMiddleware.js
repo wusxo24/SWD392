@@ -49,7 +49,7 @@ const authorize = (allowedRoles) => (req, res, next) => {
 // Middleware to check if the user owns the child
 const authorizeChildOwner = async (req, res, next) => {
     try {
-        const child = await Children.findOne({ childID: req.params.id });
+        const child = await Children.findOne({ _id: req.params.id });
         if (!child) {
             return res.status(404).json({ message: "Child không tồn tại!" });
         }
