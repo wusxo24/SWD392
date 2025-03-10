@@ -19,7 +19,6 @@ export const UserRecord = () => {
       const data = await getUserRecords();
       console.log("API Response:", data);
 
-      // Extract records from 'data' field
       setRecords(Array.isArray(data.data) ? data.data : []);
 
       if (Array.isArray(data.data) && data.data.length > 0) {
@@ -38,9 +37,9 @@ export const UserRecord = () => {
 
   const fetchPlans = async () => {
     try {
-      const data = await getPricingPlans(); // Fetch available plans
+      const data = await getPricingPlans();
       setPlans(data);
-      console.log(data)
+      console.log(data);
     } catch (error) {
       console.error("Error fetching plans:", error);
     }
@@ -49,6 +48,15 @@ export const UserRecord = () => {
   const getPlanName = (orderId) => {
     const plan = plans.find((plan) => plan._id === orderId);
     return plan ? plan.name : "N/A";
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "Still not active yet"; // Handle missing values
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   const handleActivate = async (id) => {
@@ -85,6 +93,7 @@ export const UserRecord = () => {
           <thead>
             <tr>
               <th className="border p-2">Plan Name</th>
+              <th className="border p-2">Expiration Date</th>
               <th className="border p-2">Status</th>
               <th className="border p-2">Actions</th>
             </tr>
@@ -93,18 +102,19 @@ export const UserRecord = () => {
             {records.map((record) => (
               <tr key={record._id}>
                 <td className="border p-2">{getPlanName(record.OrderId?.serviceId)}</td>
+                <td className="border p-2">{formatDate(record.ExpiredDate)}</td>
                 <td className="border p-2">{record.Status}</td>
                 <td className="border p-2">
                   {record.Status === "Inactivated" ? (
                     <button
-                      className="bg-green-500 text-white px-2 py-1 mr-2"
+                      className="bg-green-500 text-white px-2 py-1 mr-2 cursor-pointer rounded-lg"
                       onClick={() => handleActivate(record._id)}
                     >
                       Activate
                     </button>
                   ) : (
                     <button
-                      className="bg-red-500 text-white px-2 py-1"
+                      className="bg-red-500 text-white px-2 py-1 cursor-pointer rounded-lg"
                       onClick={() => handleDeactivate(record._id)}
                     >
                       Deactivate
