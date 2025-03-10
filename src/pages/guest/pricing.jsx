@@ -1,34 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "@/utils/axiosInstance";
 import { toast, ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
+import { getPricingPlans, subscribeToPlan } from "@/components/service";
 
 export const Pricing = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const response = await fetch("/api/services");
-        if (!response.ok) {
-          throw new Error("Failed to fetch pricing plans");
-        }
-        const data = await response.json();
+        const data = await getPricingPlans();
         setPlans(data);
       } catch (error) {
-        console.error("Error fetching pricing plans:", error);
         setError(error.message || "Failed to load pricing plans");
       } finally {
         setLoading(false);
       }
     };
-
     fetchPlans();
   }, []);
 
@@ -44,50 +37,15 @@ export const Pricing = () => {
       return;
     }
     try {
-      const { data } = await axios.post(`/api/payments/${plan._id}`); // Fixed template literal
-
-      const orderCode = data.data.orderCode; // Ensure backend returns orderCode
-
-      // Store orderCode in localStorage
-      localStorage.setItem("orderCode", orderCode) ||
-      sessionStorage.setItem("orderCode", orderCode);
-
-      // Redirect to PayOS payment page
+      const data = await subscribeToPlan(plan._id);
+      const orderCode = data.data.orderCode;
+      localStorage.setItem("orderCode", orderCode) || sessionStorage.setItem("orderCode", orderCode);
       window.location.href = data.data.checkoutUrl;
       toast.success(`Successfully subscribed to ${plan.name}!`);
     } catch (error) {
-      console.error("Subscription error:", error);
       toast.error("Failed to subscribe. Please try again.");
     }
   };
-
-  if (loading) {
-    return (
-      <div
-        aria-live="polite"
-        className="text-center text-2xl font-semibold p-10"
-      >
-        Loading pricing plans...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div
-        aria-live="polite"
-        className="text-center text-2xl text-red-500 font-semibold p-10"
-      >
-        {error}
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div id="pricing" className="flex flex-col min-h-screen items-center justify-center bg-[#2BC6FF26] p-6">
@@ -133,7 +91,7 @@ export const Pricing = () => {
               </span>
 
               <motion.button
-                className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all"
+                className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all cursor-pointer"
                 whileHover={{
                   scale: 1.1,
                   boxShadow: "0 5px 15px rgba(0, 0, 0, 0.3)",

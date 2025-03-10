@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export const UserRecord = () => {
-  const [records, setRecords] = useState(null); // Start as null
+  const [records, setRecords] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,11 +15,11 @@ export const UserRecord = () => {
     try {
       const data = await getUserRecords();
       console.log("API Response:", data);
-
-      // Ensure `records` is always an array or null (not undefined)
-      setRecords(Array.isArray(data) ? data : null);
-
-      if (Array.isArray(data) && data.length > 0) {
+  
+      // Extract records from 'data' field
+      setRecords(Array.isArray(data.data) ? data.data : []);
+  
+      if (Array.isArray(data.data) && data.data.length > 0) {
         toast.success("Records loaded successfully");
       } else {
         toast.info("No records found");
@@ -27,11 +27,12 @@ export const UserRecord = () => {
     } catch (error) {
       console.error("Error fetching records:", error);
       toast.error("Failed to load records");
-      setRecords(null);
+      setRecords([]);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleActivate = async (id) => {
     try {
@@ -74,7 +75,7 @@ export const UserRecord = () => {
           <tbody>
             {records.map((record) => (
               <tr key={record._id}>
-                <td className="border p-2">{record.OrderId || "N/A"}</td>
+                <td className="border p-2">{record.OrderId?._id || "N/A"}</td>
                 <td className="border p-2">{record.Status}</td>
                 <td className="border p-2">
                   {record.Status === "Inactivated" ? (
