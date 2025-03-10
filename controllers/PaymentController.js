@@ -14,12 +14,23 @@ const createEmmbeddedPaymentLink = async (req, res) => {
         const service = await Service.findById(serviceId);
 
         let orderCode;
-        while (1 > 0) {
+        let index = 0;
+        const orderCodeCount = await Order.countDocuments({status: "Paid"});
+        while (index < orderCodeCount) {
+            index++;
             orderCode = Number(Date.now().toString().slice(-8) + Math.floor(Math.random() * 100).toString().padStart(2, '0'));
             const existingOrderCodeOrder = await Order.findOne({ orderCode });
             if (!existingOrderCodeOrder) {
                 break;
             }
+            
+        }
+        if (index > orderCodeCount) {
+            return res.json({
+                error: -1,
+                message: "Please try again!",
+                data: null,
+            });
         }
         const newOrder = new Order({
             memberId: userId,
