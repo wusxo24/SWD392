@@ -27,7 +27,7 @@ export const FaildedPaid = () => {
         fetchOrder();
     }, [id]);
 
-    if (loading) return <div className="text-center mt-6">Loading...</div>;
+    if (loading) return <div className="text-center mt-6 h-screen">Loading...</div>;
     if (error) return <div className="text-center text-red-500 mt-6">{error}</div>;
 
     return (
