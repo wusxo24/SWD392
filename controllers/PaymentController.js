@@ -3,6 +3,7 @@ const Order = require("../models/Order");
 const Service = require("../models/Service");
 const User = require("../models/User");
 const Member = require("../models/MemberInfo");
+const Record = require("../models/Record");
 const dotenv = require('dotenv');
 dotenv.config();
 const createEmmbeddedPaymentLink = async (req, res) => {
@@ -16,13 +17,24 @@ const createEmmbeddedPaymentLink = async (req, res) => {
         const transactionDateTime = new Date();
 
         let orderCode;
-        while (1 > 0) {
+        let index = 0;
+        const orderCodeCount = await Order.countDocuments({status: "Paid"});
+        while (index < orderCodeCount) {
+            index++;
             orderCode = Number(Date.now().toString().slice(-8) + Math.floor(Math.random() * 100).toString().padStart(2, '0'));
             
             const existingOrderCodeOrder = await Order.findOne({ orderCode });
             if (!existingOrderCodeOrder) {
                 break;
             }
+            
+        }
+        if (index > orderCodeCount) {
+            return res.json({
+                error: -1,
+                message: "Please try again!",
+                data: null,
+            });
         }
         const newOrder = new Order({
             memberId: userId,
@@ -107,6 +119,13 @@ const receivePayment = async (req, res) => {
                 order.paymentMethod = "PayOS";
                 order.paymentStatus = data.data.desc || "Payment Successful";
                 console.log(`Order ${orderCode} updated to Paid.`);
+
+                const newRecord = new Record({
+                    OrderId: order._id,
+                })
+
+                await newRecord.save();
+                console.log(`Record created for order ${orderCode}`);
             } else {
                 order.status = "Canceled";
                 order.paymentStatus = data.data.desc || "Payment Failed";
