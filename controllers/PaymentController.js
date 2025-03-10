@@ -3,6 +3,7 @@ const Order = require("../models/Order");
 const Service = require("../models/Service");
 const User = require("../models/User");
 const Member = require("../models/MemberInfo");
+const Record = require("../models/Record");
 const dotenv = require('dotenv');
 dotenv.config();
 const createEmmbeddedPaymentLink = async (req, res) => {
@@ -118,6 +119,13 @@ const receivePayment = async (req, res) => {
                 order.paymentMethod = "PayOS";
                 order.paymentStatus = data.data.desc || "Payment Successful";
                 console.log(`Order ${orderCode} updated to Paid.`);
+
+                const newRecord = new Record({
+                    OrderId: order._id,
+                })
+
+                await newRecord.save();
+                console.log(`Record created for order ${orderCode}`);
             } else {
                 order.status = "Canceled";
                 order.paymentStatus = data.data.desc || "Payment Failed";
