@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { FaLock, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { resetPassword } from '@/services/authService'; // Import service
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState('');
@@ -28,11 +28,11 @@ export default function ResetPassword() {
     }
 
     try {
-      const response = await axios.post('/api/auth/reset-password', { newPassword }, { params: { token } });
-      setMessage(response.data.message);
+      const response = await resetPassword(token, newPassword);
+      setMessage(response.message);
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong. Try again.");
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -41,11 +41,9 @@ export default function ResetPassword() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-100 to-blue-200">
       <div className="bg-white p-8 shadow-lg rounded-lg max-w-md w-full transform transition-all hover:shadow-2xl">
-        {/* Title */}
         <h2 className="text-3xl font-semibold text-gray-700 text-center mb-2">Reset Your Password</h2>
         <p className="text-gray-500 text-center mb-6">Create a new password for your account.</p>
 
-        {/* Success or Error Messages */}
         {message && (
           <p className="flex items-center text-green-600 bg-green-100 p-3 rounded text-center mb-4">
             <FaCheckCircle className="mr-2" /> {message}
@@ -57,9 +55,7 @@ export default function ResetPassword() {
           </p>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* New Password */}
           <div className="relative">
             <FaLock className="absolute left-3 top-3 text-gray-400" />
             <input
@@ -72,7 +68,6 @@ export default function ResetPassword() {
             />
           </div>
 
-          {/* Confirm Password */}
           <div className="relative">
             <FaLock className="absolute left-3 top-3 text-gray-400" />
             <input
@@ -85,7 +80,6 @@ export default function ResetPassword() {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className={`w-full bg-blue-500 text-white py-3 rounded-lg font-semibold transition ${

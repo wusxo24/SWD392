@@ -7,7 +7,7 @@ import {
     Avatar,
   } from "@mui/material";
   import React, { useEffect, useState } from "react";
-  import axios from "@/utils/axiosInstance";
+  import { getUserProfile, updateUserProfile, convertFileToBase64 } from "@/services/userService";
   import { SideBarProfile } from "@/components/SideBarProfile";
   import EmailIcon from '@mui/icons-material/Email';
   import { toast } from "react-toastify";
@@ -24,21 +24,14 @@ import {
     const [file, setFile] = useState(null);
   
     useEffect(() => {
-      const fetchMember = async () => {
-        try {
-          const response = await axios.get(`api/members/${userId}`);
-          setMember(response.data);
-          setFormData(response.data);
-          setImage(response.data.picture);
-        } catch (err) {
-          setError("Failed to fetch member.");
-        } finally {
-          setLoading(false);
-        }
-      };
-  
       if (userId) {
-        fetchMember();
+        getUserProfile(userId)
+          .then((data) => {
+            setMember(data);
+            setFormData(data);
+          })
+          .catch(() => setError("Failed to fetch member."))
+          .finally(() => setLoading(false));
       }
     }, [userId]);
   
@@ -53,20 +46,11 @@ import {
   
     const handleFileChange = async (e) => {
       const selectedFile = e.target.files[0];
-      setFile(selectedFile);
-  
       if (!selectedFile) return;
   
-      const toBase64 = (file) =>
-        new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = (error) => reject(error);
-        });
-  
+      setFile(selectedFile);
       try {
-        const base64String = await toBase64(selectedFile);
+        const base64String = await convertFileToBase64(selectedFile);
         setFile(base64String);
       } catch (error) {
         console.error("Error converting file to Base64:", error);
@@ -88,14 +72,11 @@ import {
       }
   
       try {
-        await axios.put(`api/members/${userId}`, {
-          ...formData,
-          picture: file,
-        });
+        await updateUserProfile(userId, { ...formData, picture: file });
         setMember({ ...formData, picture: file });
         setIsEditing(false);
         toast.success("Profile updated successfully!");
-      } catch (err) {
+      } catch {
         toast.error("Failed to update profile.");
       }
     };

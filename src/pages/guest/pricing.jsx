@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
-import { getPricingPlans, subscribeToPlan } from "@/components/service";
+import { getPricingPlans, subscribeToPlan } from "@/services/pricingService";
 
 export const Pricing = () => {
   const [plans, setPlans] = useState([]);

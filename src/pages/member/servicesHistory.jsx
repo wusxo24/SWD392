@@ -1,4 +1,4 @@
-import axios from "@/utils/axiosInstance";
+import { fetchServiceHistory } from "@/services/orderService";
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -12,19 +12,18 @@ export const ServicesHistory = () => {
     const [expanded, setExpanded] = useState(null); // Track expanded item
 
     useEffect(() => {
-        const fetchData = async () => {
+        const loadServiceHistory = async () => {
             try {
-                const response = await axios.get("api/orders/member");
-                setData(response.data);
+                const historyData = await fetchServiceHistory();
+                setData(historyData);
             } catch (error) {
-                setError("Failed to fetch service history.");
-                console.error("Error fetching data:", error);
+                setError(error.message);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchData();
+        loadServiceHistory();
     }, []);
 
     if (loading) return <div className="text-center mt-4">Loading...</div>;

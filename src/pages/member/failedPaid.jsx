@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "@/utils/axiosInstance";
+import { fetchOrder } from "@/services/orderService";
 export const FaildedPaid = () => {
     const { id } = useParams(); // Get order ID from URL
     const [order, setOrder] = useState(null);
@@ -10,19 +10,18 @@ export const FaildedPaid = () => {
     const orderCode = sessionStorage.getItem("orderCode") || localStorage.getItem("orderCode");
 
     useEffect(() => {
-        const fetchOrder = async () => {
+        const loadOrder = async () => {
             try {
-                const response = await axios.get(`api/orders/${orderCode}`);
-                setOrder(response.data);
+                const data = await fetchOrder(orderCode);
+                setOrder(data);
             } catch (error) {
-                setError("Failed to fetch order details.");
-                console.error("Error fetching order:", error);
+                setError(error.message);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchOrder();
+        loadOrder();
     }, [id]);
 
     if (loading) return <div className="text-center mt-6 h-screen">Loading...</div>;

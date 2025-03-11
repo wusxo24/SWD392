@@ -5,6 +5,7 @@ import { FaArrowLeft} from 'react-icons/fa';
 import { EyeIcon } from "lucide-react";
 import { EyeOffIcon } from "lucide-react";
 import register from '@/assets/Login_image.png';
+import { registerUser } from '@/services/authService'; // Import the service
 
 export default function Register() {
   const navigate = useNavigate();
@@ -60,13 +61,12 @@ export default function Register() {
 
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/register', {
+      await registerUser({
         username: formData.username,
         email: formData.email,
         password: formData.password,
       });
 
-      console.log('Registration successful:', response.data);
       alert('Registration successful! Please check your email for verification.');
       navigate('/login');
     } catch (error) {

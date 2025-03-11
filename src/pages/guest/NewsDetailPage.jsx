@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { fetchNewsDetail, fetchRelatedNews } from "@/services/newsService";
 
 const NewsDetail = () => {
   const { id } = useParams();
@@ -10,31 +10,23 @@ const NewsDetail = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchNewsDetail = async () => {
-      try {
-        const res = await axios.get(`/api/news/${id}`);
-        setNews(res.data);
-      } catch (err) {
-        console.error("Error fetching news:", err);
-      } finally {
-        setLoading(false);
-      }
+    const getNewsDetail = async () => {
+      setLoading(true);
+      const data = await fetchNewsDetail(id);
+      setNews(data);
+      setLoading(false);
     };
 
-    fetchNewsDetail();
+    getNewsDetail();
   }, [id]);
 
   useEffect(() => {
-    const fetchRelatedNews = async () => {
-      try {
-        const res = await axios.get("/api/news");
-        setRelatedNews(res.data.slice(0, 2)); // Get 2 related articles
-      } catch (err) {
-        console.error("Error fetching related news:", err);
-      }
+    const getRelatedNews = async () => {
+      const data = await fetchRelatedNews();
+      setRelatedNews(data);
     };
 
-    fetchRelatedNews();
+    getRelatedNews();
   }, []);
 
   if (loading)
@@ -45,10 +37,9 @@ const NewsDetail = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* ✅ Back Button */}
       <button
         className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded mb-4"
-        onClick={() => navigate("/home")} // Go back to previous page
+        onClick={() => navigate("/home")}
       >
         ← Back
       </button>
@@ -63,13 +54,11 @@ const NewsDetail = () => {
         className="w-full mt-6 rounded-lg shadow-lg"
       />
 
-      {/* Fix: Ensure HTML content renders properly */}
       <div
         className="mt-6 text-gray-700 text-lg leading-relaxed"
         dangerouslySetInnerHTML={{ __html: news.content }}
       />
 
-      {/* Related News */}
       <h2 className="text-2xl font-semibold text-gray-800 mt-12">
         Related News
       </h2>

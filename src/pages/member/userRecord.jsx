@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getRecordsByMemberId as getUserRecords, activateRecord, deactivateRecord, getChildren } from "@/components/service";
+import { getRecordsByMemberId as getUserRecords, activateRecord, deactivateRecord } from "@/services/recordService";
+import { getChildren } from "@/services/childService";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getPricingPlans } from "@/components/service";
+import { getPricingPlans } from "@/services/pricingService";
 
 export const UserRecord = () => {
   const [records, setRecords] = useState(null);
