@@ -9,7 +9,6 @@ export const UserRecord = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [children, setChildren] = useState([]);
-  const [childNames, setChildNames] = useState({}); // Store child names as an object
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
