@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Noto Sans", sans-serif;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  background-color: #f0f4f8; /* Example background color */
+}

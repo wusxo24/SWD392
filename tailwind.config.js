@@ -1,8 +1,17 @@
- /** @type {import('tailwindcss').Config} */
- export default {
-  content: ["./src/**/*.{html,js}"],
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    // Ensure this points to your source code
+    './app/**/*.{js,tsx,ts,jsx}',
+    './components/**/*.{js,tsx,ts,jsx}'
+    // Do the same with `components`, `hooks`, `styles`, or any other top-level directories
+  ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Noto Sans', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
-}
+};

@@ -1,35 +1,51 @@
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import "react-native-reanimated";
+import { View } from "react-native";
+import { Stack } from "expo-router";
+import tw from "twrnc";
 
-SplashScreen.preventAutoHideAsync();
+import NavBar from "@/components/Navbar.component";
+import { usePathname } from "expo-router";
+import "../styles/global.css";
+
+import {
+  useFonts,
+  NotoSans_400Regular,
+  NotoSans_700Bold,
+} from "@expo-google-fonts/noto-sans";
+import AppLoading from "expo-app-loading";
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+  const [fontsLoaded] = useFonts({
+    NotoSans_400Regular,
+    NotoSans_700Bold,
   });
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+  const currentRoute = usePathname();
+  const routesWithNavBar = [
+    "/home.screen",
+    "/support.screen",
+    "/profile.screen",
+  ];
 
-  if (!loaded) {
-    return null;
+  const showNavBar = routesWithNavBar.includes(currentRoute);
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
   }
 
   return (
-    <>
-      <Stack initialRouteName="index">
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: true }} />
-        <Stack.Screen name="+not-found" options={{ headerShown: true }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </>
+    <View style={tw`flex-1 bg-sky-100 pt-4`}>
+      <StatusBar style="dark" />
+      {showNavBar && <NavBar />}
+      <Stack
+        initialRouteName="index"
+        screenOptions={{
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: tw.color("bg-sky-100"),
+          },
+        }}
+      />
+    </View>
   );
 }
