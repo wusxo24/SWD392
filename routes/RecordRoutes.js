@@ -5,6 +5,6 @@ const { authMiddleware} = require("../middleware/authMiddleware");
 
 router.post("/", authMiddleware, recordController.createRecord);
 router.put("/activate", authMiddleware, recordController.activateRecord);
-router.put("/deactivate", authMiddleware, recordController.deativateRecord);
+router.put("/deactivate", authMiddleware, recordController.deactivateRecord);
 router.get("/", authMiddleware, recordController.getRecordsByMemberId);
 module.exports = router;

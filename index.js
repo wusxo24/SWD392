@@ -8,6 +8,8 @@ const cors = require('cors');
 dotenv.config();
 
 const app = express();
+const swaggerSetup = require("./swagger");
+
 
 // Enable CORS
 app.use(cors({
@@ -20,6 +22,9 @@ app.use(cors({
 
 // Apply middleware
 applyMiddleware(app);
+
+// Swagger setup
+swaggerSetup(app);
 
 // Use routes with /api prefix
 app.use('/api', routes);  // All API routes will now be prefixed with /api
