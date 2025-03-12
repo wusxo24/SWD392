@@ -1,56 +1,85 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchNews } from "@/services/newsService";
 
 const News = () => {
   const [newsList, setNewsList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchNews = async () => {
+    const getNews = async () => {
       try {
-        const res = await axios.get("/api/news");
-        setNewsList(res.data);
+        const data = await fetchNews();
+        setNewsList(data);
       } catch (err) {
-        console.error("Error fetching news:", err);
+        setError(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchNews();
+    getNews();
   }, []);
 
-  if (loading) return <p className="text-center mt-10 text-gray-500">Loading news...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <p className="text-gray-500">Loading news...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="text-center text-red-500 font-semibold mt-10">
+        {error}
+      </div>
+    );
 
   return (
-    <div id = "news" className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">Latest News</h1>
+    <div id="news" className="max-w-6xl mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
+        Latest News
+      </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {newsList.map((news) => (
-          <div 
-            key={news._id} 
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
-          >
-            <img src={news.banner} alt={news.title} className="w-full h-52 object-cover" />
-            
-            <div className="p-5">
-              <h2 className="text-xl font-semibold text-gray-900">{news.title}</h2>
-              <p className="text-gray-500 text-sm mt-1">{new Date(news.date).toLocaleDateString()}</p>
-              
-              <p className="text-gray-600 mt-2 line-clamp-3">{news.description}</p>
+      {newsList.length === 0 ? (
+        <p className="text-center text-gray-500">No news available.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {newsList.map((news) => (
+            <div
+              key={news._id}
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+            >
+              <img
+                src={news.banner || "/default-news.jpg"} // Fallback image
+                alt={news.title}
+                className="w-full h-52 object-cover"
+              />
 
-              <Link 
-                to={`/news/${news._id}`} 
-                className="mt-4 inline-block text-blue-500 font-semibold hover:underline"
-              >
-                Read More →
-              </Link>
+              <div className="p-5">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {news.title}
+                </h2>
+                <p className="text-gray-500 text-sm mt-1">
+                  {new Date(news.date).toLocaleDateString()}
+                </p>
+
+                <p className="text-gray-600 mt-2 line-clamp-3">
+                  {news.description?.slice(0, 100) + "..." || "No description available."}
+                </p>
+
+                <Link
+                  to={`/news/${news._id}`}
+                  className="mt-4 inline-block text-blue-500 font-semibold hover:underline"
+                >
+                  Read More →
+                </Link>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

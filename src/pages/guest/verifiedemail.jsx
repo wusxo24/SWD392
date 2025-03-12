@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { verifyEmail } from "@/services/authService";
 
 export default function VerifyEmailPage() {
   const [message, setMessage] = useState("Verifying...");
@@ -19,16 +19,14 @@ export default function VerifyEmailPage() {
     if (requestSent.current) return; // Prevent multiple calls
     requestSent.current = true; // Mark as sent
 
-    axios
-      .get(`/api/auth/verify?token=${token}`)
-      .then((response) => {
-        setMessage(response.data.message);
+    verifyEmail(token)
+      .then((msg) => {
+        setMessage(msg);
         setTimeout(() => navigate("/login"), 3000);
       })
       .catch((error) => {
-        setMessage(error.response?.data?.message || "Verification failed.");
+        setMessage(error.message);
       });
-
   }, [token, navigate]);
 
   return (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "@/utils/axiosInstance";
+import { fetchChildDetails, updateChildDetails } from "@/services/childService";
 import {
   Card,
   CardContent,
@@ -8,18 +8,16 @@ import {
   Avatar,
   CircularProgress,
   TextField,
-  Button,
-  Grid,
   IconButton,
+  Grid,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import { SideBarProfile } from "@/components/SideBarProfile";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 export const ChildrenDetails = () => {
   const { id } = useParams();
-  console.log(id);
   const [child, setChild] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,16 +25,14 @@ export const ChildrenDetails = () => {
   const [formData, setFormData] = useState({});
 
   useEffect(() => {
-    axios
-      .get(`api/children/${id}`)
-      .then((response) => {
-        setChild(response.data);
-        setFormData(response.data);
+    fetchChildDetails(id)
+      .then((data) => {
+        setChild(data);
+        setFormData(data);
         setLoading(false);
       })
-      .catch(() => {
-        toast.error("can not fetch child's details");
-        setError("Failed to fetch child details");
+      .catch((err) => {
+        setError(err.message);
         setLoading(false);
       });
   }, [id]);
@@ -45,16 +41,14 @@ export const ChildrenDetails = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    axios.put(`api/children/${id}`, formData).then((response) => {
-      setChild(response.data);
+  const handleSave = async () => {
+    try {
+      const updatedChild = await updateChildDetails(id, formData);
+      setChild(updatedChild);
       setIsEditing(false);
-      toast.success("Edit success");
-    });
-    toast.success("Edit success").catch(() => {
-      toast.error("Edit error");
-      setError("Failed to update child details");
-    });
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   if (loading) return <CircularProgress />;

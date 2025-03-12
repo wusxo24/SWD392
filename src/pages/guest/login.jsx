@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import login from "@/assets/Login_image.png";
+import { login } from "@/services/authService";
+import login_image from "@/assets/Login_image.png";
 import { FaArrowLeft } from "react-icons/fa";
-import { EyeIcon } from "lucide-react";
-import { EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,25 +15,20 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
-  // Check if user is already logged in and redirect
   useEffect(() => {
-    const token =
-      localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
-    const role =
-      localStorage.getItem("roleName") || sessionStorage.getItem("roleName");
-
+    const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+    const role = localStorage.getItem("roleName") || sessionStorage.getItem("roleName");
     if (token) {
-      let redirectUrl = "/";
-      if (role === "Manager") redirectUrl = "/manage-dashboard";
-      else if (role === "Doctor") redirectUrl = "/add-info";
-      else if (role === "Admin") redirectUrl = "/manager-account";
-      else if (role === "Member") redirectUrl = "/home";
-
-      navigate(redirectUrl);
+      const roleRedirects = {
+        Manager: "/manage-dashboard",
+        Doctor: "/add-info",
+        Admin: "/manager-account",
+        Member: "/home",
+      };
+      navigate(roleRedirects[role] || "/");
     }
   }, [navigate]);
 
-  // Load remembered email
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
     if (savedEmail) {
@@ -50,43 +44,29 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/auth/login", { email, password });
-      const { token, message, user } = response.data;
-      const { role } = user;
-      const { userName } = user;
-      const { id } = user;
+      const { token, message, user } = await login(email, password);
+      const { role, userName, id } = user;
 
       setSuccess(message || "Login successful!");
 
-      // Store token based on Remember Me option
-      if (rememberMe) {
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("roleName", role);
-        localStorage.setItem("rememberedEmail", email);
-        localStorage.setItem("userName", userName);
-        localStorage.setItem("userId", id);
-      } else {
-        sessionStorage.setItem("authToken", token);
-        sessionStorage.setItem("roleName", role);
-        sessionStorage.setItem("userName", userName);
-        sessionStorage.setItem("userId", id);
-        localStorage.removeItem("rememberedEmail");
-      }
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem("authToken", token);
+      storage.setItem("roleName", role);
+      storage.setItem("userName", userName);
+      storage.setItem("userId", id);
+      
+      if (rememberMe) localStorage.setItem("rememberedEmail", email);
+      else localStorage.removeItem("rememberedEmail");
 
-      // Redirect based on user roleName
-      let redirectUrl = "/";
-      if (role === "Manager") redirectUrl = "/dashboard";
-      else if (role === "Doctor") redirectUrl = "/view-booking";
-      else if (role === "Admin") redirectUrl = "/staff-management";
-      else if (role === "Member") redirectUrl = "/home";
-
-      navigate(redirectUrl);
+      const roleRedirects = {
+        Manager: "/dashboard",
+        Doctor: "/view-booking",
+        Admin: "/staff-management",
+        Member: "/home",
+      };
+      navigate(roleRedirects[role] || "/");
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Something went wrong. Please try again."
-      );
+      setError(err.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -116,9 +96,7 @@ export default function Login() {
             />
           </div>
           <div className="mb-8 relative">
-            <label className="block text-gray-600 mb-2 font-bold">
-              Password
-            </label>
+            <label className="block text-gray-600 mb-2 font-bold">Password</label>
             <input
               type={showPassword ? "text" : "password"}
               value={password}
@@ -146,42 +124,30 @@ export default function Login() {
               />
               Remember Me
             </label>
-            <a
-              href="/forgot-password"
-              className="text-[#0DBFFF] hover:underline"
-            >
+            <a href="/forgot-password" className="text-[#0DBFFF] hover:underline">
               Forgot Password?
             </a>
           </div>
-          <br></br>
+          <br />
           <button
             type="submit"
             disabled={loading}
             className={`w-full text-white py-3 rounded-full shadow transition duration-300
-            ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#0DBFFF] hover:bg-[#10a7de]"
-            }`}
+            ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#0DBFFF] hover:bg-[#10a7de]"}`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <br></br>
+        <br />
         <div className="mb-6">
-          {" "}
-          Don't have an account? {" "}
+          Don't have an account?{" "}
           <a href="/register" className="text-blue-400">
             Register
           </a>
         </div>
       </div>
       <div className="w-1/2 flex items-center justify-center">
-        <img
-          src={login}
-          alt="Login Illustration"
-          className="w-full h-auto object-cover"
-        />
+        <img src={login_image} alt="Login Illustration" className="w-full h-auto object-cover" />
       </div>
     </div>
   );
