@@ -1,22 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { getRecordsByMemberId as getUserRecords, activateRecord, deactivateRecord } from "@/services/recordService";
- import { getChildren } from "@/services/childService";
+import {
+  getRecordsByMemberId as getUserRecords,
+  activateRecord,
+  deactivateRecord,
+} from "@/services/recordService";
+import { getChildren } from "@/services/childService";
+import { getPricingPlans } from "@/services/pricingService";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getPricingPlans } from "@/services/pricingService";
+
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableContainer,
+  Paper,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
 
 export const UserRecord = () => {
   const [records, setRecords] = useState([]);
   const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [children, setChildren] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [filter, setFilter] = useState("All");
   useEffect(() => {
     fetchRecords();
     fetchPlans();
-    fetchChildren(); // Fetch children on mount
+    fetchChildren();
   }, []);
 
   const fetchRecords = async () => {
@@ -43,7 +65,7 @@ export const UserRecord = () => {
 
   const fetchChildren = async () => {
     try {
-      const data = await getChildren(); // Fetch children list
+      const data = await getChildren();
       setChildren(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching children:", error);
@@ -51,18 +73,16 @@ export const UserRecord = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    return dateString
+  const formatDate = (dateString) =>
+    dateString
       ? new Date(dateString).toLocaleString("en-US", {
           year: "numeric",
           month: "long",
           day: "numeric",
           hour: "2-digit",
           minute: "2-digit",
-          second: "2-digit",
         })
       : "Still not active yet";
-  };
 
   const openChildSelectionModal = (record) => {
     setSelectedRecord(record);
@@ -97,78 +117,110 @@ export const UserRecord = () => {
   };
 
   const getChildName = (childId) => {
-    if (!childId) return "You haven't assigned any child yet"; // Handle cases where childId is missing
+    if (!childId) return "You haven't assigned any child yet";
     const child = children.find((c) => c._id === childId);
     return child ? `${child.fname} ${child.lname}` : "Child not found";
   };
-  
+  const handleFilterChange = (event, newFilter) => {
+    if (newFilter !== null) {
+      setFilter(newFilter);
+    }
+  };
 
+  const filteredRecords =
+    filter === "All" ? records : records.filter((r) => r.Status === filter);
   return (
     <div className="p-5 h-screen">
       <ToastContainer />
       <h2 className="text-2xl font-bold mb-4">User Records</h2>
-
+      <ToggleButtonGroup
+        value={filter}
+        exclusive
+        onChange={handleFilterChange}
+        className="mb-4"
+      >
+        <ToggleButton value="All">All</ToggleButton>
+        <ToggleButton value="Activated">Activated</ToggleButton>
+        <ToggleButton value="Inactivated">Inactivated</ToggleButton>
+        <ToggleButton value="Expired">Expired</ToggleButton>
+      </ToggleButtonGroup>
       {loading ? (
-        <p className="h-screen">Loading records...</p>
+        <div className="flex justify-center items-center h-screen">
+          <CircularProgress />
+        </div>
       ) : records.length === 0 ? (
         <p className="text-gray-500">No records available.</p>
       ) : (
-        records.map((record) => (
-          <div key={record._id} className="flex p-2 border-b">
-            <h3 className="p-2">{getPlanName(record.OrderId?.serviceId)}</h3>
-            <p className="p-2">{formatDate(record.ExpiredDate)}</p>
-            <p className="p-2">{getChildName(record.ChildId)}</p>
-            <p className="p-2">{record.Status}</p>
-            <div className="p-2">
-              {record.Status === "Inactivated" ? (
-                <button
-                  className="bg-green-500 text-white px-2 py-1 mr-2 cursor-pointer rounded-lg"
-                  onClick={() => openChildSelectionModal(record)}
-                >
-                  Activate
-                </button>
-              ) : (
-                <button
-                  className="bg-red-500 text-white px-2 py-1 cursor-pointer rounded-lg"
-                  onClick={() => handleDeactivate(record._id)}
-                >
-                  Deactivate
-                </button>
-              )}
-            </div>
-          </div>
-        ))
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell><strong>Plan Name</strong></TableCell>
+                <TableCell><strong>Expiry Date</strong></TableCell>
+                <TableCell><strong>Child</strong></TableCell>
+                <TableCell><strong>Status</strong></TableCell>
+                <TableCell><strong>Actions</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredRecords.map((record) => (
+                <TableRow key={record._id}>
+                  <TableCell>{getPlanName(record.OrderId?.serviceId)}</TableCell>
+                  <TableCell>{formatDate(record.ExpiredDate)}</TableCell>
+                  <TableCell>{getChildName(record.ChildId)}</TableCell>
+                  <TableCell>{record.Status}</TableCell>
+                  <TableCell>
+                    {record.Status === "Inactivated" ? (
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => openChildSelectionModal(record)}
+                      >
+                        Activate
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleDeactivate(record._id)}
+                      >
+                        Deactivate
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
 
       {/* Child Selection Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-gray-800">
-          <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
-            <h3 className="text-xl font-bold mb-3">Select a Child</h3>
-            {children.length === 0 ? (
-              <p>No children available.</p>
-            ) : (
-              <ul>
-                {children.map((child) => (
-                  <li
-                    key={child._id}
-                    className="p-2 cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSelectChild(child._id)}
-                  >
-                    {child.fname} {child.lname}
-                  </li>
-                ))}
-              </ul>
-            )}
-            <button
-              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <DialogTitle>Select a Child</DialogTitle>
+        <DialogContent>
+          {children.length === 0 ? (
+            <p>No children available.</p>
+          ) : (
+            children.map((child) => (
+              <Button
+                key={child._id}
+                onClick={() => handleSelectChild(child._id)}
+                fullWidth
+                variant="outlined"
+                className="mb-2"
+              >
+                {child.fname} {child.lname}
+              </Button>
+            ))
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsModalOpen(false)} color="error">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
