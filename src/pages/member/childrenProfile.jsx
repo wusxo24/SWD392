@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getChildren, addChild } from "@/services/childService"; // Adjust the path accordingly
+import { getChildren, addChild } from "@/services/childService";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import {
