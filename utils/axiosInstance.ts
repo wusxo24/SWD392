@@ -6,7 +6,7 @@ const axiosInstance = axios.create({
   timeout: 10000,
 });
 
-// Request interceptor
+// Request interceptor to add authorization token to headers
 axiosInstance.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem("authToken");
@@ -20,14 +20,14 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Response interceptor to handle errors globally
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Handle 401 error
+      // Handle 401 error (e.g., redirect to login)
     }
     return Promise.reject(error);
   }
