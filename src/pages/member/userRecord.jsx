@@ -185,7 +185,7 @@ export const UserRecord = () => {
                         record.Status === "Activated" ? window.location.href = "/childGrowth" : openChildSelectionModal(record)
                       }
                     >
-                      {record.Status === "Activated" ? "Go to Child Growth" : "Activate"}
+                      {record.Status === "Activated" ? "Child Growth" : "Activate"}
                     </Button>
                   </TableCell>
                 </TableRow>
