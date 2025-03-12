@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   getRecordsByMemberId as getUserRecords,
   activateRecord,
-  deactivateRecord,
 } from "@/services/recordService";
 import { getChildren } from "@/services/childService";
 import { getPricingPlans } from "@/services/pricingService";
@@ -25,7 +24,9 @@ import {
   CircularProgress,
   ToggleButton,
   ToggleButtonGroup,
+  TablePagination,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export const UserRecord = () => {
   const [records, setRecords] = useState([]);
@@ -35,6 +36,10 @@ export const UserRecord = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filter, setFilter] = useState("All");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(6);
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetchRecords();
     fetchPlans();
@@ -101,16 +106,6 @@ export const UserRecord = () => {
     }
   };
 
-  const handleDeactivate = async (recordId) => {
-    try {
-      await deactivateRecord(recordId);
-      await fetchRecords();
-      toast.success("Record deactivated successfully");
-    } catch {
-      toast.error("Failed to deactivate record");
-    }
-  };
-
   const getPlanName = (orderId) => {
     const plan = plans.find((plan) => plan._id === orderId);
     return plan ? plan.name : "N/A";
@@ -121,16 +116,28 @@ export const UserRecord = () => {
     const child = children.find((c) => c._id === childId);
     return child ? `${child.fname} ${child.lname}` : "Child not found";
   };
+
   const handleFilterChange = (event, newFilter) => {
     if (newFilter !== null) {
       setFilter(newFilter);
+      setPage(0);
     }
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   const filteredRecords =
     filter === "All" ? records : records.filter((r) => r.Status === filter);
+
   return (
-    <div className="p-5 h-screen">
+    <div className="p-5 h-screen bg-[#f6f7f8] px-30">
       <ToastContainer />
       <h2 className="text-2xl font-bold mb-4">User Records</h2>
       <ToggleButtonGroup
@@ -163,39 +170,40 @@ export const UserRecord = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredRecords.map((record) => (
+              {filteredRecords.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((record) => (
                 <TableRow key={record._id}>
                   <TableCell>{getPlanName(record.OrderId?.serviceId)}</TableCell>
                   <TableCell>{formatDate(record.ExpiredDate)}</TableCell>
                   <TableCell>{getChildName(record.ChildId)}</TableCell>
                   <TableCell>{record.Status}</TableCell>
                   <TableCell>
-                    {record.Status === "Inactivated" ? (
-                      <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => openChildSelectionModal(record)}
-                      >
-                        Activate
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleDeactivate(record._id)}
-                      >
-                        Deactivate
-                      </Button>
-                    )}
+                    <Button
+                      variant="contained"
+                      color={record.Status === "Activated" ? "primary" : "success"}
+                      disabled={record.Status === "Expired"}
+                      onClick={() =>
+                        record.Status === "Activated" ? window.location.href = "/childGrowth" : openChildSelectionModal(record)
+                      }
+                    >
+                      {record.Status === "Activated" ? "Go to Child Growth" : "Activate"}
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          <TablePagination
+            rowsPerPageOptions={[6, 12, 24]}
+            component="div"
+            count={filteredRecords.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </TableContainer>
       )}
-
-      {/* Child Selection Modal */}
+        {/* Child Selection Modal */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <DialogTitle>Select a Child</DialogTitle>
         <DialogContent>
@@ -207,7 +215,6 @@ export const UserRecord = () => {
                 key={child._id}
                 onClick={() => handleSelectChild(child._id)}
                 fullWidth
-                variant="outlined"
                 className="mb-2"
               >
                 {child.fname} {child.lname}
@@ -221,6 +228,7 @@ export const UserRecord = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      
     </div>
   );
 };
