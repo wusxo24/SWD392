@@ -22,7 +22,7 @@ export default function RootLayout() {
 
   const currentRoute = usePathname();
   const routesWithNavBar = [
-    "/index.screen",
+    "/home.screen",
     "/support.screen",
     "/profile.screen",
   ];
@@ -34,18 +34,18 @@ export default function RootLayout() {
   }
 
   return (
-    <View style={tw`flex-1 bg-sky-100 pt-4`}>
+    <View style={tw`flex-1 bg-sky-50 pt-4`}>
       <StatusBar style="dark" />
+      {showNavBar && <NavBar />}
       <Stack
         initialRouteName="index"
         screenOptions={{
           headerShown: false,
           contentStyle: {
-            backgroundColor: tw.color("bg-sky-100"),
+            backgroundColor: tw.color("bg-sky-50"),
           },
         }}
       />
-      {showNavBar && <NavBar />}
     </View>
   );
 }
