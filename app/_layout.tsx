@@ -34,7 +34,7 @@ export default function RootLayout() {
   }
 
   return (
-    <View style={tw`flex-1 bg-sky-100 pt-4`}>
+    <View style={tw`flex-1 bg-sky-50 pt-4`}>
       <StatusBar style="dark" />
       {showNavBar && <NavBar />}
       <Stack
@@ -42,7 +42,7 @@ export default function RootLayout() {
         screenOptions={{
           headerShown: false,
           contentStyle: {
-            backgroundColor: tw.color("bg-sky-100"),
+            backgroundColor: tw.color("bg-sky-50"),
           },
         }}
       />
