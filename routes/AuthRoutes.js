@@ -61,6 +61,8 @@ router.post("/login", loginUser);        // Route đăng nhập
  *   post:
  *     summary: Logout a user
  *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: User logged out successfully

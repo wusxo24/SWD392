@@ -1,5 +1,3 @@
-// filepath: d:\hukoFpt\SWD\SWD392\swagger.js
-
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
@@ -13,11 +11,25 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:3000",
+                url: "http://localhost:3000/api",
+            },
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
             },
         ],
     },
-    apis: ["./controllers/*.js"], // Path to the API docs
+    apis: ["./controllers/*.js", "./routes/*.js"], // Path to the API docs
 };
 
 const specs = swaggerJsdoc(options);
