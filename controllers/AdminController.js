@@ -1,60 +1,44 @@
 const User = require("../models/User");
 
-// Get all Admins
-exports.getAdmins = async (req, res) => {
-    try {
-        const admins = await User.find({ role: "Admin" });
-        res.json(admins);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch admins" });
+class AdminService {
+    async getAdmins() {
+        return await User.find({ role: "Admin" });
     }
-};
 
-// Get a single Admin by ID
-exports.getAdminById = async (req, res) => {
-    try {
-        const admin = await User.findOne({ _id: req.params.id, role: "Admin" });
-        if (!admin) return res.status(404).json({ error: "Admin not found" });
-        res.json(admin);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch admin" });
+    async getAdminById(id) {
+        const admin = await User.findOne({ _id: id, role: "Admin" });
+        if (!admin) {
+            throw new Error("Admin not found");
+        }
+        return admin;
     }
-};
 
-// Create a new Admin
-exports.createAdmin = async (req, res) => {
-    try {
-        const { username, email, password, status } = req.body;
+    async createAdmin(adminData) {
+        const { username, email, password, status } = adminData;
         const newAdmin = new User({ username, email, password, role: "Admin", status });
         await newAdmin.save();
-        res.status(201).json(newAdmin);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to create admin" });
+        return newAdmin;
     }
-};
 
-// Update an Admin
-exports.updateAdmin = async (req, res) => {
-    try {
+    async updateAdmin(id, updateData) {
         const updatedAdmin = await User.findOneAndUpdate(
-            { _id: req.params.id, role: "Admin" },
-            req.body,
+            { _id: id, role: "Admin" },
+            updateData,
             { new: true }
         );
-        if (!updatedAdmin) return res.status(404).json({ error: "Admin not found" });
-        res.json(updatedAdmin);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to update admin" });
+        if (!updatedAdmin) {
+            throw new Error("Admin not found");
+        }
+        return updatedAdmin;
     }
-};
 
-// Delete an Admin
-exports.deleteAdmin = async (req, res) => {
-    try {
-        const deletedAdmin = await User.findOneAndDelete({ _id: req.params.id, role: "Admin" });
-        if (!deletedAdmin) return res.status(404).json({ error: "Admin not found" });
-        res.json({ message: "Admin deleted successfully" });
-    } catch (err) {
-        res.status(500).json({ error: "Failed to delete admin" });
+    async deleteAdmin(id) {
+        const deletedAdmin = await User.findOneAndDelete({ _id: id, role: "Admin" });
+        if (!deletedAdmin) {
+            throw new Error("Admin not found");
+        }
+        return deletedAdmin;
     }
-};
+}
+
+module.exports = new AdminService();
