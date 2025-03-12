@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const axiosInstance = axios.create({
   baseURL: "https://api.example.com",
-  timeout: 10000,
+  timeout: 10000, 
 });
 
 // Request interceptor to add authorization token to headers
