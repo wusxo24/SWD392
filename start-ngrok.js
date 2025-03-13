@@ -4,7 +4,8 @@ const axios = require('axios');
 
 (async function() {
     try {
-        const url = await ngrok.connect(3000); // Adjust port if needed
+        // const url = await ngrok.connect(3000); // Adjust port if needed
+        const url = 'https://swd-392-api.vercel.app'
         console.log(`Ngrok tunnel started: ${url}`);
 
         // Automatically update the PayOS webhook
