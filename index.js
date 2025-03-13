@@ -18,7 +18,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// Apply middleware
 applyMiddleware(app);
 
 // Swagger setup
