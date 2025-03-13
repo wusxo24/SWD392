@@ -1,6 +1,8 @@
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
+function cn(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const Textarea = React.forwardRef(({ className, ...props }, ref) => {
   return (

@@ -1,7 +1,9 @@
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
-import { cn } from "@/lib/utils"
+function cn(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const Tabs = TabsPrimitive.Root
 
