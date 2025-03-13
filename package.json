@@ -56,6 +56,7 @@
     "@shadcn/ui": "^0.0.4",
     "@tailwindcss/vite": "^4.0.3",
     "axios": "^1.7.9",
+    "chart.js": "^4.4.8",
     "child-growth": "file:",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",

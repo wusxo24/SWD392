@@ -30,7 +30,7 @@ import { ServicesHistory } from "./pages/member/servicesHistory";
 import { SuccessPaid } from "./pages/member/successPaid";
 import { FaildedPaid } from "./pages/member/failedPaid";
 import { UserRecord } from "./pages/member/userRecord";
-import { ChildGrowth } from "./pages/member/childGrowth";
+import GrowthChartContainer from "./pages/member/growthChartContainer";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = false;
 
@@ -85,7 +85,7 @@ function App() {
           <Route path="/successPaid/" element={<SuccessPaid />} />
           <Route path="/failedPaid/" element={<FaildedPaid />} />
           <Route path="/userRecord/:id" element={<UserRecord/>} />
-          <Route path="/childGrowth/" element={<ChildGrowth/>} />
+          <Route path="/childGrowth/" element={<GrowthChartContainer />} />
         </Route>
 
         {/* Manager Pages */}
