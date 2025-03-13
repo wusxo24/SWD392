@@ -7,15 +7,19 @@ const { authMiddleware, authorize } = require("../middleware/authMiddleware");
  * @swagger
  * /admins:
  *   get:
- *     summary: Get all admins
+ *     summary: Retrieve a list of admins
  *     tags: [Admins]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of admins
- *       500:
- *         description: Server error
+ *         description: A list of admins
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Admin'
  */
 router.get("/", authMiddleware, authorize(["Admin"]), adminController.getAdmins);
 
@@ -23,7 +27,7 @@ router.get("/", authMiddleware, authorize(["Admin"]), adminController.getAdmins)
  * @swagger
  * /admins/{id}:
  *   get:
- *     summary: Get admin by ID
+ *     summary: Retrieve an admin by ID
  *     tags: [Admins]
  *     security:
  *       - bearerAuth: []
@@ -33,10 +37,14 @@ router.get("/", authMiddleware, authorize(["Admin"]), adminController.getAdmins)
  *         schema:
  *           type: string
  *         required: true
- *         description: Admin ID
+ *         description: The admin ID
  *     responses:
  *       200:
- *         description: Admin data
+ *         description: An admin object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Admin'
  *       404:
  *         description: Admin not found
  */
@@ -55,19 +63,14 @@ router.get("/:id", authMiddleware, authorize(["Admin"]), adminController.getAdmi
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/Admin'
  *     responses:
  *       201:
- *         description: Admin created successfully
- *       400:
- *         description: Bad request
+ *         description: The created admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Admin'
  */
 router.post("/", authMiddleware, authorize(["Admin"]), adminController.createAdmin);
 
@@ -75,7 +78,7 @@ router.post("/", authMiddleware, authorize(["Admin"]), adminController.createAdm
  * @swagger
  * /admins/{id}:
  *   put:
- *     summary: Update admin
+ *     summary: Update an admin by ID
  *     tags: [Admins]
  *     security:
  *       - bearerAuth: []
@@ -85,25 +88,20 @@ router.post("/", authMiddleware, authorize(["Admin"]), adminController.createAdm
  *         schema:
  *           type: string
  *         required: true
- *         description: Admin ID
+ *         description: The admin ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/Admin'
  *     responses:
  *       200:
- *         description: Admin updated successfully
- *       400:
- *         description: Bad request
+ *         description: The updated admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Admin'
  *       404:
  *         description: Admin not found
  */
@@ -113,7 +111,7 @@ router.put("/:id", authMiddleware, authorize(["Admin"]), adminController.updateA
  * @swagger
  * /admins/{id}:
  *   delete:
- *     summary: Delete admin
+ *     summary: Delete an admin by ID
  *     tags: [Admins]
  *     security:
  *       - bearerAuth: []
@@ -123,10 +121,14 @@ router.put("/:id", authMiddleware, authorize(["Admin"]), adminController.updateA
  *         schema:
  *           type: string
  *         required: true
- *         description: Admin ID
+ *         description: The admin ID
  *     responses:
  *       200:
- *         description: Admin deleted successfully
+ *         description: The deleted admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Admin'
  *       404:
  *         description: Admin not found
  */
