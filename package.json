@@ -9,9 +9,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node index.js",
-    "start": "nodemon index.js",
+    "dev": "nodemon index.js",
     "ngrok": "node start-ngrok.js",
-    "dev": "concurrently \"npm start\" \"npm run ngrok\""
+    "start": "concurrently \"npm start\" \"npm run ngrok\""
   },
   "keywords": [],
   "author": "",
