@@ -1,9 +1,9 @@
-const User = require("../models/User");
+const ManagerService = require("../services/ManagerService");
 
 // Get all Managers
 exports.getManagers = async (req, res) => {
     try {
-        const managers = await User.find({ role: "Manager" });
+        const managers = await ManagerService.getManagers();
         res.json(managers);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch managers" });
@@ -13,8 +13,7 @@ exports.getManagers = async (req, res) => {
 // Get a single Manager by ID
 exports.getManagerById = async (req, res) => {
     try {
-        const manager = await User.findOne({ _id: req.params.id, role: "Manager" });
-        if (!manager) return res.status(404).json({ error: "Manager not found" });
+        const manager = await ManagerService.getManagerById(req.params.id);
         res.json(manager);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch manager" });
@@ -24,9 +23,7 @@ exports.getManagerById = async (req, res) => {
 // Create a new Manager
 exports.createManager = async (req, res) => {
     try {
-        const { username, email, password, status } = req.body;
-        const newManager = new User({ username, email, password, role: "Manager", status });
-        await newManager.save();
+        const newManager = await ManagerService.createManager(req.body);
         res.status(201).json(newManager);
     } catch (err) {
         res.status(500).json({ error: "Failed to create manager" });
@@ -36,12 +33,7 @@ exports.createManager = async (req, res) => {
 // Update a Manager
 exports.updateManager = async (req, res) => {
     try {
-        const updatedManager = await User.findOneAndUpdate(
-            { _id: req.params.id, role: "Manager" },
-            req.body,
-            { new: true }
-        );
-        if (!updatedManager) return res.status(404).json({ error: "Manager not found" });
+        const updatedManager = await ManagerService.updateManager(req.params.id, req.body);
         res.json(updatedManager);
     } catch (err) {
         res.status(500).json({ error: "Failed to update manager" });
@@ -51,8 +43,7 @@ exports.updateManager = async (req, res) => {
 // Delete a Manager
 exports.deleteManager = async (req, res) => {
     try {
-        const deletedManager = await User.findOneAndDelete({ _id: req.params.id, role: "Manager" });
-        if (!deletedManager) return res.status(404).json({ error: "Manager not found" });
+        await ManagerService.deleteManager(req.params.id);
         res.json({ message: "Manager deleted successfully" });
     } catch (err) {
         res.status(500).json({ error: "Failed to delete manager" });

@@ -9,9 +9,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "nodemon index.js",
     "ngrok": "node start-ngrok.js",
-    "start": "concurrently \"npm run dev\" \"npm run ngrok\""
+    "dev": "concurrently \"npm start\" \"npm run ngrok\""
   },
   "keywords": [],
   "author": "",
@@ -31,6 +31,8 @@
     "multer": "^1.4.5-lts.1",
     "ngrok": "^5.0.0-beta.2",
     "nodemailer": "^6.10.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.3",
     "swd392": "file:",
     "uuid": "^11.1.0"
   },

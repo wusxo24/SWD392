@@ -1,33 +1,19 @@
-const Record = require("../models/Record");
-const Tracking = require("../models/Tracking");
+const TrackingService = require("../services/TrackingService");
 
 const updateTracking = async (req, res) => {
     try {
         const { recordId, date, growthStats } = req.body;
-        const existingRecord = await Record.findById(recordId);
-        if (!existingRecord) {
-            return res.status(404).json({ error: "Record not found" });
-        }
-        if (existingRecord.Status !== "Activated") {
-            return res.status(400).json({ error: "Record is not activated" });
-        }
-        const monthYear = date.substring(0, 7);
-
-        // Check if the tracking group already exists
-        let tracking = await Tracking.findOneAndUpdate(
-            { RecordId: recordId, MonthYear: monthYear },
-            { $set: { [`Trackings.${date}`]: growthStats } }, // Atomic update
-            { new: true, upsert: true } // Creates if doesn't exist
-        );
-
+        const tracking = await TrackingService.updateTracking(recordId, date, growthStats);
         return res.status(201).json({
             success: true,
             data: tracking,
             message: "Tracking data saved successfully"
         });
-
     } catch (error) {
         console.error("Error creating tracking:", error);
+        if (error.message === "Record not found" || error.message === "Record is not activated") {
+            return res.status(404).json({ error: error.message });
+        }
         return res.status(500).json({
             success: false,
             message: "Error creating tracking",
@@ -35,20 +21,23 @@ const updateTracking = async (req, res) => {
         });
     }
 };
+
 const getAllTrackingsByRecordId = async (req, res) => {
     try {
         const { recordId } = req.body;
-        const trackings = await Tracking.find({ RecordId: recordId });
+        const trackings = await TrackingService.getAllTrackingsByRecordId(recordId);
         return res.status(200).json(trackings);
     } catch (error) {
         console.error("Error getting trackings:", error);
+        if (error.message === "No tracking records found for this record") {
+            return res.status(404).json({ success: false, message: error.message });
+        }
         return res.status(500).json({
             success: false,
             message: "Error getting trackings",
             error: error.message
         });
     }
-}
-module.exports = { updateTracking, getAllTrackingsByRecordId };
+};
 
-  
+module.exports = { updateTracking, getAllTrackingsByRecordId };
