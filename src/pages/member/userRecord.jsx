@@ -182,7 +182,7 @@ export const UserRecord = () => {
                       color={record.Status === "Activated" ? "primary" : "success"}
                       disabled={record.Status === "Expired"}
                       onClick={() =>
-                        record.Status === "Activated" ? window.location.href = "/childGrowth" : openChildSelectionModal(record)
+                        record.Status === "Activated" ? window.location.href =`/childGrowth/${record._id}` : openChildSelectionModal(record)
                       }
                     >
                       {record.Status === "Activated" ? "Child Growth" : "Activate"}
