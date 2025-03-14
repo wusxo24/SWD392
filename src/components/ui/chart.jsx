@@ -2,7 +2,9 @@
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 
-import { cn } from "@/lib/utils"
+function cn(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = {
