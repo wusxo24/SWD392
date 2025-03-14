@@ -3,7 +3,9 @@
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
 
-import { cn } from "@/lib/utils"
+function cn(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const Drawer = ({
   shouldScaleBackground = true,
