@@ -1,9 +1,10 @@
 const MedicalRequest = require("../models/MedicalRequest");
 const DoctorResponse = require("../models/DoctorResponse");
+const mongoose = require("mongoose");
+
 
 const createMedicalRequest = async (RecordId, requestData) => {
     const { Reason, Notes } = requestData;
-
     const medicalRequest = await MedicalRequest.create({
         RecordId,
         Reason,

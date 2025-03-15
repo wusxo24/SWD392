@@ -9,6 +9,7 @@ const TrackingSchema = new mongoose.Schema({
             Height: Number,
             Weight: Number,
             BMI: Number,
+            BMIZScore: Number,
             BMIResult: String,
             HeadCircumference: Number,
             WaistCircumference: Number,

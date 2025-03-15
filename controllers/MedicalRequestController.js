@@ -2,8 +2,8 @@ const MedicalRequestService = require("../services/MedicalRequestService");
 
 const createMedicalRequest = async (req, res) => {
     try {
-        const { RecordId } = req.params;
-        const medicalRequest = await MedicalRequestService.createMedicalRequest(RecordId, req.body);
+        const { recordId } = req.params;
+        const medicalRequest = await MedicalRequestService.createMedicalRequest(recordId, req.body);
         res.status(201).json(medicalRequest);
     } catch (error) {
         res.status(500).json({ error: error.message });

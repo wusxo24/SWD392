@@ -58,5 +58,7 @@ router.post("/", authMiddleware, trackingController.updateTracking);
  *         description: Server error
  */
 router.get("/", authMiddleware, trackingController.getAllTrackingsByRecordId);
+router.get("/inrange", authMiddleware, trackingController.getTrackingsByRecordIdWithStartAndEndDates);
 
+router.get("/child/:recordId", authMiddleware, trackingController.getChildByRecordId);
 module.exports = router;
