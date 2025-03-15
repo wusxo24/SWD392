@@ -20,8 +20,8 @@ import {
 import axios from "@/utils/axiosInstance";
 import HeightChart from "./heightChart";
 import WeightChart from "./weightChart";
-import { ChildGrowth } from "./ChildGrowth";
-import { MedicalRequest } from "@/services/MedicalRequest";
+import { ChildGrowth } from "./childGrowth";
+import { MedicalRequest } from "@/services/medicalRequest";
 import { Tracking } from "@/services/tracking"; // Import Tracking function
 import { useLocation, useParams } from "react-router-dom";
 
@@ -40,6 +40,8 @@ const GrowthChartContainer = () => {
 
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState({ Reason: "", Notes: "" });
+  const [trackingData, setTrackingData] = useState([]);
+
   const checkRecordId = () => {
     if (recordId) {
       console.log("RecordId exists:", recordId);
@@ -74,7 +76,7 @@ const GrowthChartContainer = () => {
       console.log("Submitting request..."); // Check if function is being called
       console.log("RecordId:", recordId);
       console.log("Request Data:", requestData);
-  
+
       if (!recordId) {
         toast.error("Child Record ID is missing!");
         return;
@@ -86,14 +88,27 @@ const GrowthChartContainer = () => {
       }
   
       const response = await MedicalRequest(recordId, requestData);
-  
-      toast.success("Request sent successfully.");
       handleModalClose();
     } catch (error) {
       console.error("Error sending medical request:", error);
       toast.error("Failed to send request. Please try again.");
     }
   };
+
+  useEffect(() => {
+    const fetchTrackingData = async () => {
+      try {
+        const data = await Tracking();
+        if (data) {
+          setTrackingData(data);
+          console.log("Tracking data fetched:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching tracking data:", error);
+      }
+    };
+    fetchTrackingData();
+  }, []);
 
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
@@ -111,7 +126,7 @@ const GrowthChartContainer = () => {
         <Grid item xs={12} md={4}>
           <Card sx={{ textAlign: "center", p: 3, boxShadow: 3 }}>
             <Avatar
-              src="https://via.placeholder.com/100"
+              src="https://plus.unsplash.com/premium_photo-1687203673190-d39c3719123a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aGVsbG98ZW58MHx8MHx8fDA%3D"
               alt="Child Avatar"
               sx={{ width: 100, height: 100, mx: "auto" }}
             />
