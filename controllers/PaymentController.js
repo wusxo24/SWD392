@@ -119,7 +119,6 @@ const receivePayment = async (req, res) => {
                 order.paymentMethod = "PayOS";
                 order.paymentStatus = data.data.desc || "Payment Successful";
                 console.log(`Order ${orderCode} updated to Paid.`);
-
                 const newRecord = new Record({
                     OrderId: order._id,
                 })
