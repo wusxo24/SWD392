@@ -27,6 +27,7 @@ const receivePayment = async (req, res) => {
     try {
         const data = req.body;
         const response = await PaymentService.receivePayment(data);
+
         return res.status(200).json(response);
     } catch (error) {
         console.error("Error processing webhook:", error);
