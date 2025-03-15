@@ -26,6 +26,9 @@ const getAllTrackingsByRecordId = async (req, res) => {
     try {
         const { recordId } = req.body;
         const trackings = await TrackingService.getAllTrackingsByRecordId(recordId);
+        if (!trackings.length) {
+            return res.status(404).json({ success: false, message: "No tracking records found for this record" });
+        }
         return res.status(200).json(trackings);
     } catch (error) {
         console.error("Error getting trackings:", error);
