@@ -51,12 +51,12 @@ const GrowthChartContainer = () => {
   };
   useEffect(() => {
     checkRecordId();
-    setChildData({ ...childData, [e.target.name]: e.target.value });
-  };
   }, [recordId]);
   
 
   const handleChange = (e) => {
+    setChildData({ ...childData, [e.target.name]: e.target.value });
+  };
 
   const handleModalOpen = () => {
     setOpenModal(true);
