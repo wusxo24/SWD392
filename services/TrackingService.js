@@ -1,6 +1,6 @@
 const Record = require("../models/Record");
 const Tracking = require("../models/Tracking");
-
+const Child = require("../models/Children");
 const updateTracking = async (recordId, date, growthStats) => {
     const existingRecord = await Record.findById(recordId);
     if (!existingRecord) {
@@ -29,4 +29,20 @@ const getAllTrackingsByRecordId = async (recordId) => {
     return trackings;
 };
 
-module.exports = { updateTracking, getAllTrackingsByRecordId };
+const getChildByRecordId = async (recordId) => {
+    const record = await Record.findById(recordId);
+    if (!record) {
+        throw new Error("Record not found");
+    }
+    const child = await Child.findById(record.ChildId);
+    return child;
+}
+
+const getTrackingsByRecordIdWithStartAndEndDates = async (recordId, startDate, endDate) => {
+    const trackings = await Tracking.find({ RecordId: recordId, MonthYear: { $gte: startDate, $lte: endDate } });
+    if (!trackings.length) {
+        throw new Error("No tracking records found for this record");
+    }
+    return trackings;
+}
+module.exports = { updateTracking, getAllTrackingsByRecordId, getChildByRecordId, getTrackingsByRecordIdWithStartAndEndDates };

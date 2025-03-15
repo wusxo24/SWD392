@@ -40,4 +40,39 @@ const getAllTrackingsByRecordId = async (req, res) => {
     }
 };
 
-module.exports = { updateTracking, getAllTrackingsByRecordId };
+const getChildByRecordId = async (req, res) => {
+    try {
+        const { recordId } = req.params;
+        const child = await TrackingService.getChildByRecordId(recordId);
+        return res.status(200).json(child);
+    } catch (error) {
+        console.error("Error getting child:", error);
+        if (error.message === "Record not found") {
+            return res.status(404).json({ success: false, message: error.message });
+        }
+        return res.status(500).json({
+            success: false,
+            message: "Error getting child",
+            error: error.message
+        });
+    }
+};
+
+const getTrackingsByRecordIdWithStartAndEndDates = async (req, res) => {
+    try {
+        const { recordId, startDate, endDate } = req.body;
+        const trackings = await TrackingService.getTrackingsByRecordIdWithStartAndEndDates(recordId, startDate, endDate);
+        return res.status(200).json(trackings);
+    } catch (error) {
+        console.error("Error getting trackings:", error);
+        if (error.message === "No tracking records found for this record") {
+            return res.status(404).json({ success: false, message: error.message });
+        }
+        return res.status(500).json({
+            success: false,
+            message: "Error getting trackings",
+            error: error.message
+        });
+    }
+}
+module.exports = { updateTracking, getAllTrackingsByRecordId, getChildByRecordId, getTrackingsByRecordIdWithStartAndEndDates };
