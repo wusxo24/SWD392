@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChildGrowth } from "./ChildGrowth";
+import { ChildGrowth } from "./childGrowth";
 import {
   Button,
   Card,
