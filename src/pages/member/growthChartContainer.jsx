@@ -16,84 +16,47 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  MenuItem,
 } from "@mui/material";
-import axios from "@/utils/axiosInstance";
 import HeightChart from "./heightChart";
 import WeightChart from "./weightChart";
 import { ChildGrowth } from "./childGrowth";
 import { MedicalRequest } from "@/services/medicalRequest";
-import { Tracking } from "@/services/tracking"; // Import Tracking function
-import { useLocation, useParams } from "react-router-dom";
+import { Tracking } from "@/services/tracking";
+import { useParams } from "react-router-dom";
 
 const GrowthChartContainer = () => {
-  const  { recordId }   = useParams();
-  const [gender, setGender] = useState("girls");
   const [tabIndex, setTabIndex] = useState(0);
-  const [childData, setChildData] = useState({
-    name: "John Doe",
-    birthday: "Jan 1, 2020",
-    height: "",
-    weight: "",
-    head: "",
-    waist: "",
-  });
-
+  const [childData, setChildData] = useState([]);
+  const [selectedChildIndex, setSelectedChildIndex] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState({ Reason: "", Notes: "" });
   const [trackingData, setTrackingData] = useState([]);
 
-  const checkRecordId = () => {
-    if (recordId) {
-      console.log("RecordId exists:", recordId);
-    } else {
-      console.log("No RecordId found");
-    }
-  };
   useEffect(() => {
-    checkRecordId();
-  }, [recordId]);
-  
+    const fetchChildData = async () => {
+      try {
+        const response = await fetch("https://66722715e083e62ee43e2228.mockapi.io/children");
+        const data = await response.json();
 
-  const handleChange = (e) => {
-    setChildData({ ...childData, [e.target.name]: e.target.value });
-  };
+        // Filter all children that share the same memberID
+        const children = data.filter((child) => child.memberID === trackingData.RecordId);
 
-  const handleModalOpen = () => {
-    setOpenModal(true);
-  };
-
-  const handleModalClose = () => {
-    setOpenModal(false);
-    setRequestData({ Reason: "", Notes: "" }); // Reset form fields
-  };
-
-  const handleRequestChange = (e) => {
-    setRequestData({ ...requestData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmitRequest = async () => {
-    try {
-      console.log("Submitting request..."); // Check if function is being called
-      console.log("RecordId:", recordId);
-      console.log("Request Data:", requestData);
-
-      if (!recordId) {
-        toast.error("Child Record ID is missing!");
-        return;
+        if (children.length > 0) {
+          setChildData(children); // Store all matching children
+          setSelectedChildIndex(0); // Default to first child
+        } else {
+          setChildData([]); // No data found
+        }
+      } catch (error) {
+        console.error("Error fetching child data:", error);
       }
-      
-      if (!requestData.Reason.trim()) {
-        toast.error("Reason is required.");
-        return;
-      }
-  
-      const response = await MedicalRequest(recordId, requestData);
-      handleModalClose();
-    } catch (error) {
-      console.error("Error sending medical request:", error);
-      toast.error("Failed to send request. Please try again.");
+    };
+
+    if (trackingData.RecordId) {
+      fetchChildData();
     }
-  };
+  }, [trackingData.RecordId]);
 
   useEffect(() => {
     const fetchTrackingData = async () => {
@@ -101,7 +64,6 @@ const GrowthChartContainer = () => {
         const data = await Tracking();
         if (data) {
           setTrackingData(data);
-          console.log("Tracking data fetched:", data);
         }
       } catch (error) {
         console.error("Error fetching tracking data:", error);
@@ -110,19 +72,57 @@ const GrowthChartContainer = () => {
     fetchTrackingData();
   }, []);
 
+  const handleChildChange = (event) => {
+    setSelectedChildIndex(event.target.value);
+  };
+
+  const handleChange = (e) => {
+    const updatedChildren = [...childData];
+    updatedChildren[selectedChildIndex] = {
+      ...updatedChildren[selectedChildIndex],
+      [e.target.name]: e.target.value,
+    };
+    setChildData(updatedChildren);
+  };
+
+  const handleModalOpen = () => {
+    setOpenModal(true);
+  };
+
+  const handleModalClose = () => {
+    setOpenModal(false);
+    setRequestData({ Reason: "", Notes: "" });
+  };
+
+  const handleRequestChange = (e) => {
+    setRequestData({ ...requestData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmitRequest = async () => {
+    try {
+      if (!requestData.Reason.trim()) {
+        toast.error("Reason is required.");
+        return;
+      }
+
+      await MedicalRequest(trackingData.RecordId, requestData);
+      handleModalClose();
+    } catch (error) {
+      console.error("Error sending medical request:", error);
+      toast.error("Failed to send request. Please try again.");
+    }
+  };
+
+  const displayedChild = childData[selectedChildIndex] || {};
+
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
-      <ToastContainer/>
-      {/* Title */}
+      <ToastContainer />
       <Typography variant="h3" align="center" fontWeight={600} gutterBottom>
-        Your Child's{" "}
-        <span style={{ color: "#0DBFFF", textDecoration: "underline" }}>
-          Growth
-        </span>
+        Your Child's <span style={{ color: "#0DBFFF", textDecoration: "underline" }}>Growth</span>
       </Typography>
 
       <Grid container spacing={4} justifyContent="center">
-        {/* Child Profile */}
         <Grid item xs={12} md={4}>
           <Card sx={{ textAlign: "center", p: 3, boxShadow: 3 }}>
             <Avatar
@@ -130,132 +130,70 @@ const GrowthChartContainer = () => {
               alt="Child Avatar"
               sx={{ width: 100, height: 100, mx: "auto" }}
             />
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              {childData.name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Birthday: {childData.birthday}
-            </Typography>
-            <Button
-              style={{ marginTop: "10px" }}
-              variant="contained"
-              onClick={handleModalOpen}
-            >
+            {childData.length > 1 && (
+              <TextField
+                select
+                label="Select Child"
+                value={selectedChildIndex}
+                onChange={handleChildChange}
+                fullWidth
+                sx={{ mt: 2 }}
+              >
+                {childData.map((child, index) => (
+                  <MenuItem key={child.id} value={index}>
+                    {child.fname} {child.lname}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+            <Typography variant="h6" sx={{ mt: 2 }}>{displayedChild.fname} {displayedChild.lname}</Typography>
+            <Typography variant="body2" color="text.secondary">Gender: {displayedChild.gender}</Typography>
+            <Button style={{ marginTop: "10px" }} variant="contained" onClick={handleModalOpen}>
               Send to Doctor
             </Button>
           </Card>
         </Grid>
 
-        {/* Growth Input Form */}
         <Grid item xs={12} md={6}>
           <Card sx={{ p: 3, boxShadow: 3 }}>
             <CardContent>
               <Stack spacing={2}>
-                <TextField
-                  label="Height (cm)"
-                  name="height"
-                  value={childData.height}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Weight (kg)"
-                  name="weight"
-                  value={childData.weight}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Head Circumference (cm)"
-                  name="head"
-                  value={childData.head}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Waist Circumference (cm)"
-                  name="waist"
-                  value={childData.waist}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <Button variant="contained" color="primary">
-                  Update Growth
-                </Button>
+                <TextField label="Height (cm)" name="height" value={displayedChild.height || ""} onChange={handleChange} fullWidth />
+                <TextField label="Weight (kg)" name="weight" value={displayedChild.weight || ""} onChange={handleChange} fullWidth />
+                <TextField label="Head Circumference (cm)" name="head" value={displayedChild.head || ""} onChange={handleChange} fullWidth />
+                <TextField label="Waist Circumference (cm)" name="waist" value={displayedChild.waist || ""} onChange={handleChange} fullWidth />
+                <Button variant="contained" color="primary">Update Growth</Button>
               </Stack>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
 
-      {/* Gender Selection */}
-      <Stack direction="row" justifyContent="center" spacing={2} sx={{ mt: 4 }}>
-        <Button
-          variant={gender === "girls" ? "contained" : "outlined"}
-          color="secondary"
-          onClick={() => setGender("girls")}
-        >
-          Girls Chart
-        </Button>
-        <Button
-          variant={gender === "boys" ? "contained" : "outlined"}
-          color="secondary"
-          onClick={() => setGender("boys")}
-        >
-          Boys Chart
-        </Button>
-      </Stack>
-
-      {/* Chart Tabs */}
       <Card sx={{ mt: 6, p: 3, boxShadow: 3 }}>
-        <Tabs
-          value={tabIndex}
-          onChange={(event, newIndex) => setTabIndex(newIndex)}
-          centered
-        >
+        <Tabs value={tabIndex} onChange={(event, newIndex) => setTabIndex(newIndex)} centered>
           <Tab label="Height Chart" />
           <Tab label="Weight Chart" />
           <Tab label="BMI Chart" />
         </Tabs>
 
         <CardContent>
-          {tabIndex === 0 && <HeightChart gender={gender} />}
-          {tabIndex === 1 && <WeightChart gender={gender} />}
-          {tabIndex === 2 && <ChildGrowth gender={gender} />}
+          {tabIndex === 0 && <HeightChart gender={displayedChild.gender} />}
+          {tabIndex === 1 && <WeightChart gender={displayedChild.gender} />}
+          {tabIndex === 2 && <ChildGrowth gender={displayedChild.gender} />}
         </CardContent>
       </Card>
 
-      {/* Medical Request Modal */}
       <Dialog open={openModal} onClose={handleModalClose} fullWidth>
         <DialogTitle>Send Medical Request</DialogTitle>
         <DialogContent>
           <Stack spacing={2}>
-            <TextField
-              label="Reason"
-              name="Reason"
-              value={requestData.Reason}
-              onChange={handleRequestChange}
-              fullWidth
-              required
-            />
-            <TextField
-              label="Notes"
-              name="Notes"
-              value={requestData.Notes}
-              onChange={handleRequestChange}
-              fullWidth
-              multiline
-              rows={3}
-            />
+            <TextField label="Reason" name="Reason" value={requestData.Reason} onChange={handleRequestChange} fullWidth required />
+            <TextField label="Notes" name="Notes" value={requestData.Notes} onChange={handleRequestChange} fullWidth multiline rows={3} />
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleModalClose} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleSubmitRequest} color="primary" variant="contained">
-            Submit
-          </Button>
+          <Button onClick={handleModalClose} color="secondary">Cancel</Button>
+          <Button onClick={handleSubmitRequest} color="primary" variant="contained">Submit</Button>
         </DialogActions>
       </Dialog>
     </Container>
