@@ -16,10 +16,10 @@ const Sidebar = () => {
               isActive ? "bg-[#f2f3ff] border-r-4 border-blue-400" : ""
             }`
           }
-          to="/manager-account"
+          to="/account"
         >
           <HiChartBarSquare className="text-xl" />
-          <p>Manager Account</p>
+          <p>Account</p>
         </NavLink>
       </ul>
       {/* )} */}
