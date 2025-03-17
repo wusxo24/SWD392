@@ -85,7 +85,7 @@ function App() {
           <Route path="/successPaid/" element={<SuccessPaid />} />
           <Route path="/failedPaid/" element={<FaildedPaid />} />
           <Route path="/userRecord/:id" element={<UserRecord/>} />
-          <Route path="/childGrowth/" element={<GrowthChartContainer />} />
+          <Route path="/childGrowth/:recordId" element={<GrowthChartContainer />} />
         </Route>
 
         {/* Manager Pages */}

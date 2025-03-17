@@ -50,6 +50,7 @@ export const UserRecord = () => {
     try {
       const data = await getUserRecords();
       setRecords(Array.isArray(data.data) ? data.data : []);
+      console.log(records)
     } catch (error) {
       console.error("Error fetching records:", error);
       toast.error("Failed to load records");
@@ -182,7 +183,7 @@ export const UserRecord = () => {
                       color={record.Status === "Activated" ? "primary" : "success"}
                       disabled={record.Status === "Expired"}
                       onClick={() =>
-                        record.Status === "Activated" ? window.location.href = "/childGrowth" : openChildSelectionModal(record)
+                        record.Status === "Activated" ? window.location.href =`/childGrowth/${record._id}` : openChildSelectionModal(record)
                       }
                     >
                       {record.Status === "Activated" ? "Child Growth" : "Activate"}
