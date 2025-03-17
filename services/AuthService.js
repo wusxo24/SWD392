@@ -163,11 +163,13 @@ class AuthService {
     }
 
     async logoutUser(req) {
-        req.session.destroy((err) => {
-            if (err) {
-                throw new Error("An error occurred during logout");
-            }
-        });
+         // If using sessions
+    if (req.session) {
+        req.session.destroy();
+    }
+
+    // If using JWT, no need to "destroy" anything, just remove token from frontend
+    return { message: "Logged out successfully" };
     }
 }
 
