@@ -74,11 +74,18 @@ const receivePayment = async (data) => {
         return { error: 0, message: "Success" };
     }
 
-    const orderCode = data.data.orderCode;
+    console.log("Webhook received:", data);
+    const orderCode = data.data?.orderCode;
+    
+    if (!orderCode) {
+        return { error: 1, message: "Invalid payment data" };
+    }
+
     const order = await Order.findOne({ orderCode });
 
     if (!order) {
-        throw new Error(`Order with orderCode ${orderCode} not found.`);
+        console.log(`Order with orderCode ${orderCode} not found.`);
+        return { error: 1, message: "Order not found" };
     }
 
     if (data.success) {
@@ -86,15 +93,18 @@ const receivePayment = async (data) => {
         order.currency = data.data.currency;
         order.paymentMethod = "PayOS";
         order.paymentStatus = data.data.desc || "Payment Successful";
+        console.log(`Order ${orderCode} updated to Paid.`);
 
         const newRecord = new Record({
             OrderId: order._id,
         });
 
         await newRecord.save();
+        console.log(`Record created for order ${orderCode}`);
     } else {
         order.status = "Canceled";
         order.paymentStatus = data.data.desc || "Payment Failed";
+        console.log(`Order ${orderCode} updated to Canceled.`);
     }
 
     await order.save();

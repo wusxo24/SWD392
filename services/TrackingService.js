@@ -1,7 +1,7 @@
-const Record = require("../models/Record");
-const Tracking = require("../models/Tracking");
-const Child = require("../models/Children");
-const fs = require("fs");
+import Record from "../models/Record.js";
+import Tracking from "../models/Tracking.js";
+import Child from "../models/Children.js";
+import fs from "fs";
 
 // Load the extracted LMS data from WHO
 import path from "path";
@@ -134,4 +134,4 @@ const getTrackingsByRecordIdWithStartAndEndDates = async (recordId, startDate, e
     }
     return trackings;
 }
-module.exports = { updateTracking, getAllTrackingsByRecordId, getChildByRecordId, getTrackingsByRecordIdWithStartAndEndDates };
+export { updateTracking, getAllTrackingsByRecordId, getChildByRecordId, getTrackingsByRecordIdWithStartAndEndDates };
