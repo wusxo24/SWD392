@@ -22,14 +22,13 @@ import HeightChart from "./heightChart";
 import WeightChart from "./weightChart";
 import { ChildGrowth } from "./childGrowth";
 import { MedicalRequest } from "@/services/medicalRequest";
-import { Tracking, getChildByRecordId } from "@/services/tracking";
+import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
 import { useParams } from "react-router-dom";
 
 const GrowthChartContainer = () => {
   const { recordId } = useParams();
   const [tabIndex, setTabIndex] = useState(0);
   const [childData, setChildData] = useState([]);
-  const [selectedChildIndex, setSelectedChildIndex] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState({ Reason: "", Notes: "" });
   const [trackingData, setTrackingData] = useState([]);
@@ -41,9 +40,7 @@ const GrowthChartContainer = () => {
         const data = await getChildByRecordId(recordId);
         if (data) {
           setChildData(data);
-          setSelectedChildIndex(0);
         }
-        toast.success("already get child");
         console.log(data)
       } catch (error) {
         console.error("Error fetching child data:", error);
@@ -60,7 +57,6 @@ const GrowthChartContainer = () => {
         if (data) {
           setTrackingData(data);
         }
-        toast.success("NICESU.");
       } catch (error) {
         console.error("Error fetching tracking data:", error);
       }
@@ -68,18 +64,23 @@ const GrowthChartContainer = () => {
     fetchTrackingData();
   }, [recordId]);
 
-  const handleChildChange = (event) => {
-    setSelectedChildIndex(event.target.value);
-  };
 
   const handleChange = (e) => {
-    const updatedChildren = [...childData];
-    updatedChildren[selectedChildIndex] = {
-      ...updatedChildren[selectedChildIndex],
-      [e.target.name]: e.target.value,
-    };
-    setChildData(updatedChildren);
+    setTrackingData({ ...trackingData, [e.target.name]: e.target.value });
   };
+
+  const handleUpdateGrowth = async () => {
+    try {
+      const currentDate = new Date().toISOString().split("T")[0]; // Use the current date
+
+      await postTracking(recordId, currentDate, trackingData);
+      toast.success("Growth data updated successfully.");
+    } catch (error) {
+      console.error("Error updating tracking data:", error);
+      toast.error("Failed to update growth data.");
+    }
+  };
+  
 
   const handleModalOpen = () => {
     setOpenModal(true);
@@ -113,8 +114,6 @@ const GrowthChartContainer = () => {
     }
   };
 
-  const displayedChild = childData[selectedChildIndex] || {};
-
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
       <ToastContainer />
@@ -142,11 +141,11 @@ const GrowthChartContainer = () => {
           <Card sx={{ p: 3, boxShadow: 3 }}>
             <CardContent>
               <Stack spacing={2}>
-                <TextField label="Height (cm)" name="height" value={displayedChild.height || ""} onChange={handleChange} fullWidth />
-                <TextField label="Weight (kg)" name="weight" value={displayedChild.weight || ""} onChange={handleChange} fullWidth />
-                <TextField label="Head Circumference (cm)" name="head" value={displayedChild.head || ""} onChange={handleChange} fullWidth />
-                <TextField label="Waist Circumference (cm)" name="waist" value={displayedChild.waist || ""} onChange={handleChange} fullWidth />
-                <Button variant="contained" color="primary">Update Growth</Button>
+                <TextField label="Height (cm)" name="Height" value={trackingData.Height || ""} onChange={handleChange} fullWidth />
+                <TextField label="Weight (kg)" name="Weight" value={trackingData.Weight || ""} onChange={handleChange} fullWidth />
+                <TextField label="Head Circumference (cm)" name="HeadCircumference" value={trackingData.HeadCircumference || ""} onChange={handleChange} fullWidth />
+                <TextField label="Waist Circumference (cm)" name="WaistCircumference" value={trackingData.WaistCircumference || ""} onChange={handleChange} fullWidth />
+                <Button variant="contained" color="primary" onClick={handleUpdateGrowth}>Update Growth</Button>
               </Stack>
             </CardContent>
           </Card>
@@ -161,9 +160,9 @@ const GrowthChartContainer = () => {
         </Tabs>
 
         <CardContent>
-          {tabIndex === 0 && <HeightChart gender={displayedChild.gender} />}
-          {tabIndex === 1 && <WeightChart gender={displayedChild.gender} />}
-          {tabIndex === 2 && <ChildGrowth gender={displayedChild.gender} />}
+          {tabIndex === 0 && <HeightChart gender={childData.gender} />}
+          {tabIndex === 1 && <WeightChart gender={childData.gender} />}
+          {tabIndex === 2 && <ChildGrowth gender={childData.gender} />}
         </CardContent>
       </Card>
 
