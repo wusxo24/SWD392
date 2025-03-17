@@ -1,6 +1,6 @@
 import SidebarManager from "./SidebarManager";
 
-const Dashboard = () => {
+const RatingFeedback = () => {
   return (
     <div className="flex">
       <SidebarManager />
@@ -8,4 +8,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default RatingFeedback;

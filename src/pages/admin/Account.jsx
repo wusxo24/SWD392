@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import SidebarAdmin from "./SidebarAdmin";
 const API_URL = "https://67c2b6951851890165ad0915.mockapi.io/account"; // API endpoint for account management
 
 const Notification = ({ message, onClose }) =>
@@ -84,56 +85,86 @@ const AccountForm = ({ form, setForm, handleCreateOrUpdate, isEditing }) => {
   );
 };
 
-const AccountTable = ({ accounts, handleEditClick, handleDelete }) => (
-  <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-    <thead className="bg-blue-400 text-white">
-      <tr>
-        <th className="py-2 px-4">Full Name</th>
-        <th className="py-2 px-4">Username</th>
-        <th className="py-2 px-4">Email</th>
-        <th className="py-2 px-4">Password</th>
-        <th className="py-2 px-4">Role</th>
-        <th className="py-2 px-4">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {accounts && accounts.length > 0 ? (
-        accounts.map((account) => (
-          <tr key={account.id} className="border-b hover:bg-gray-100">
-            <td className="py-2 px-4">{account.fullname}</td>
-            <td className="py-2 px-4">{account.username}</td>
-            <td className="py-2 px-4">{account.email}</td>
-            <td className="py-2 px-4">******</td>{" "}
-            {/* Hide password for security */}
-            <td className="py-2 px-4">{account.role}</td>
-            <td className="py-2 px-4 space-x-2">
-              <button
-                className="bg-yellow-400 text-white rounded px-3 py-1"
-                onClick={() => handleEditClick(account)}
-              >
-                Edit
-              </button>
-              <button
-                className="bg-red-400 text-white rounded px-3 py-1"
-                onClick={() => handleDelete(account.id)}
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        ))
-      ) : (
-        <tr>
-          <td colSpan="6" className="text-center py-4 text-gray-500">
-            No accounts available
-          </td>
-        </tr>
-      )}
-    </tbody>
-  </table>
-);
+const AccountTable = ({ accounts, handleEditClick, handleDelete }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const accountsPerPage = 10;
 
-const ManageAccounts = () => {
+  const indexOfLastAccount = currentPage * accountsPerPage;
+  const indexOfFirstAccount = indexOfLastAccount - accountsPerPage;
+  const currentAccounts = accounts.slice(
+    indexOfFirstAccount,
+    indexOfLastAccount
+  );
+
+  const totalPages = Math.ceil(accounts.length / accountsPerPage);
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <thead className="bg-blue-400 text-white">
+          <tr>
+            <th className="py-2 px-4">Full Name</th>
+            <th className="py-2 px-4">Username</th>
+            <th className="py-2 px-4">Email</th>
+            <th className="py-2 px-4">Password</th>
+            <th className="py-2 px-4">Role</th>
+            <th className="py-2 px-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentAccounts && currentAccounts.length > 0 ? (
+            currentAccounts.map((account) => (
+              <tr key={account.id} className="border-b hover:bg-gray-100">
+                <td className="py-2 px-4">{account.fullname}</td>
+                <td className="py-2 px-4">{account.username}</td>
+                <td className="py-2 px-4">{account.email}</td>
+                <td className="py-2 px-4">******</td>
+                <td className="py-2 px-4">{account.role}</td>
+                <td className="py-2 px-4 space-x-2">
+                  <button
+                    className="bg-yellow-400 text-white rounded px-3 py-1"
+                    onClick={() => handleEditClick(account)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="bg-red-400 text-white rounded px-3 py-1"
+                    onClick={() => handleDelete(account.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="6" className="text-center py-4 text-gray-500">
+                No accounts available
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+
+      {/* Phân trang */}
+      <div className="flex justify-center mt-4">
+        {[...Array(totalPages).keys()].map((num) => (
+          <button
+            key={num + 1}
+            className={`px-3 py-1 mx-1 border rounded ${
+              currentPage === num + 1 ? "bg-blue-400 text-white" : "bg-gray-200"
+            }`}
+            onClick={() => setCurrentPage(num + 1)}
+          >
+            {num + 1}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
   const [form, setForm] = useState({
     id: null,
@@ -271,24 +302,27 @@ const ManageAccounts = () => {
   }, []);
 
   return (
-    <div>
-      <Notification
-        message={notification}
-        onClose={() => setNotification("")}
-      />
-      <AccountForm
-        form={form}
-        setForm={setForm}
-        handleCreateOrUpdate={handleCreateOrUpdate}
-        isEditing={isEditing}
-      />
-      <AccountTable
-        accounts={accounts}
-        handleEditClick={handleEditClick}
-        handleDelete={handleDelete}
-      />
+    <div className="flex">
+      <SidebarAdmin />
+      <div className="w-full p-5">
+        <Notification
+          message={notification}
+          onClose={() => setNotification("")}
+        />
+        <AccountForm
+          form={form}
+          setForm={setForm}
+          handleCreateOrUpdate={handleCreateOrUpdate}
+          isEditing={isEditing}
+        />
+        <AccountTable
+          accounts={accounts}
+          handleEditClick={handleEditClick}
+          handleDelete={handleDelete}
+        />
+      </div>
     </div>
   );
 };
 
-export default ManageAccounts;
+export default Accounts;
