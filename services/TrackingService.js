@@ -4,9 +4,9 @@ const Child = require("../models/Children");
 const fs = require("fs");
 
 // Load the extracted LMS data from WHO
-const bmiReference5_19 = await fetch("/utils/bmi_zscore5-19.json").then(res => res.json());
-const bmiReference0_2 = await fetch("/utils/bmi_zscore_0-2.json").then(res => res.json());
-const bmiReference2_5 = await fetch("/utils/bmi_zscore_2-5.json").then(res => res.json());
+const bmiReference5_19 = await fetch(`https://swd-392-api.vercel.app/utils/bmi_zscore5-19.json`).then(res => res.json());
+const bmiReference0_2 = await fetch("https://swd-392-api.vercel.app/utils/bmi_zscore_0-2.json").then(res => res.json());
+const bmiReference2_5 = await fetch("https://swd-392-api.vercel.app/utils/bmi_zscore_2-5.json").then(res => res.json());
 
 
 const updateTracking = async (recordId, date, growthStats) => {
