@@ -51,98 +51,107 @@ const weightPercentiles = {
     }
   };
 
-  const GrowthChart = ({ gender = "Female", data, title, yLabel }) => {
+  const GrowthChart = ({ gender = "Female", data=[], title, yLabel }) => {
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
-  
-    useEffect(() => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-      }
-  
-      if (chartRef.current) {
-        const ctx = chartRef.current.getContext("2d");
-  
-        // Generate 218 evenly spaced age points from 2 to 20 years
-        const ageValues = weightPercentiles[gender].Agemos.map(age => age / 12);
-  
-        // Trim percentile data to match age range
-        const percentiles = Object.entries(weightPercentiles[gender]).reduce((acc, [key, values]) => {
-          if (key !== "Agemos") {  // Exclude Agemos from percentiles
-            acc[key] = values;
-          }
-          return acc;
-        }, {});
-        const trimmedPercentiles = Object.entries(percentiles).reduce((acc, [percentile, values]) => {
-          acc[percentile] = values.slice(0, 218); // Keep only the first 218 values
-          return acc;
-        }, {});
-  
-        const colors = ["#FFAAAA", "#32CD32", "#FF4500", "#FFD700", "#6495ED"];
-  
-        chartInstanceRef.current = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: ageValues,
-            datasets: Object.entries(trimmedPercentiles).map(([percentile, values], index) => ({
-              label: `${percentile} Percentile`,
-              data: values.map((y, i) => ({ x: ageValues[i], y })),
-              borderColor: colors[index % colors.length],
-              borderWidth: 2,
-              fill: false,
-              tension: 0.4,
-              pointRadius: 0,
-              pointHoverRadius: 0,
-            })),
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                type: "linear",
-                title: { display: true, text: "Age (Years)" },
-                ticks: { stepSize: 1 },
-                min: 2,
-                max: 20, // Ensures the chart does not go beyond 20 years
-              },
-              y: {
-                title: { display: true, text: yLabel },
-                ticks: { stepSize: 5 },
-                min: 0,
-                max: 110,
-              },
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    return `Age: ${context.raw.x.toFixed(2)}, ${yLabel}: ${context.raw.y}`;
-                  },
-                },
-              },
-            },
-          },
-        });
-      }
-  
-      return () => {
-        if (chartInstanceRef.current) {
-          chartInstanceRef.current.destroy();
-        }
-      };
-    }, [gender, data, yLabel]);
-  
-    return (
-<div style={{ width: "926px", height: "1098px" }}>
-        <canvas ref={chartRef}></canvas>
-      </div>
-    );
-  };
 
-  
-  export const WeightChart = (props) => (
-    <GrowthChart {...props} data={weightPercentiles} title="Weight Growth Chart" yLabel="Weight (kg)" />
-  );
-  
-  export default WeightChart;
+    useEffect(() => {
+        if (chartInstanceRef.current) {
+            chartInstanceRef.current.destroy();
+        }
+
+        if (chartRef.current) {
+            const ctx = chartRef.current.getContext("2d");
+
+            // Generate 218 evenly spaced age points from 2 to 20 years
+            const ageValues = weightPercentiles[gender].Agemos.map(age => age / 12);
+
+            // Trim percentile data to match age range
+            const percentiles = Object.entries(weightPercentiles[gender]).reduce((acc, [key, values]) => {
+                if (key !== "Agemos") {  // Exclude Agemos from percentiles
+                    acc[key] = values;
+                }
+                return acc;
+            }, {});
+            const trimmedPercentiles = Object.entries(percentiles).reduce((acc, [percentile, values]) => {
+                acc[percentile] = values.slice(0, 218); // Keep only the first 218 values
+                return acc;
+            }, {});
+
+            const colors = ["#FFAAAA", "#32CD32", "#FF4500", "#FFD700", "#6495ED"];
+
+            chartInstanceRef.current = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: ageValues,
+                    datasets: [
+                        ...Object.entries(trimmedPercentiles).map(([percentile, values], index) => ({
+                            label: `${percentile} Percentile`,
+                            data: values.map((y, i) => ({ x: ageValues[i], y })),
+                            borderColor: colors[index % colors.length],
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 0,
+                        })),
+                        {
+                            label: "User Data",
+                            data: data,
+                            borderColor: "black",
+                            backgroundColor: "orange",
+                            pointRadius: 6,
+                            type: "scatter",
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: "linear",
+                            title: { display: true, text: "Age (Years)" },
+                            ticks: { stepSize: 1 },
+                            min: 2,
+                            max: 20,
+                        },
+                        y: {
+                            title: { display: true, text: yLabel },
+                            ticks: { stepSize: 5 },
+                            min: 0,
+                            max: 110,
+                        },
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `Age: ${context.raw.x.toFixed(0)}, ${yLabel}: ${context.raw.y}`;
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        return () => {
+            if (chartInstanceRef.current) {
+                chartInstanceRef.current.destroy();
+            }
+        };
+    }, [gender, data, yLabel]);
+
+    return (
+        <div style={{ width: "926px", height: "1098px" }}>
+            <canvas ref={chartRef}></canvas>
+        </div>
+    );
+};
+
+export const WeightChart = ({ gender, data }) => {
+    return <GrowthChart gender={gender} data={data} title="Weight Growth Chart" yLabel="Weight (kg)" />;
+};
+
+export default WeightChart;

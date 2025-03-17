@@ -52,10 +52,9 @@ const heightPercentilesData = {
   };
 
 
-  export const HeightChart = ({ gender = "Female" }) => {
+  const HeightChart = ({ gender = "Female", data = [] }) => {
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
-  
     useEffect(() => {
       if (chartInstanceRef.current) {
         chartInstanceRef.current.destroy();
@@ -64,29 +63,19 @@ const heightPercentilesData = {
       if (chartRef.current) {
         const ctx = chartRef.current.getContext("2d");
   
-        // Generate evenly spaced age points from 2 to 20 years (218 points)
+        // Generate age points and percentile data
         const ageValues = heightPercentilesData[gender].Agemos.map(age => age / 12);
-  
-        // Trim percentile data to match age range
         const percentiles = Object.entries(heightPercentilesData[gender]).reduce((acc, [key, values]) => {
-          if (key !== "Agemos") {  // Exclude Agemos from percentiles
-            acc[key] = values;
+          if (key !== "Agemos") {
+            acc[key] = values.slice(0, 218);
           }
           return acc;
         }, {});
-        const trimmedPercentiles = Object.entries(percentiles).reduce((acc, [percentile, values]) => {
-          acc[percentile] = values.slice(0, 218);
-          return acc;
-        }, {});
   
-        // User data points
-        const userData = [
-          { x: 5, y: 105 },
-          { x: 10, y: 130 },
-          { x: 15, y: 160 }
-        ];
+        // Process user data from props
+        const userData = data.map(({ x, y }) => ({ x, y }));
   
-        // Define colors for percentile lines
+        // Define colors
         const colors = ["#FFAAAA", "#FFD700", "#32CD32", "#FFA500", "#FF4500", "#B22222"];
   
         chartInstanceRef.current = new Chart(ctx, {
@@ -94,7 +83,7 @@ const heightPercentilesData = {
           data: {
             labels: ageValues,
             datasets: [
-              ...Object.entries(trimmedPercentiles).map(([percentile, values], index) => ({
+              ...Object.entries(percentiles).map(([percentile, values], index) => ({
                 label: `${percentile} Percentile`,
                 data: values.map((y, i) => ({ x: ageValues[i], y })),
                 borderColor: colors[index % colors.length],
@@ -123,7 +112,7 @@ const heightPercentilesData = {
                 title: { display: true, text: "Age (Years)" },
                 ticks: { stepSize: 1 },
                 min: 2,
-                max: 20, // Prevents chart from extending beyond 20 years
+                max: 20,
               },
               y: {
                 title: { display: true, text: "Height (cm)" },
@@ -136,7 +125,7 @@ const heightPercentilesData = {
               tooltip: {
                 callbacks: {
                   label: function (context) {
-                    return `Age: ${context.raw.x.toFixed(2)}, Height: ${context.raw.y} cm`;
+                    return `Age: ${context.raw.x.toFixed(0)}, Height: ${context.raw.y} cm`;
                   },
                 },
               },
@@ -150,14 +139,13 @@ const heightPercentilesData = {
           chartInstanceRef.current.destroy();
         }
       };
-    }, [gender]);
+    }, [gender, data]);
   
     return (
-<div style={{ width: "926px", height: "1098px" }}>
+      <div style={{ width: "926px", height: "1098px" }}>
         <canvas ref={chartRef}></canvas>
       </div>
     );
   };
   
   export default HeightChart;
-  
