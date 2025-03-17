@@ -154,12 +154,6 @@ export default function Navbar() {
               >
                 <InventoryIcon /> Your Purchase
               </Link>
-              <Link
-                to={`/childGrowth/`}
-                className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              >
-                <ChildCareIcon/> Child Growth
-              </Link>
             </div>
             <button
               onClick={() => setShowLoginModal(true)}
