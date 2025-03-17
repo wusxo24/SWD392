@@ -22,55 +22,51 @@ import HeightChart from "./heightChart";
 import WeightChart from "./weightChart";
 import { ChildGrowth } from "./childGrowth";
 import { MedicalRequest } from "@/services/medicalRequest";
-import { Tracking } from "@/services/tracking";
+import { Tracking, getChildByRecordId } from "@/services/tracking";
 import { useParams } from "react-router-dom";
 
 const GrowthChartContainer = () => {
+  const { recordId } = useParams();
   const [tabIndex, setTabIndex] = useState(0);
   const [childData, setChildData] = useState([]);
   const [selectedChildIndex, setSelectedChildIndex] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState({ Reason: "", Notes: "" });
   const [trackingData, setTrackingData] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchChildData = async () => {
       try {
-        const response = await fetch("https://66722715e083e62ee43e2228.mockapi.io/children");
-        const data = await response.json();
-
-        // Filter all children that share the same memberID
-        const children = data.filter((child) => child.memberID === trackingData.RecordId);
-
-        if (children.length > 0) {
-          setChildData(children); // Store all matching children
-          setSelectedChildIndex(0); // Default to first child
-        } else {
-          setChildData([]); // No data found
+        const data = await getChildByRecordId(recordId);
+        if (data) {
+          setChildData(data);
+          setSelectedChildIndex(0);
         }
+        toast.success("already get child");
+        console.log(data)
       } catch (error) {
         console.error("Error fetching child data:", error);
       }
     };
-
-    if (trackingData.RecordId) {
-      fetchChildData();
-    }
-  }, [trackingData.RecordId]);
+    fetchChildData();
+  }, [recordId]);
 
   useEffect(() => {
+    console.log(recordId)
     const fetchTrackingData = async () => {
       try {
-        const data = await Tracking();
+        const data = await Tracking(recordId);
         if (data) {
           setTrackingData(data);
         }
+        toast.success("NICESU.");
       } catch (error) {
         console.error("Error fetching tracking data:", error);
       }
     };
     fetchTrackingData();
-  }, []);
+  }, [recordId]);
 
   const handleChildChange = (event) => {
     setSelectedChildIndex(event.target.value);
@@ -91,6 +87,7 @@ const GrowthChartContainer = () => {
 
   const handleModalClose = () => {
     setOpenModal(false);
+    setIsSubmitting(false);
     setRequestData({ Reason: "", Notes: "" });
   };
 
@@ -99,13 +96,16 @@ const GrowthChartContainer = () => {
   };
 
   const handleSubmitRequest = async () => {
+    if (isSubmitting) return; // Prevent multiple clicks
+    setIsSubmitting(true);
+
     try {
       if (!requestData.Reason.trim()) {
         toast.error("Reason is required.");
         return;
       }
 
-      await MedicalRequest(trackingData.RecordId, requestData);
+      await MedicalRequest(recordId, requestData);
       handleModalClose();
     } catch (error) {
       console.error("Error sending medical request:", error);
@@ -130,24 +130,8 @@ const GrowthChartContainer = () => {
               alt="Child Avatar"
               sx={{ width: 100, height: 100, mx: "auto" }}
             />
-            {childData.length > 1 && (
-              <TextField
-                select
-                label="Select Child"
-                value={selectedChildIndex}
-                onChange={handleChildChange}
-                fullWidth
-                sx={{ mt: 2 }}
-              >
-                {childData.map((child, index) => (
-                  <MenuItem key={child.id} value={index}>
-                    {child.fname} {child.lname}
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
-            <Typography variant="h6" sx={{ mt: 2 }}>{displayedChild.fname} {displayedChild.lname}</Typography>
-            <Typography variant="body2" color="text.secondary">Gender: {displayedChild.gender}</Typography>
+            <Typography variant="h6" sx={{ mt: 2 }}>{childData.fname} {childData.lname}</Typography>
+            <Typography variant="body2" color="text.secondary">Gender: {childData.gender}</Typography>
             <Button style={{ marginTop: "10px" }} variant="contained" onClick={handleModalOpen}>
               Send to Doctor
             </Button>

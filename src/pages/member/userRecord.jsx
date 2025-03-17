@@ -50,6 +50,7 @@ export const UserRecord = () => {
     try {
       const data = await getUserRecords();
       setRecords(Array.isArray(data.data) ? data.data : []);
+      console.log(records)
     } catch (error) {
       console.error("Error fetching records:", error);
       toast.error("Failed to load records");
