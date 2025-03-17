@@ -22,10 +22,14 @@ import { ChildrenProfile } from "./pages/member/childrenProfile";
 import "react-toastify/dist/ReactToastify.css";
 import { ChildrenDetails } from "./pages/member/childrenDetails";
 import Dashboard from "./pages/manager/Dashboard";
-import AllApointments from "./pages/manager/AllApointments";
+import Subscription from "./pages/manager/Subscription";
 import DoctorList from "./pages/manager/DoctorList";
-import ManagerAccount from "./pages/admin/ManagerAccount";
+import MemberRequest from "./pages/manager/MemberRequest";
+import RatingFeedback from "./pages/manager/RatingFeedback";
+import Account from "./pages/admin/Account";
 import AddInfo from "./pages/doctor/AddInfo";
+import ViewRequest from "./pages/doctor/ViewRequest";
+import AnalyzeReport from "./pages/doctor/AnalyzeReport";
 import { ServicesHistory } from "./pages/member/servicesHistory";
 import { SuccessPaid } from "./pages/member/successPaid";
 import { FaildedPaid } from "./pages/member/failedPaid";
@@ -38,14 +42,15 @@ function App() {
   const location = useLocation();
   const hideNavFooter =
     location.pathname === "/login" || location.pathname === "/register";
-  const userRole = localStorage.getItem("roleName") || sessionStorage.getItem("roleName"); // Get user role
+  const userRole =
+    localStorage.getItem("roleName") || sessionStorage.getItem("roleName"); // Get user role
 
   // Define default pages for each role
   const roleRoutes = {
     Guest: "/home",
     Member: "/home",
     Manager: "/dashboard",
-    Admin: "/manager-account",
+    Admin: "/account",
     Doctor: "/view-medical-request",
   };
 
@@ -68,11 +73,17 @@ function App() {
         <Route path="/verify" element={<VerifiedEmail />} />
 
         {/* Guest & MemberMember Shared Pages */}
-        <Route
-          element={<ProtectedRoute allowedRoles={["Guest", "Member"]} />}>
-             <Route path="/home" element={<><Hero /> <OurBest /> <AboutUs /> <OurTeam /> <Pricing /></>}/>
-             <Route path="/news" element={<NewsPage />} />
-             <Route path="/news/:id" element={<NewsDetailPage />} />
+        <Route element={<ProtectedRoute allowedRoles={["Guest", "Member"]} />}>
+          <Route
+            path="/home"
+            element={
+              <>
+                <Hero /> <OurBest /> <AboutUs /> <OurTeam /> <Pricing />
+              </>
+            }
+          />
+          <Route path="/news" element={<NewsPage />} />
+          <Route path="/news/:id" element={<NewsDetailPage />} />
         </Route>
 
         {/* Member Pages */}
@@ -84,32 +95,41 @@ function App() {
           <Route path="/news/:id" element={<NewsDetailPage />} />
           <Route path="/successPaid/" element={<SuccessPaid />} />
           <Route path="/failedPaid/" element={<FaildedPaid />} />
-          <Route path="/userRecord/:id" element={<UserRecord/>} />
-          <Route path="/childGrowth/:recordId" element={<GrowthChartContainer />} />
+          <Route path="/userRecord/:id" element={<UserRecord />} />
+          <Route
+            path="/childGrowth/:recordId"
+            element={<GrowthChartContainer />}
+          />
         </Route>
 
         {/* Manager Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Manager"]} />}>
-          <Route path="/manage-dashboard" element={<Dashboard />} />
-          <Route path="/all-appointments" element={<AllApointments />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/subscription" element={<Subscription />} />
           <Route path="/doctor-list" element={<DoctorList />} />
+          <Route path="/member-request" element={<MemberRequest />} />
+          <Route path="/rating-feedback" element={<RatingFeedback />} />
         </Route>
 
         {/* Admin Pages */}
+
         <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
-          <Route path="/manager-account" element={<ManagerAccount />} />
+          <Route path="/account" element={<Account />} />
         </Route>
 
         {/* Doctor Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Doctor"]} />}>
           <Route path="/add-info" element={<AddInfo />} />
+          <Route path="/view-medical-request" element={<ViewRequest />} />
+          <Route path="/analyze-report" element={<AnalyzeReport />} />
         </Route>
 
         {/* Company Shared Pages */}
         <Route
-          element={<ProtectedRoute allowedRoles={["Manager", "Admin", "Doctor"]} />}>
-
-        </Route>
+          element={
+            <ProtectedRoute allowedRoles={["Manager", "Admin", "Doctor"]} />
+          }
+        ></Route>
 
         {/* 404 Fallback */}
         <Route path="*" element={<Navigate to={defaultPage} replace />} />
