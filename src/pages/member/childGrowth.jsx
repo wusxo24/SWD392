@@ -46,11 +46,12 @@ const bmiData = {
   }
 };
 
-
-
-export const ChildGrowth = ({ gender = "Female" }) => {
+export const ChildGrowth = ({ gender = "Female", data = [] }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
+  // Extract age and BMI arrays from data
+  const age = data.map((point) => point.x);
+  const BMI = data.map((point) => point.y);
 
   useEffect(() => {
     if (chartInstanceRef.current) {
@@ -60,28 +61,24 @@ export const ChildGrowth = ({ gender = "Female" }) => {
     if (chartRef.current) {
       const ctx = chartRef.current.getContext("2d");
 
-      // Generate 218 evenly spaced points from age 2 to 20
-      const ageValues = bmiData[gender].Agemos.map(age => age / 12);
+      // Convert Agemos (months) to years
+      const ageValues = bmiData[gender].Agemos.map((age) => age / 12);
 
-      // Get percentile data and trim it to match age range
-      const percentiles = Object.entries(bmiData[gender]).reduce((acc, [key, values]) => {
-        if (key !== "Agemos") {  // Exclude Agemos from percentiles
-          acc[key] = values;
-        }
-        return acc;
-      }, {});
+      // Extract percentile data
+      const percentiles = Object.fromEntries(
+        Object.entries(bmiData[gender]).filter(([key]) => key !== "Agemos")
+      );
 
-      const trimmedPercentiles = Object.entries(percentiles).reduce((acc, [percentile, values]) => {
-        acc[percentile] = values.slice(0, 218); // Only keep first 218 points
-        return acc;
-      }, {});
+      // Trim percentile values to match the age range
+      const trimmedPercentiles = Object.fromEntries(
+        Object.entries(percentiles).map(([percentile, values]) => [
+          percentile,
+          values.slice(0, 218),
+        ])
+      );
 
-      // Sample user data points
-      const userData = [
-        { x: 5, y: 17.5 },
-        { x: 10, y: 19.2 },
-        { x: 15, y: 21.8 }
-      ];
+      // Map user data (age & BMI) into scatter points
+      const userData = age.map((a, index) => ({ x: a, y: BMI[index] }));
 
       const colors = [
         "#FFAAAA", "#FFD700", "#32CD32", "#FFA500", "#FF4500",
@@ -93,7 +90,7 @@ export const ChildGrowth = ({ gender = "Female" }) => {
         data: {
           labels: ageValues,
           datasets: [
-            ...Object.entries(trimmedPercentiles).map(([percentile, values = []], index) => ({
+            ...Object.entries(trimmedPercentiles).map(([percentile, values], index) => ({
               label: `${percentile} Percentile`,
               data: values.map((y, i) => ({ x: ageValues[i] || i, y })),
               borderColor: colors[index % colors.length],
@@ -123,7 +120,7 @@ export const ChildGrowth = ({ gender = "Female" }) => {
               title: { display: true, text: "Age (Years)" },
               ticks: { stepSize: 1 },
               min: 2,
-              max: 20, // Ensures chart stops at 20
+              max: 20,
             },
             y: {
               title: { display: true, text: "BMI" },
@@ -136,7 +133,7 @@ export const ChildGrowth = ({ gender = "Female" }) => {
             tooltip: {
               callbacks: {
                 label: function (context) {
-                  return `Age: ${context.raw.x.toFixed(2)}, BMI: ${context.raw.y}`;
+                  return `Age: ${context.raw.x.toFixed(0)}, BMI: ${context.raw.y}`;
                 },
               },
             },
@@ -151,10 +148,10 @@ export const ChildGrowth = ({ gender = "Female" }) => {
         chartInstanceRef.current = null;
       }
     };
-  }, [gender]);
+  }, [gender, age, BMI]);
 
   return (
-<div style={{ width: "926px", height: "1098px" }}>
+    <div style={{ width: "926px", height: "1098px" }}>
       <canvas ref={chartRef}></canvas>
     </div>
   );

@@ -33,6 +33,7 @@ const GrowthChartContainer = () => {
   const [requestData, setRequestData] = useState({ Reason: "", Notes: "" });
   const [trackingData, setTrackingData] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ageData, setAgeData] = useState([]);
 
   useEffect(() => {
     const fetchChildData = async () => {
@@ -41,28 +42,35 @@ const GrowthChartContainer = () => {
         if (data) {
           setChildData(data);
         }
-        console.log(data)
+        
       } catch (error) {
         console.error("Error fetching child data:", error);
       }
     };
     fetchChildData();
-  }, [recordId]);
+  }, []);
 
   useEffect(() => {
+    
     console.log(recordId)
+    
     const fetchTrackingData = async () => {
       try {
         const data = await Tracking(recordId);
         if (data) {
           setTrackingData(data);
+          const processedData = processTrackingData(data, childData.birthdate);
+          setAgeData(processedData);
+          
         }
+        
       } catch (error) {
         console.error("Error fetching tracking data:", error);
       }
     };
     fetchTrackingData();
-  }, [recordId]);
+
+  }, [childData]);
 
 
   const handleChange = (e) => {
@@ -114,6 +122,46 @@ const GrowthChartContainer = () => {
     }
   };
 
+  const processTrackingData = (trackingData, yearOfBirth) => {
+    if (!yearOfBirth) {
+        console.error("Error: yearOfBirth is missing");
+        return [];
+    }
+
+    const birthYear = new Date(yearOfBirth).getFullYear();
+
+    return trackingData.flatMap(entry => {
+        console.log("Processing entry:", entry);
+
+        if (!entry.MonthYear || !entry.MonthYear.includes("-")) {
+            console.warn("Invalid MonthYear format:", entry.MonthYear);
+            return [];
+        }
+
+        const year = parseInt(entry.MonthYear.split("-")[0]);
+        if (isNaN(year)) {
+            console.warn("Invalid year extracted:", entry.MonthYear);
+            return [];
+        }
+
+        const age = year - birthYear;
+        console.log(`Extracted Year: ${year}, Calculated Age: ${age}`);
+
+        // 🔹 Iterate over ALL tracking entries in this MonthYear
+        return Object.entries(entry.Trackings).map(([trackingDate, trackingValues]) => {
+            return {
+                age,
+                BMI: trackingValues.BMI || null,
+                Height: trackingValues.Height || null,
+                Weight: trackingValues.Weight || null,
+                trackingDate, // 🔍 Include for debugging
+            };
+        });
+    });
+};
+
+  
+
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
       <ToastContainer />
@@ -160,9 +208,9 @@ const GrowthChartContainer = () => {
         </Tabs>
 
         <CardContent>
-          {tabIndex === 0 && <HeightChart gender={childData.gender} />}
-          {tabIndex === 1 && <WeightChart gender={childData.gender} />}
-          {tabIndex === 2 && <ChildGrowth gender={childData.gender} />}
+        {tabIndex === 0 && <HeightChart gender={childData.gender} data={ageData.map(({ age, Height }) => ({ x: age, y: Height }))} />}
+        {tabIndex === 1 && <WeightChart gender={childData.gender} data={ageData.map(({ age, Weight }) => ({ x: age, y: Weight }))} />}
+          {tabIndex === 2 && <ChildGrowth gender={childData.gender} data={ageData.map(({ age, BMI }) => ({ x: age, y: BMI }))} />}
         </CardContent>
       </Card>
 
