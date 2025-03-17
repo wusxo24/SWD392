@@ -42,7 +42,8 @@ const updateTracking = async (recordId, date, growthStats) => {
         growthStats.BMIZScore = calculateBMIZScore(growthStats.BMI, childAgeMonths, gender);
         growthStats.BMIResult = getBMIResult(growthStats["BMIZ-score"]);
     }
-
+    // log BMI and Z-score and BMI result
+    console.log("BMI:", growthStats.BMI, "Z-score:", growthStats.BMIZScore, "BMI Result:", growthStats.BMIResult);
     let tracking = await Tracking.findOneAndUpdate(
         { RecordId: recordId, MonthYear: monthYear },
         { $set: { [`Trackings.${date}`]: growthStats } },
