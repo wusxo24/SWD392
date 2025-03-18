@@ -1,4 +1,4 @@
-import axios from "axios"; // Adjust based on your project structure
+import axios from "@/utils/axiosInstance";
 
 export const login = async (email, password) => {
     try {

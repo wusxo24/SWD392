@@ -35,6 +35,7 @@ import { SuccessPaid } from "./pages/member/successPaid";
 import { FaildedPaid } from "./pages/member/failedPaid";
 import { UserRecord } from "./pages/member/userRecord";
 import GrowthChartContainer from "./pages/member/growthChartContainer";
+import PlanDetails from "./pages/guest/PlanDetails";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 
@@ -96,6 +97,7 @@ function App() {
           <Route path="/successPaid/" element={<SuccessPaid />} />
           <Route path="/failedPaid/" element={<FaildedPaid />} />
           <Route path="/userRecord/:id" element={<UserRecord />} />
+          <Route path="/plan/:id" element={<PlanDetails />} />
           <Route
             path="/childGrowth/:recordId"
             element={<GrowthChartContainer />}
