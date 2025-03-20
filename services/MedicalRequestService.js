@@ -64,11 +64,17 @@ const doctorStartWorkingOnMedicalRequest = async (medicalRequestId) => {
     return { message: "Medical request accepted successfully" };
 };
 
+const getAllMedicalRequests = async () => {
+    const medicalRequests = await MedicalRequest.find();
+    return medicalRequests;
+};
+
 module.exports = {
     createMedicalRequest,
     rejectMedicalRequest,
     acceptMedicalRequest,
     getMedicalRequestByRecordId,
     getMedicalRequestByDoctorId,
-    doctorStartWorkingOnMedicalRequest
+    doctorStartWorkingOnMedicalRequest,
+    getAllMedicalRequests
 };
