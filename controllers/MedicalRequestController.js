@@ -52,6 +52,15 @@ const getMedicalRequestByDoctorId = async (req, res) => {
     }
 };
 
+const getAllMedicalRequests = async (req, res) => {
+    try {
+        const medicalRequests = await MedicalRequestService.getAllMedicalRequests();
+        res.status(200).json(medicalRequests);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const doctorStartWorkingOnMedicalRequest = async (req, res) => {
     try {
         const { medicalRequestId } = req.params;
@@ -68,5 +77,6 @@ module.exports = {
     acceptMedicalRequest,
     getMedicalRequestByRecordId,
     getMedicalRequestByDoctorId,
-    doctorStartWorkingOnMedicalRequest
+    doctorStartWorkingOnMedicalRequest,
+    getAllMedicalRequests
 };

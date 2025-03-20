@@ -160,4 +160,6 @@ router.get("/doctor/:doctorId", authMiddleware, authorize(["Doctor"]), medicalRe
  */
 router.put("/doctor/:medicalRequestId", authMiddleware, authorize(["Doctor"]), medicalRequestController.doctorStartWorkingOnMedicalRequest);
 
+router.get("/", authMiddleware, authorize(["Manager", "Doctor"]), medicalRequestController.getAllMedicalRequests);
+
 module.exports = router;
