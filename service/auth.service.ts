@@ -12,7 +12,7 @@ class AuthServiceImpl implements AuthService {
 
   async login(username: string, password: string): Promise<boolean> {
     try {
-      const response = await post('/auth', { username, password });
+      const response = await post('/auth/login', { username, password });
 
       if (response.data && response.data.token) {
         await AsyncStorage.setItem(this.tokenKey, response.data.token);
