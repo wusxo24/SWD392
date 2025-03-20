@@ -233,9 +233,11 @@ const GrowthChartContainer = () => {
       </Dialog>
       <ChildHealth 
   isOpen={isChildHealthOpen} 
-  onClose={() => setIsChildHealthOpen(false)} 
-  trackingData={trackingData} // ✅ Pass trackingData here
+  onClose={() => setIsChildHealthOpen(false)}
+  trackingData={trackingData}
+  setTrackingData={setTrackingData}  // ✅ Pass setTrackingData
 />
+
     </Container>
   );
 };
