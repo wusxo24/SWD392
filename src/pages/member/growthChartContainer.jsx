@@ -24,7 +24,7 @@ import { ChildGrowth } from "./childGrowth";
 import { MedicalRequest } from "@/services/medicalRequest";
 import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
 import { useParams } from "react-router-dom";
-
+import ChildHealth from "./childHeath";
 const GrowthChartContainer = () => {
   const { recordId } = useParams();
   const [tabIndex, setTabIndex] = useState(0);
@@ -34,7 +34,7 @@ const GrowthChartContainer = () => {
   const [trackingData, setTrackingData] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ageData, setAgeData] = useState([]);
-
+  const [isChildHealthOpen, setIsChildHealthOpen] = useState(false);
   useEffect(() => {
     const fetchChildData = async () => {
       try {
@@ -131,7 +131,6 @@ const GrowthChartContainer = () => {
     const birthYear = new Date(yearOfBirth).getFullYear();
 
     return trackingData.flatMap(entry => {
-        console.log("Processing entry:", entry);
 
         if (!entry.MonthYear || !entry.MonthYear.includes("-")) {
             console.warn("Invalid MonthYear format:", entry.MonthYear);
@@ -145,7 +144,6 @@ const GrowthChartContainer = () => {
         }
 
         const age = year - birthYear;
-        console.log(`Extracted Year: ${year}, Calculated Age: ${age}`);
 
         // 🔹 Iterate over ALL tracking entries in this MonthYear
         return Object.entries(entry.Trackings).map(([trackingDate, trackingValues]) => {
@@ -183,6 +181,12 @@ const GrowthChartContainer = () => {
               Send to Doctor
             </Button>
           </Card>
+          <Card sx={{ textAlign: "center", p: 3, boxShadow: 3, marginTop: "20px" }}>
+          <Button style={{ marginTop: "10px" }}  onClick={() => setIsChildHealthOpen(true)}>
+              View Child Health
+            </Button>
+          </Card>
+
         </Grid>
 
         <Grid item xs={12} md={6}>
@@ -227,6 +231,13 @@ const GrowthChartContainer = () => {
           <Button onClick={handleSubmitRequest} color="primary" variant="contained">Submit</Button>
         </DialogActions>
       </Dialog>
+      <ChildHealth 
+  isOpen={isChildHealthOpen} 
+  onClose={() => setIsChildHealthOpen(false)}
+  trackingData={trackingData}
+  setTrackingData={setTrackingData}  // ✅ Pass setTrackingData
+/>
+
     </Container>
   );
 };
