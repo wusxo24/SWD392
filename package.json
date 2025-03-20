@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
+    "proxy": "node proxy-server.js",
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
@@ -24,6 +25,7 @@
     "@reduxjs/toolkit": "^2.6.1",
     "axios": "^1.8.2",
     "caref": "file:",
+    "cors-anywhere": "^0.4.4",
     "dotenv": "^16.4.7",
     "expo": "~52.0.35",
     "expo-app-loading": "^2.1.1",

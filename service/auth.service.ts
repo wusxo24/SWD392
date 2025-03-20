@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { post } from '../utils/axiosInstance';
+import axiosInstance from '../utils/axiosInstance';
 
 interface AuthService {
-  login(username: string, password: string): Promise<boolean>;
+  login(email: string, password: string): Promise<boolean>;
   logout(): Promise<void>;
   isAuthenticated(): Promise<boolean>;
 }
@@ -10,9 +10,9 @@ interface AuthService {
 class AuthServiceImpl implements AuthService {
   private readonly tokenKey = 'authToken';
 
-  async login(username: string, password: string): Promise<boolean> {
+  async login(email: string, password: string): Promise<boolean> {
     try {
-      const response = await post('/auth/login', { username, password });
+      const response = await axiosInstance.post('/auth/login', { email, password });
 
       if (response.data && response.data.token) {
         await AsyncStorage.setItem(this.tokenKey, response.data.token);

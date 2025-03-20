@@ -2,8 +2,12 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const axiosInstance = axios.create({
-  baseURL: "https://swd-392-api.vercel.app/api",
+  baseURL: "http://localhost:8080/https://swd-392-api.vercel.app/api/",
   timeout: 10000, 
+  headers: {
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/json',
+  },
 });
 
 // Request interceptor to add authorization token to headers

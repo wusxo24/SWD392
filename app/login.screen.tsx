@@ -120,9 +120,9 @@ const SignUpLink = () => (
 );
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isUsernameFocused, setIsUsernameFocused] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const passwordInputRef = useRef<TextInput>(null);
@@ -136,7 +136,7 @@ export default function LoginScreen() {
   }, []);
 
   const handleLogin = async () => {
-    const success = await authService.login(username, password);
+    const success = await authService.login(email, password);
     if (success) {
       router.replace("/home.screen"); // Use replace instead of push
     } else {
@@ -149,13 +149,13 @@ export default function LoginScreen() {
     <View style={tw`flex flex-col items-center h-full`}>
       <LogoSection />
       <InputField
-        label="Your username"
-        value={username}
-        onChangeText={setUsername}
-        placeholder="Username"
-        onFocus={() => setIsUsernameFocused(true)}
-        onBlur={() => setIsUsernameFocused(false)}
-        isFocused={isUsernameFocused}
+        label="Your email"
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Email"
+        onFocus={() => setIsEmailFocused(true)}
+        onBlur={() => setIsEmailFocused(false)}
+        isFocused={isEmailFocused}
         returnKeyType="next"
         onSubmitEditing={() =>
           passwordInputRef.current && passwordInputRef.current.focus()

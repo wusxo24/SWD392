@@ -1,12 +1,13 @@
 import React, { useRef, useState } from "react";
 import tw from "twrnc";
 
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Modal, StyleSheet, Linking } from "react-native";
 
 import { UserCenter } from "@/components/index/UserCenter.component";
 import ArrowDownIcon from "@/assets/icons/ArrowDown.icon";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import IndexStat from "@/components/index/IndexStat.component";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ChildSelector = () => {
   return (
@@ -37,6 +38,17 @@ export default function HomeScreen() {
       />
       <ChildSelector />
       <IndexStat />
+      <TouchableOpacity
+        style={tw`mt-4 p-4 bg-red-500 rounded-full`}
+        onPress={() => {
+          // Clear storage logic here
+          console.log("Logging out...");
+          AsyncStorage.clear();
+          router.push("/login.screen")
+        }}
+      >
+        <Text style={tw`text-white text-center text-lg`}>Log Out</Text>
+      </TouchableOpacity>
     </View>
   );
 }
