@@ -58,7 +58,7 @@ router.post("/:recordId", authMiddleware, medicalRequestController.createMedical
  *       404:
  *         description: Record not found
  */
-router.get("/:recordId", authMiddleware, authorize(["Manager"]), medicalRequestController.getMedicalRequestByRecordId);
+router.get("/:recordId", authMiddleware, authorize(["Manager","Doctor"]), medicalRequestController.getMedicalRequestByRecordId);
 
 /**
  * @swagger
@@ -163,3 +163,4 @@ router.put("/doctor/:medicalRequestId", authMiddleware, authorize(["Doctor"]), m
 router.get("/", authMiddleware, authorize(["Manager", "Doctor"]), medicalRequestController.getAllMedicalRequests);
 
 module.exports = router;
+
