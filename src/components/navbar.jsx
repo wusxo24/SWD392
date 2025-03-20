@@ -13,7 +13,6 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InventoryIcon from '@mui/icons-material/Inventory';
-import ChildCareIcon from '@mui/icons-material/ChildCare';
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -153,12 +152,6 @@ export default function Navbar() {
                 className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
               >
                 <InventoryIcon /> Your Purchase
-              </Link>
-              <Link
-                to={`/childGrowth/`}
-                className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              >
-                <ChildCareIcon/> Child Growth
               </Link>
             </div>
             <button

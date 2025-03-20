@@ -24,8 +24,7 @@ export const getChildByRecordId = async (recordId) => {
     const response = await axios.get(`/api/trackings/child/${recordId}`);
     return response.data;
   } catch (error) {
-    toast.error("Failed to fetch tracking data.");
-    console.error("Error fetching tracking data:", error);
+      console.error("Error fetching tracking data:", error);
   }
 };
 export const postTracking = async (recordId, date, growthStats) => {
