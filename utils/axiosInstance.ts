@@ -6,7 +6,7 @@ const axiosInstance = axios.create({
   timeout: 10000, 
 });
 
-// Request interceptor to add the token to headers
+// Request interceptor to add authorization token to headers
 axiosInstance.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem("authToken");
@@ -20,30 +20,17 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle errors
+// Response interceptor to handle errors globally
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  (response) => {
+    return response;
+  },
+  (error) => {
     if (error.response && error.response.status === 401) {
-      await AsyncStorage.removeItem("authToken");
-      // Handle redirection to login screen if needed
+      // Handle 401 error (e.g., redirect to login)
     }
     return Promise.reject(error);
   }
 );
 
-export const get = async (url: string) => {
-  return axiosInstance.get(url);
-};
-
-export const post = async (url: string, data: any) => {
-  return axiosInstance.post(url, data);
-};
-
-export const put = async (url: string, data: any) => {
-  return axiosInstance.put(url, data);
-};
-
-export const del = async (url: string) => {
-  return axiosInstance.delete(url);
-};
+export default axiosInstance;
