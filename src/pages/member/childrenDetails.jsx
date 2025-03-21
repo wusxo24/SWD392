@@ -15,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import { SideBarProfile } from "@/components/SideBarProfile";
 import { ToastContainer } from "react-toastify";
+import { LoadingScreen } from "@/components/loadingScreen";
 
 export const ChildrenDetails = () => {
   const { id } = useParams();
@@ -51,15 +52,15 @@ export const ChildrenDetails = () => {
     }
   };
 
-  if (loading) return <CircularProgress />;
+  if (loading) return <LoadingScreen />;
   if (error) return <Typography color="error">{error}</Typography>;
   if (!child) return <Typography>No child found</Typography>;
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <ToastContainer />
       <SideBarProfile />
-      <div className="p-4 w-full bg-[#f9f9f9] flex justify-center">
+      <div className="p-4 w-full bg-[#f9f9f9] flex justify-center items-center">
         <Card sx={{ maxWidth: 1000, padding: 3, boxShadow: 3 }}>
           <div className="flex justify-between items-center">
             <Typography variant="h6">Child's Details</Typography>
