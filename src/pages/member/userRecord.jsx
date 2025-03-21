@@ -26,7 +26,6 @@ import {
   ToggleButtonGroup,
   TablePagination,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
 export const UserRecord = () => {
   const [records, setRecords] = useState([]);
@@ -38,7 +37,6 @@ export const UserRecord = () => {
   const [filter, setFilter] = useState("All");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRecords();
