@@ -10,7 +10,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { SideBarProfile } from "@/components/SideBarProfile";
-import { LoadingScreen } from "@/components/LoadingScreen"; // Import the Loading Screen
+import { LoadingScreen } from "@/components/loadingScreen"; // Import the Loading Screen
 
 export const ChildrenProfile = () => {
   const [children, setChildren] = useState([]);
