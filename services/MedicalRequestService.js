@@ -40,7 +40,7 @@ const getMedicalRequestByRecordId = async (recordId) => {
         throw new Error(`Invalid RecordId format: ${recordId}`);
     }
 
-    return await MedicalRequest.findOne({ RecordId: new mongoose.Types.ObjectId(recordId) });
+    return await MedicalRequest.find({ RecordId: new mongoose.Types.ObjectId(recordId) });
 };
 
 const getMedicalRequestByDoctorId = async (doctorId) => {
