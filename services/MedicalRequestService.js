@@ -36,12 +36,19 @@ const acceptMedicalRequest = async (id, ManagerId, DoctorId) => {
 };
 
 const getMedicalRequestByRecordId = async (RecordId) => {
-    const medicalRequest = await MedicalRequest.findOne({ RecordId });
-    if (!medicalRequest) {
-        throw new Error("Medical request not found");
-    }
+    try {
+        const objectId = new mongoose.Types.ObjectId(RecordId); // Convert to ObjectId
 
-    return medicalRequest;
+        const medicalRequest = await MedicalRequest.findOne({ RecordId: objectId });
+
+        if (!medicalRequest) {
+            throw new Error("Medical request not found");
+        }
+
+        return medicalRequest;
+    } catch (error) {
+        throw new Error("Invalid RecordId or Medical request not found");
+    }
 };
 
 const getMedicalRequestByDoctorId = async (doctorId) => {
