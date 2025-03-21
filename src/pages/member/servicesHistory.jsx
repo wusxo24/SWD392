@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import { LoadingScreen } from "@/components/loadingScreen";
 
 export const ServicesHistory = () => {
     const { id } = useParams();
@@ -26,7 +27,7 @@ export const ServicesHistory = () => {
         loadServiceHistory();
     }, []);
 
-    if (loading) return <div className="text-center mt-4">Loading...</div>;
+    if (loading) return <LoadingScreen/>;
     if (error) return <div className="text-center text-red-500 mt-4">Error: {error}</div>;
 
     // Status color mapping
