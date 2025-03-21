@@ -17,6 +17,7 @@ import { SideBarProfile } from "@/components/SideBarProfile";
 import { ToastContainer } from "react-toastify";
 import { LoadingScreen } from "@/components/loadingScreen";
 
+
 export const ChildrenDetails = () => {
   const { id } = useParams();
   const [child, setChild] = useState(null);

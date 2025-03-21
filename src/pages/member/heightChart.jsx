@@ -110,13 +110,13 @@ const heightPercentilesData = {
               x: {
                 type: "linear",
                 title: { display: true, text: "Age (Years)" },
-                ticks: { stepSize: 1 },
+                ticks: { stepSize: 0.1 },
                 min: 2,
                 max: 20,
               },
               y: {
                 title: { display: true, text: "Height (cm)" },
-                ticks: { stepSize: 5 },
+                ticks: { stepSize: 0.1 },
                 min: 70,
                 max: 200,
               },
