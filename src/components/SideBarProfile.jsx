@@ -2,9 +2,10 @@ import React from 'react'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import StrollerIcon from '@mui/icons-material/Stroller';
 import { Link } from 'react-router-dom';
+import {Footer} from './footer';
 export const SideBarProfile = () => {
   return (
-    <div className="p-4 w-64 h-full">
+    <div className="p-4 w-64 h-screen">
       {/* User Section */}
       <div className=" p-2">
       <Link to="/userProfile/:id">

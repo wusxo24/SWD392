@@ -15,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import { SideBarProfile } from "@/components/SideBarProfile";
 import { ToastContainer } from "react-toastify";
+import { Footer } from "react-day-picker";
 
 export const ChildrenDetails = () => {
   const { id } = useParams();
@@ -56,7 +57,7 @@ export const ChildrenDetails = () => {
   if (!child) return <Typography>No child found</Typography>;
 
   return (
-    <div className="flex">
+    <div className="flex ">
       <ToastContainer />
       <SideBarProfile />
       <div className="p-4 w-full bg-[#f9f9f9] flex justify-center">

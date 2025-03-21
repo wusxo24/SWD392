@@ -118,13 +118,13 @@ export const ChildGrowth = ({ gender = "Female", data = [] }) => {
             x: {
               type: "linear",
               title: { display: true, text: "Age (Years)" },
-              ticks: { stepSize: 1 },
+              ticks: { stepSize: 0.1 },
               min: 2,
               max: 20,
             },
             y: {
               title: { display: true, text: "BMI" },
-              ticks: { stepSize: 1 },
+              ticks: { stepSize: 0.1 },
               min: 10,
               max: 37,
             },

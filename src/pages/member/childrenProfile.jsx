@@ -44,7 +44,7 @@ export const ChildrenProfile = () => {
   const currentChildren = children.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <ToastContainer />
       <SideBarProfile />
       <div className="p-4 w-full bg-[#f9f9f9]">
