@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchNews } from "@/services/newsService";
+import { LoadingScreen } from "@/components/loadingScreen";
 
 const News = () => {
   const [newsList, setNewsList] = useState([]);
@@ -24,9 +25,7 @@ const News = () => {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <p className="text-gray-500">Loading news...</p>
-      </div>
+      <LoadingScreen/>
     );
 
   if (error)

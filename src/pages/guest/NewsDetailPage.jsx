@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { fetchNewsDetail, fetchRelatedNews } from "@/services/newsService";
+import { LoadingScreen } from "@/components/loadingScreen";
 
 const NewsDetail = () => {
   const { id } = useParams();
@@ -30,7 +31,7 @@ const NewsDetail = () => {
   }, []);
 
   if (loading)
-    return <p className="text-center mt-10 text-gray-500">Loading...</p>;
+    return <LoadingScreen/>;
 
   if (!news)
     return <p className="text-center text-red-500 mt-10">News not found.</p>;

@@ -39,3 +39,33 @@ export const MedicalRequest = async (recordId, requestData, handleModalClose) =>
     }
   }
 };
+export const getMedicalRequest = async (recordId) => {
+  try {
+    if (!recordId) {
+      throw new Error("Missing recordId.");
+    }
+
+    const response = await axios.get(`/api/medical-requests/${recordId}`);
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Unexpected response from server.");
+    }
+  } catch (error) {
+    console.error("Fetch medical request error:", error.response?.data || error.message);
+
+    if (error.response) {
+      const { status, data } = error.response;
+      if (status === 404) {
+        toast.error("Medical request not found.");
+      } else if (status === 500) {
+        toast.error("Server error. Please try again later.");
+      } else {
+        toast.error("Failed to fetch medical request.");
+      }
+    } else {
+      toast.error("Network error or server unreachable.");
+    }
+  }
+};

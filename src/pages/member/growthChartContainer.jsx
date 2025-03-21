@@ -23,7 +23,7 @@ import {
 import HeightChart from "./heightChart";
 import WeightChart from "./weightChart";
 import { ChildGrowth } from "./childGrowth";
-import { MedicalRequest } from "@/services/medicalRequest";
+import { getMedicalRequest, MedicalRequest } from "@/services/medicalRequest";
 import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
 import { useParams } from "react-router-dom";
 import ChildHealth from "./childHeath";
@@ -37,6 +37,7 @@ const GrowthChartContainer = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ageData, setAgeData] = useState([]);
   const [isChildHealthOpen, setIsChildHealthOpen] = useState(false);
+  const [medicalRequests, setMedicalRequests] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchChildData = async () => {
@@ -52,6 +53,23 @@ const GrowthChartContainer = () => {
     };
     fetchChildData();
   }, []);
+
+  useEffect(() => {
+
+    const fetchMedicalRequests = async () => {
+      try {
+        const data = await getMedicalRequest(recordId);
+        if (data) {
+          setMedicalRequests(data);
+          
+        }
+      } catch (error) {
+        console.error("Error fetching medical requests:", error);
+      }
+    };
+    fetchMedicalRequests();
+    
+  }, [recordId]);
 
   useEffect(() => {
     
@@ -246,6 +264,7 @@ const GrowthChartContainer = () => {
   onClose={() => setIsChildHealthOpen(false)}
   trackingData={trackingData}
   setTrackingData={setTrackingData}  // ✅ Pass setTrackingData
+  medicalRequests={medicalRequests}
 />
 
     </Container>
