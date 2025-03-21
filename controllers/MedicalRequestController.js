@@ -1,4 +1,5 @@
 const MedicalRequestService = require("../services/MedicalRequestService");
+const mongoose = require("mongoose");
 
 const createMedicalRequest = async (req, res) => {
     try {
@@ -34,13 +35,27 @@ const acceptMedicalRequest = async (req, res) => {
 
 const getMedicalRequestByRecordId = async (req, res) => {
     try {
-        const { RecordId } = req.params;
-        const medicalRequest = await MedicalRequestService.getMedicalRequestByRecordId(RecordId);
+        console.log("🔹 Route Hit - Received Params:", req.params);
+
+        const { recordId } = req.params; // ✅ Fix: Extract directly
+
+        if (!recordId) {
+            return res.status(400).json({ error: "Missing RecordId in request" });
+        }
+
+        const medicalRequest = await MedicalRequestService.getMedicalRequestByRecordId(recordId);
+
+        if (!medicalRequest) {
+            return res.status(404).json({ error: "Medical request not found" });
+        }
+
         res.status(200).json(medicalRequest);
     } catch (error) {
+        console.error("🔴 Service Error:", error.message);
         res.status(500).json({ error: error.message });
     }
 };
+
 
 const getMedicalRequestByDoctorId = async (req, res) => {
     try {
