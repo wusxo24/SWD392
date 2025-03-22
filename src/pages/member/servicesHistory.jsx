@@ -70,7 +70,6 @@ export const ServicesHistory = () => {
     return (
         <div className="max-w-4xl mx-auto my-6 p-4 bg-[#f1f5fc] shadow-md rounded-lg">
             <h2 className="text-xl font-bold mb-4 text-center ">Service History</h2>
-
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>

@@ -44,3 +44,21 @@ export const verifyEmail = (token) => {
       throw new Error(error.response?.data?.message || "Verification failed.");
     });
 };
+
+export const logout = async () => {
+  try {
+    await axios.post("/api/auth/logout");
+    
+    ["authToken", "userId", "userName", "roleName"].forEach((item) => {
+      localStorage.removeItem(item);
+      sessionStorage.removeItem(item);
+    });
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || "Logout failed. Try again.",
+    };
+  }
+};
