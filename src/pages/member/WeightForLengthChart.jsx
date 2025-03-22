@@ -83,6 +83,7 @@
                   tension: 0.4,
                   pointRadius: 0,
                   pointHoverRadius: 0,
+                  pointHitRadius: 15, // Expands the invisible hitbox area
                 }))
               },
               options: {
@@ -110,6 +111,12 @@
                         return `Length: ${context.raw.x.toFixed(1)} cm, ${yLabel}: ${context.raw.y}`;
                       },
                     },
+                    enabled: true, 
+                    animation: {
+                    duration: 1000, 
+                    },
+                    caretSize: 10,
+                    displayColors: true, 
                   },
                 },
               },

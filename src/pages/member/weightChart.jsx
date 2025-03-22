@@ -51,7 +51,7 @@ const weightPercentiles = {
     }
   };
 
-  const GrowthChart = ({ gender = "Female", data=[], title, yLabel }) => {
+  const GrowthChart = ({ gender = "Female", data=[], yLabel }) => {
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
 
@@ -83,6 +83,7 @@ const weightPercentiles = {
             chartInstanceRef.current = new Chart(ctx, {
                 type: "line",
                 data: {
+                    pointHitRadius: 1000,
                     labels: ageValues,
                     datasets: [
                         ...Object.entries(trimmedPercentiles).map(([percentile, values], index) => ({
@@ -94,6 +95,7 @@ const weightPercentiles = {
                             tension: 0.4,
                             pointRadius: 0,
                             pointHoverRadius: 0,
+                            pointHitRadius: 15, // Expands the invisible hitbox area
                         })),
                         {
                             label: "User Data",
@@ -125,11 +127,18 @@ const weightPercentiles = {
                     },
                     plugins: {
                         tooltip: {
+                            position: 'average', // Keeps tooltip in a stable position
                             callbacks: {
                                 label: function (context) {
-                                    return `Age: ${context.raw.x.toFixed(0)}, ${yLabel}: ${context.raw.y}`;
+                                  return `Age: ${context.raw.x.toFixed(1)} months, ${yLabel}: ${context.raw.y} kg`;
                                 },
-                            },
+                              },
+                              enabled: true, 
+                              animation: {
+                                duration: 1000, 
+                              },
+                              caretSize: 10,
+                              displayColors: true, 
                         },
                     },
                 },

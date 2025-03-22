@@ -39,7 +39,6 @@ export const UserRecord = () => {
   const [filter, setFilter] = useState("All");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRecords();
