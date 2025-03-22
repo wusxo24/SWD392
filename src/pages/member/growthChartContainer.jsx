@@ -68,7 +68,7 @@ const GrowthChartContainer = () => {
       }
     };
     fetchMedicalRequests();
-    
+
   }, [recordId]);
 
   useEffect(() => {

@@ -46,9 +46,9 @@ export const getMedicalRequest = async (recordId) => {
     }
 
     const response = await axios.get(`/api/medical-requests/${recordId}`);
-
     if (response.status === 200) {
       return response.data;
+      
     } else {
       throw new Error("Unexpected response from server.");
     }

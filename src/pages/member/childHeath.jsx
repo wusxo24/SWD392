@@ -7,7 +7,6 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
   const [editingDates, setEditingDates] = useState({});
   const [editedValues, setEditedValues] = useState({});
   const [activeTab, setActiveTab] = useState("tracking"); // ✅ Toggle state
-
   if (!isOpen) return null;
 
   const formatValue = (value) =>
@@ -81,6 +80,7 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
       return newValues;
     });
   };
+  const medicalRequestsArray = Array.isArray(medicalRequests) ? medicalRequests : [medicalRequests];
 
   return (
     <div
@@ -91,9 +91,6 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
         className="bg-white p-6 rounded-lg shadow-lg w-[45rem] max-h-[80vh] overflow-y-auto relative z-50"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-semibold text-gray-800 mb-3">
-          Child Health Information
-        </h2>
 
         {/* ✅ Switch Buttons for Tracking & Medical Requests */}
         <div className="flex justify-between items-center mb-4">
@@ -203,21 +200,12 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
         {/* ✅ Medical Requests Section */}
         {activeTab === "medical" && (
           <>
-            {medicalRequests.length > 0 ? (
-              medicalRequests.map((request, index) => (
-                <div
-                  key={index}
-                  className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50"
-                >
-                  <h3 className="text-lg font-semibold text-blue-600">
-                    <CalendarMonthIcon /> {request.RequestDate}
-                  </h3>
-                  <p className="text-gray-700">
-                    <strong>Request Type:</strong> {request.RequestType}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Status:</strong> {request.Status}
-                  </p>
+           {medicalRequestsArray.length > 0 ? (
+              medicalRequestsArray.map((request, index) => (
+                <div key={index} className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50">
+                  <h3 className="text-lg font-semibold text-blue-600">Status: {request.Status}</h3>
+                  <p className="text-gray-700"><strong>Request Reason:</strong> {request.Reason}</p>
+                  <p className="text-gray-700"><strong>Notes:</strong> {request.Notes}</p>
                 </div>
               ))
             ) : (
