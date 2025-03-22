@@ -42,8 +42,7 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const location = useLocation();
-  const hideNavFooter =
-    location.pathname === "/login" || location.pathname === "/register";
+
   const userRole =
     localStorage.getItem("roleName") || sessionStorage.getItem("roleName"); // Get user role
 
@@ -55,7 +54,10 @@ function App() {
     Admin: "/account",
     Doctor: "/view-medical-request",
   };
-
+  const hideNavFooter =
+    location.pathname === "/login" ||
+    location.pathname === "/register" ||
+    ["Manager", "Doctor", "Admin"].includes(userRole);
   // Default page based on role
   const defaultPage = roleRoutes[userRole] || "/home";
 
