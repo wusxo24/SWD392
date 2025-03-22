@@ -25,12 +25,9 @@ import {
 import HeightChart from "./heightChart";
 import WeightChart from "./weightChart";
 import { ChildGrowth } from "./childGrowth";
-import { MedicalRequest } from "@/services/medicalRequest";
-import {
-  Tracking,
-  getChildByRecordId,
-  postTracking,
-} from "@/services/tracking";
+
+import { getMedicalRequest, MedicalRequest } from "@/services/medicalRequest";
+import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
 import { useParams } from "react-router-dom";
 import ChildHealth from "./childHeath";
 const GrowthChartContainer = () => {
@@ -43,7 +40,9 @@ const GrowthChartContainer = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ageData, setAgeData] = useState([]);
   const [isChildHealthOpen, setIsChildHealthOpen] = useState(false);
+  const [medicalRequests, setMedicalRequests] = useState([]);
   const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const birthDate = new Date(childData?.birthdate);
   const today = new Date();
@@ -54,6 +53,7 @@ const GrowthChartContainer = () => {
   const ageMonths = ageInMonths.toFixed(1);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
 
   useEffect(() => {
     const fetchChildData = async () => {
@@ -70,8 +70,22 @@ const GrowthChartContainer = () => {
   }, []);
 
   useEffect(() => {
-    console.log(recordId);
+    const fetchMedicalRequests = async () => {
+      try {
+        const data = await getMedicalRequest(recordId);
+        if (data) {
+          setMedicalRequests(data);
+          
+        }
+      } catch (error) {
+        console.error("Error fetching medical requests:", error);
+      }
+    };
+    fetchMedicalRequests();
+  }, [recordId]);
 
+  useEffect(() => {
+    console.log(recordId)
     const fetchTrackingData = async () => {
       try {
         const data = await Tracking(recordId);
@@ -87,6 +101,25 @@ const GrowthChartContainer = () => {
     fetchTrackingData();
   }, [childData]);
 
+  useEffect(() => {
+    if (trackingData.length > 0) {
+      const latestRecord = trackingData[trackingData.length - 1]; 
+      const trackingsEntries = Object.entries(latestRecord.Trackings); // Convert to array [date, data]
+      if (trackingsEntries.length === 0) return;
+      const latestTracking = trackingsEntries[trackingsEntries.length - 1]; // Get last [date, data] pair
+      const latestDate = latestTracking[0]; // Extract date
+      const latestEntry = latestTracking[1]; // Extract data object
+      if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
+        toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`
+          ,{ autoClose: 10000, // 10 seconds (default is 5000ms or 5s)
+            closeOnClick: true, // Allows closing on click
+            pauseOnHover: true, // Keeps it visible when hovering
+            draggable: true // Allows dragging the toast
+          });
+      }
+    }
+  }, [trackingData]);
+
   const handleChange = (e) => {
     setTrackingData({ ...trackingData, [e.target.name]: e.target.value });
   };
@@ -97,6 +130,29 @@ const GrowthChartContainer = () => {
 
       await postTracking(recordId, currentDate, trackingData);
       toast.success("Growth data updated successfully.");
+      const updatedData = await Tracking(recordId);
+    if (updatedData) {
+      setTrackingData(updatedData);
+
+      // 🔹 Extract latest BMI entry after update
+      const latestRecord = updatedData[updatedData.length - 1];
+      const trackingsEntries = Object.entries(latestRecord.Trackings);
+      if (trackingsEntries.length === 0) return;
+
+      const latestTracking = trackingsEntries[trackingsEntries.length - 1]; 
+      const latestDate = latestTracking[0]; 
+      const latestEntry = latestTracking[1]; 
+
+      // 🔥 Show warning if BMI is not normal
+      if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
+        toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`, {
+          autoClose: 10000, // 10 seconds
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        });
+      }
+    }
     } catch (error) {
       console.error("Error updating tracking data:", error);
       toast.error("Failed to update growth data.");
@@ -354,12 +410,14 @@ const GrowthChartContainer = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <ChildHealth
-        isOpen={isChildHealthOpen}
-        onClose={() => setIsChildHealthOpen(false)}
-        trackingData={trackingData}
-        setTrackingData={setTrackingData} // ✅ Pass setTrackingData
-      />
+
+      <ChildHealth 
+  isOpen={isChildHealthOpen} 
+  onClose={() => setIsChildHealthOpen(false)}
+  trackingData={trackingData}
+  setTrackingData={setTrackingData}  // ✅ Pass setTrackingData
+  medicalRequests={medicalRequests}
+/>
       {/* Modal Component */}
       <Modal
         open={open}
@@ -410,7 +468,6 @@ const GrowthChartContainer = () => {
               <strong>Notes:</strong> {childData.notes || "No additional notes"}
             </Typography>
           </Stack>
-
           {/* Close Button */}
           <Button
             variant="contained"

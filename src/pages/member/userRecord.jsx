@@ -27,6 +27,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { LoadingScreen } from "@/components/loadingScreen";
 
 export const UserRecord = () => {
   const [records, setRecords] = useState([]);
@@ -171,10 +172,10 @@ export const UserRecord = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
+  if(loading) return <LoadingScreen/>;
   const filteredRecords =
     filter === "All" ? records : records.filter((r) => r.Status === filter);
-
+  
   return (
     <div className="p-5 h-screen bg-[#f6f7f8] px-30">
       <ToastContainer />

@@ -10,10 +10,12 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { SideBarProfile } from "@/components/SideBarProfile";
+import { LoadingScreen } from "@/components/loadingScreen"; // Import the Loading Screen
 
 export const ChildrenProfile = () => {
   const [children, setChildren] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // Add loading state
   const itemsPerPage = 5;
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
@@ -24,9 +26,14 @@ export const ChildrenProfile = () => {
 
   useEffect(() => {
     getChildren()
-      .then((data) => setChildren(data))
-      .catch(() => toast.error("Failed to fetch children"));
-
+      .then((data) => {
+        setChildren(data);
+        setLoading(false); // Stop loading when data is fetched
+      })
+      .catch(() => {
+        toast.error("Failed to fetch children");
+        setLoading(false); // Stop loading even if there's an error
+      });
   }, []);
 
   const handleAddChildren = () => {
@@ -42,6 +49,11 @@ export const ChildrenProfile = () => {
 
   const totalPages = Math.ceil(children.length / itemsPerPage);
   const currentChildren = children.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // Show Loading Screen while fetching data
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="flex h-screen">

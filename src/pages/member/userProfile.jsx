@@ -12,6 +12,7 @@ import { SideBarProfile } from "@/components/SideBarProfile";
 import EmailIcon from '@mui/icons-material/Email';
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
+import { LoadingScreen } from "@/components/loadingScreen";
 export const UserProfile = () => {
   const userId =
     localStorage.getItem("userId") || sessionStorage.getItem("userId");
@@ -81,7 +82,7 @@ export const UserProfile = () => {
     }
   };
 
-  if (loading) return <p className="text-center text-lg font-semibold">Loading...</p>;
+  if (loading) return <LoadingScreen/>;
   if (error) return <p className="text-center text-red-500 text-lg font-semibold">{error}</p>;
   if (!member) return <p className="text-center text-gray-500">No member found.</p>;
 

@@ -66,10 +66,10 @@ export const ChildrenDetails = () => {
           <div className="flex justify-between items-center">
             <Typography variant="h6">Child's Details</Typography>
             <IconButton
-              onClick={() => setIsEditing(!isEditing)}
+              onClick={isEditing ? handleSave : () => setIsEditing(true)}
               color="primary"
             >
-              {isEditing ? <SaveIcon onClick={handleSave} /> : <EditIcon />}
+              {isEditing ? <SaveIcon /> : <EditIcon />}
             </IconButton>
           </div>
           <CardContent>
@@ -154,23 +154,28 @@ export const ChildrenDetails = () => {
               </Grid>
               <Grid item xs={6}>
                 <TextField
-                  fullWidth
-                  label="Birthdate"
-                  name="birthdate"
-                  type="date"
-                  value={
-                    new Date(formData.birthdate).toISOString().split("T")[0]
-                  }
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  sx={{
-                    borderRadius: "200px",
-                    boxShadow: 5,
-                    backgroundColor: "white",
-                    "& fieldset": { borderRadius: "200px" }, // Ensure the fieldset is also rounded
-                  }}
-                />
+                    fullWidth
+                    label="Birthdate"
+                    name="birthdate"
+                    type="date"
+                    value={new Date(formData.birthdate).toISOString().split("T")[0]}
+                    onChange={handleChange}
+                    disabled={!isEditing}
+                    inputProps={{
+                      max: new Date().toISOString().split("T")[0], // Prevents future dates
+                      min: new Date(new Date().setFullYear(new Date().getFullYear() - 20))
+                        .toISOString()
+                        .split("T")[0], // Prevents selecting age > 20
+                    }}
+                    sx={{
+                      borderRadius: "200px",
+                      boxShadow: 5,
+                      backgroundColor: "white",
+                      "& fieldset": { borderRadius: "200px" },
+                    }}
+                  />
               </Grid>
+
               <Grid item xs={6}>
                 <TextField
                   fullWidth
@@ -192,7 +197,7 @@ export const ChildrenDetails = () => {
                   fullWidth
                   label="Allergy"
                   name="allergy"
-                  value={formData.allergy || "None"}
+                  value={formData.allergy}
                   onChange={handleChange}
                   disabled={!isEditing}
                   sx={{
