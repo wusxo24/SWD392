@@ -8,31 +8,31 @@ const API_URL = "";
 
 const AddInfo = () => {
   const [doctorData, setDoctorData] = useState({
-    image: "",
+    picture: "",
     name: "",
     gender: "",
     email: "",
     experience: "",
-    fees: "",
+    certificate: "",
     address: "",
-    clinicName: "",
+    clinic_name: "",
     about: "",
     degree: "",
   });
 
-  // Giả sử user đã login và có doctorId lưu trong localStorage
-  const doctorId = localStorage.getItem("doctorId");
+  // Giả sử user đã login và có user_id lưu trong localStorage
+  const user_id = localStorage.getItem("user_id");
 
   // Lấy thông tin bác sĩ từ API
   useEffect(() => {
-    if (!doctorId) {
+    if (!user_id) {
       toast.error("Doctor not logged in");
       return;
     }
 
     const fetchDoctorInfo = async () => {
       try {
-        const response = await fetch(`${API_URL}/doctor/${doctorId}`);
+        const response = await fetch(`${API_URL}/doctor/${user_id}`);
         const data = await response.json();
         setDoctorData(data);
       } catch (error) {
@@ -42,14 +42,14 @@ const AddInfo = () => {
     };
 
     fetchDoctorInfo();
-  }, [doctorId]);
+  }, [user_id]);
 
-  const handleImageUpload = async (e) => {
+  const handlePictureUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("picture", file);
 
     try {
       // Gửi ảnh lên server (giả sử có API endpoint /api/upload)
@@ -59,18 +59,18 @@ const AddInfo = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Image upload failed");
+        throw new Error("picture upload failed");
       }
 
       const data = await response.json();
 
       // Cập nhật state với URL ảnh từ server
-      setDoctorData((prev) => ({ ...prev, image: data.imageUrl }));
+      setDoctorData((prev) => ({ ...prev, picture: data.pictureUrl }));
 
-      toast.success("Image uploaded successfully!");
+      toast.success("picture uploaded successfully!");
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("Failed to upload image");
+      toast.error("Failed to upload picture");
     }
   };
 
@@ -81,13 +81,13 @@ const AddInfo = () => {
 
   // Hàm gửi dữ liệu lên API để cập nhật thông tin bác sĩ
   const handleSave = async () => {
-    if (!doctorId) {
+    if (!user_id) {
       toast.error("Doctor not logged in");
       return;
     }
 
     try {
-      const response = await fetch(`${API_URL}/doctor/${doctorId}`, {
+      const response = await fetch(`${API_URL}/doctor/${user_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -112,14 +112,14 @@ const AddInfo = () => {
       <div className="m-5 w-full">
         <p className="mb-3 text-lg font-medium">Doctor Profile</p>
         <div className="bg-white px-8 py-8 border rounded w-full max-w-4xl shadow-lg">
-          {/* Upload Profile Image */}
+          {/* Upload Profile picture */}
           <div className="flex flex-col items-center mb-6">
             <label htmlFor="doc-img">
               <img
                 className="w-24 h-24 bg-gray-100 rounded-full cursor-pointer object-cover border"
                 src={
-                  doctorData.image
-                    ? doctorData.image
+                  doctorData.picture
+                    ? doctorData.picture
                     : "/src/assets/upload_area.svg"
                 }
                 alt="Doctor Profile"
@@ -129,7 +129,7 @@ const AddInfo = () => {
               type="file"
               id="doc-img"
               hidden
-              onChange={handleImageUpload}
+              onChange={handlePictureUpload}
             />
             <p className="text-gray-500 mt-2 cursor-pointer">
               Upload doctor picture
@@ -191,16 +191,16 @@ const AddInfo = () => {
               />
             </div>
 
-            {/* Fees */}
+            {/* certificate */}
             <div className="flex flex-col">
               <label className="text-gray-600">Consultation Fee ($)</label>
               <input
-                name="fees"
-                value={doctorData.fees}
+                name="certificate"
+                value={doctorData.certificate}
                 onChange={handleChange}
                 className="border rounded px-3 py-2 focus:ring-2 focus:ring-blue-400"
-                type="number"
-                placeholder="Enter fee amount"
+                type="text"
+                placeholder="certificate"
               />
             </div>
 
@@ -221,8 +221,8 @@ const AddInfo = () => {
             <div className="flex flex-col">
               <label className="text-gray-600">Clinic Name</label>
               <input
-                name="clinicName"
-                value={doctorData.clinicName}
+                name="clinic_name"
+                value={doctorData.clinic_name}
                 onChange={handleChange}
                 className="border rounded px-3 py-2 focus:ring-2 focus:ring-blue-400"
                 type="text"

@@ -82,30 +82,33 @@ const DoctorList = () => {
                 <th>Gender</th>
                 <th>Email</th>
                 <th>Experience</th>
-                <th>Fees</th>
+                <th>certificate</th>
                 <th>Address</th>
                 <th>Clinic Name</th>
                 <th>About</th>
                 <th>Degree</th>
-                <th>Image</th>
+                <th>Picture</th>
               </tr>
             </thead>
             <tbody>
               {Array.isArray(doctors) && doctors.length > 0 ? (
                 doctors.map((doctor) => (
-                  <tr key={doctor.id} className="border-b hover:bg-gray-100">
+                  <tr
+                    key={doctor.user_id}
+                    className="border-b hover:bg-gray-100"
+                  >
                     <td>{doctor.name}</td>
                     <td>{doctor.gender}</td>
                     <td>{doctor.email}</td>
                     <td>{doctor.experience}</td>
-                    <td>{doctor.fees}</td>
+                    <td>{doctor.certificate}</td>
                     <td>{doctor.address}</td>
-                    <td>{doctor.clinicName}</td>
+                    <td>{doctor.clinic_name}</td>
                     <td>{doctor.about}</td>
                     <td>{doctor.degree}</td>
                     <td>
                       <img
-                        src={doctor.image}
+                        src={doctor.picture}
                         alt={doctor.name}
                         className="w-16 h-16 object-cover rounded-md"
                       />
