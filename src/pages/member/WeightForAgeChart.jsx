@@ -50,7 +50,7 @@
     }
     };
     
-    const GrowthChart = ({ gender = "Female", data = [], title, yLabel }) => {
+    const GrowthChart = ({ gender = "Female", data = [], yLabel }) => {
       const chartRef = useRef(null);
       const chartInstanceRef = useRef(null);
     
@@ -86,6 +86,7 @@
           chartInstanceRef.current = new Chart(ctx, {
             type: "line",
             data: {
+              pointHitRadius: 10,
               labels: ageValues,
               datasets: [
                 ...Object.entries(percentiles).map(([percentile, values], index) => ({
@@ -97,6 +98,7 @@
                   tension: 0.4,
                   pointRadius: 0,
                   pointHoverRadius: 0,
+                  pointHitRadius: 15, // Expands the invisible hitbox area
                 })),
                 {
                   label: "User Data",
@@ -130,18 +132,25 @@
                 tooltip: {
                   callbacks: {
                     label: function (context) {
-                      return `Age: ${context.raw.x.toFixed(1)} months, ${yLabel}: ${context.raw.y} kg`;
+                      return `Age: ${context.raw.x.toFixed(0)} months, ${yLabel}: ${context.raw.y} kg`;
                     },
                   },
+                  enabled: true,
+                  animation: {
+                  duration: 1000, 
+                  },
+                  caretSize: 10,
+                  displayColors: true, 
                 },
               },
-            },
+            }             
           });
         }
     
         return () => {
           if (chartInstanceRef.current) {
             chartInstanceRef.current.destroy();
+            chartInstanceRef.current = null;
           }
         };
       }, [gender, data, yLabel]);

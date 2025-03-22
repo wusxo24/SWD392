@@ -90,6 +90,7 @@ const WeightForStatureChart = ({ gender = "Female", data = [] }) => {
               tension: 0.4,
               pointRadius: 0,
               pointHoverRadius: 0,
+              pointHitRadius: 15, // Expands the invisible hitbox area
             })),
             {
               label: "User Data",
@@ -125,6 +126,12 @@ const WeightForStatureChart = ({ gender = "Female", data = [] }) => {
                   return `Stature: ${context.raw.x.toFixed(1)} cm, Weight: ${context.raw.y} kg`;
                 },
               },
+              enabled: true, 
+              animation: {
+              duration: 1000, 
+              },
+              caretSize: 10,
+              displayColors: true, 
             },
           },
         },

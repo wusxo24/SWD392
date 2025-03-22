@@ -99,6 +99,7 @@ export const ChildGrowth = ({ gender = "Female", data = [] }) => {
               tension: 0.4,
               pointRadius: 0,
               pointHoverRadius: 0,
+              pointHitRadius: 15, // Expands the invisible hitbox area
             })),
             {
               label: "User Data",
@@ -136,6 +137,12 @@ export const ChildGrowth = ({ gender = "Female", data = [] }) => {
                   return `Age: ${context.raw.x.toFixed(0)}, BMI: ${context.raw.y}`;
                 },
               },
+              enabled: true, 
+              animation: {
+              duration: 1000, 
+              },
+              caretSize: 10,
+              displayColors: true, 
             },
           },
         },

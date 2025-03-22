@@ -292,7 +292,7 @@ const GrowthChartContainer = () => {
           centered
         >
           <Tab label="Height Chart" />
-          <Tab label="Weight Chart" />
+          <Tab label="Weight Chart" /> 
           <Tab label="BMI Chart" />
         </Tabs>
 

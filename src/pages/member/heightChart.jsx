@@ -92,6 +92,7 @@ const heightPercentilesData = {
                 tension: 0.4,
                 pointRadius: 0,
                 pointHoverRadius: 0,
+                pointHitRadius: 15, // Expands the invisible hitbox area
               })),
               {
                 label: "User Data",
@@ -128,6 +129,12 @@ const heightPercentilesData = {
                     return `Age: ${context.raw.x.toFixed(0)}, Height: ${context.raw.y} cm`;
                   },
                 },
+                enabled: true, 
+                animation: {
+                duration: 1000, 
+                },
+                caretSize: 10,
+                displayColors: true, 
               },
             },
           },

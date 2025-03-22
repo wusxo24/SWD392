@@ -90,6 +90,7 @@ const GrowthChart = ({ gender = "Female", data = [], title, yLabel }) => {
               tension: 0.4,
               pointRadius: 0,
               pointHoverRadius: 0,
+              pointHitRadius: 15, // Expands the invisible hitbox area
             })),
             {
               label: "User Data",
@@ -126,6 +127,12 @@ const GrowthChart = ({ gender = "Female", data = [], title, yLabel }) => {
                   return `Age: ${context.raw.x.toFixed(1)} months, ${yLabel}: ${context.raw.y} cm`;
                 },
               },
+              enabled: true, 
+              animation: {
+              duration: 1000, 
+              },
+              caretSize: 10,
+              displayColors: true,
             },
           },
         },

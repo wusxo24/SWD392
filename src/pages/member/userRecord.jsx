@@ -26,6 +26,7 @@ import {
   ToggleButtonGroup,
   TablePagination,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export const UserRecord = () => {
   const [records, setRecords] = useState([]);

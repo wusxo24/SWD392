@@ -27,7 +27,8 @@ import LengthForAgeChart from "./LengthForAgeChart";
 import WeightForLengthChart from "./WeightForLengthChart";
 import HeadCircumferenceChart from "./HeadCircumferenceChart.jsx";
 import WeightForStatureChart from "./WeightForStatureChart";
-import { getChildByRecordId } from "@/services/tracking";
+import { MedicalRequest } from "@/services/medicalRequest";
+import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
 import { useParams } from "react-router-dom";
 import ChildHealth from "./childHeath";
 
