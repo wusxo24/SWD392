@@ -30,7 +30,6 @@ import Account from "./pages/admin/Account";
 import AddInfo from "./pages/doctor/AddInfo";
 import ViewRequest from "./pages/doctor/ViewRequest";
 import AnalyzeReport from "./pages/doctor/AnalyzeReport";
-import Reviews from "./pages/doctor/Reviews";
 import { ServicesHistory } from "./pages/member/servicesHistory";
 import { SuccessPaid } from "./pages/member/successPaid";
 import { FaildedPaid } from "./pages/member/failedPaid";
@@ -130,7 +129,6 @@ function App() {
           <Route path="/add-info" element={<AddInfo />} />
           <Route path="/view-medical-request" element={<ViewRequest />} />
           <Route path="/analyze-report" element={<AnalyzeReport />} />
-          <Route path="/reviews" element={<Reviews />} />
         </Route>
 
         {/* Company Shared Pages */}
