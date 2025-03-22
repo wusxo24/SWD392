@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRequests }) => {
   const [editingDates, setEditingDates] = useState({});
   const [editedValues, setEditedValues] = useState({});
-  const [activeTab, setActiveTab] = useState("tracking"); // ✅ Toggle state
+  const [activeTab, setActiveTab] = useState("tracking"); 
   if (!isOpen) return null;
 
   const formatValue = (value) =>
@@ -48,8 +48,6 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
   const handleSave = async (recordId, date) => {
     try {
       await postTracking(recordId, date, editedValues[date]);
-
-      // ✅ Update UI immediately
       setTrackingData((prevData) =>
         prevData.map((entry) =>
           entry.RecordId === recordId
@@ -91,8 +89,6 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
         className="bg-white p-6 rounded-lg shadow-lg w-[45rem] max-h-[80vh] overflow-y-auto relative z-50"
         onClick={(e) => e.stopPropagation()}
       >
-
-        {/* ✅ Switch Buttons for Tracking & Medical Requests */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-800">Child Health Information</h2>
           
@@ -100,7 +96,7 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
             <button
               onClick={() => setActiveTab("tracking")}
               className={`px-4 py-2 rounded-lg transition cursor-pointer ${
-                activeTab === "tracking"
+                activeTab == "tracking"
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
@@ -110,7 +106,7 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
             <button
               onClick={() => setActiveTab("medical")}
               className={`px-4 py-2 rounded-lg transition cursor-pointer ${
-                activeTab === "medical"
+                activeTab == "medical"
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
@@ -120,8 +116,7 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
           </div>
         </div>
 
-        {/* ✅ Tracking Data Section */}
-        {activeTab === "tracking" && (
+        {activeTab == "tracking" && (
           <>
             {trackingData.length > 0 ? (
               trackingData.map((entry, index) => (
@@ -163,7 +158,6 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
                         ))}
                       </ul>
 
-                      {/* ✅ Edit & Save Buttons */}
                       {editingDates[date] ? (
                         <div className="mt-2 flex space-x-2">
                           <button
@@ -197,13 +191,25 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
           </>
         )}
 
-        {/* ✅ Medical Requests Section */}
+
         {activeTab === "medical" && (
           <>
            {medicalRequestsArray.length > 0 ? (
               medicalRequestsArray.map((request, index) => (
                 <div key={index} className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50">
-                  <h3 className="text-lg font-semibold text-blue-600">Status: {request.Status}</h3>
+                  <h3 className="text-lg font-semibold">
+                    Status: <span className={`text-lg font-semibold ${
+                      request.Status == "Pending"
+                        ? "text-yellow-500"
+                        : request.Status == "Completed"
+                        ? "text-green-500"
+                        : request.Status == "Rejected"
+                        ? "text-red-500"
+                        : request.Status == "InProgress"
+                        ? "text-blue-500"
+                        : "text-gray-500" // Default for Completed
+                    }`}>{request.Status}</span> 
+                  </h3>
                   <p className="text-gray-700"><strong>Request Reason:</strong> {request.Reason}</p>
                   <p className="text-gray-700"><strong>Notes:</strong> {request.Notes}</p>
                 </div>
