@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import moment from "moment";
 import Sidebar from "./SidebarAdmin";
 import { fetchDoctors, deleteDoctor, saveDoctor, updateDoctorStatus } from "@/services/doctorService";
@@ -26,6 +27,7 @@ export default function DoctorManagement() {
       setDoctors(doctors);
     } catch (error) {
       console.error("Error fetching doctors:", error);
+      toast.error("Failed to load doctors");
     }
   };
 
@@ -37,8 +39,10 @@ export default function DoctorManagement() {
       setIsModalOpen(false);
       form.resetFields();
       setEditId(null);
+      toast.success("Doctor saved successfully");
     } catch (error) {
       console.error("Error saving doctor:", error);
+      toast.error("Failed to save doctor");
     }
   };
 
@@ -65,8 +69,10 @@ export default function DoctorManagement() {
     try {
       await deleteDoctor(id);
       fetchDoctorsData();
+      toast.success("Doctor deleted successfully");
     } catch (error) {
       console.error("Error deleting doctor:", error);
+      toast.error("Failed to delete doctor");
     }
   };
 
@@ -137,8 +143,10 @@ export default function DoctorManagement() {
         console.log("Updated Doctor:", updatedDoctor);
 
         fetchDoctorsData(); // Refresh data
+        toast.success("Status updated successfully");
     } catch (error) {
         console.error("Error updating status:", error);
+        toast.error("Failed to update status");
     }
 };
   
@@ -147,6 +155,7 @@ export default function DoctorManagement() {
     <div className="flex">
       <Sidebar/>
     <div className="w-full p-5" style={{ padding: "30px", backgroundColor: "#f8f9fa", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <ToastContainer />
       <Card style={{ width: "100%", maxWidth: "1500px", padding: "20px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", borderRadius: "10px" }}>
         <Space style={{ marginBottom: "20px", display: "flex", justifyContent: "space-between" }}>
           <Input placeholder="Search doctors..." prefix={<SearchOutlined />} value={searchText} onChange={(e) => setSearchText(e.target.value)} style={{ width: 300 }} />
@@ -154,7 +163,6 @@ export default function DoctorManagement() {
         </Space>
         <Table dataSource={filteredDoctors} columns={columns} rowKey="_id" bordered pagination={{ pageSize: 5 }} />
       </Card>
-
       <Modal
         title={editId ? "Edit Doctor" : "Add Doctor"}
         open={isModalOpen}
