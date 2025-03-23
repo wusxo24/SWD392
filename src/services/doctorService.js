@@ -1,8 +1,10 @@
 import axios from "@/utils/axiosInstance";
 export const fetchDoctors = async () => {
     try {
+        
         const response = await axios.get("/api/doctors");
         return response.data;
+        
     } catch (error) {
         console.error("Error fetching doctors:", error);
         throw error;
