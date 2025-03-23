@@ -26,7 +26,7 @@ import HeightChart from "./heightChart";
 import WeightChart from "./weightChart";
 import { ChildGrowth } from "./childGrowth";
 
-import { getMedicalRequest, MedicalRequest } from "@/services/medicalRequest";
+import { getMedicalRequest, MedicalRequest } from "@/services/medicalRequestService";
 import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
 import { useParams } from "react-router-dom";
 import ChildHealth from "./childHeath";

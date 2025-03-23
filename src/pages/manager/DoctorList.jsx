@@ -67,9 +67,7 @@ const DoctorList = () => {
     <div className="flex">
       <SidebarManager />
       <div className="flex-1 p-6">
-      {loading ? (  
-          <LoadingScreen />
-        ) : (
+      
           <>
         {/* Search bar */}
         <div className="flex justify-between items-center mb-4">
@@ -95,8 +93,15 @@ const DoctorList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-
-              {Array.isArray(doctors) && doctors.length > 0 ? (
+            {loading ? (  
+                <tr>
+                <td colSpan="12" className="text-center py-4">
+                  <div className="flex justify-center items-center">
+                    <LoadingScreen />
+                  </div>
+                </td>
+              </tr>
+            ) : Array.isArray(doctors) && doctors.length > 0 ? (
                 doctors.map((doctor) => (
                   <TableRow key={doctor._id}>
                     <TableCell>{doctor.user_id?.username}</TableCell> {/* Accessing nested username */}
@@ -141,7 +146,6 @@ const DoctorList = () => {
           />
         </div>
           </>
-        )}
       </div>
     </div>
   );

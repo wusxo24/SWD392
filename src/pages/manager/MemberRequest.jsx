@@ -136,9 +136,9 @@ const MemberRequest = () => {
         ) : filteredRequests.length === 0 ? (
           <p>No requests available.</p>
         ) : (
-          <TableContainer component={Paper} className="mb-4">
+          <TableContainer component={Paper} className="mb-4 mt-4">
             <Table>
-              <TableHead>
+              <TableHead style={{ background: "#51a2ff" }}>
                 <TableRow>
                   <TableCell>Date</TableCell>
                   <TableCell>Reason</TableCell>
