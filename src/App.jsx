@@ -37,6 +37,7 @@ import { UserRecord } from "./pages/member/userRecord";
 import GrowthChartContainer from "./pages/member/growthChartContainer";
 import PlanDetails from "./pages/guest/PlanDetails";
 import GrowthChartContainerBaby from "./pages/member/growthChartContainerBaby";
+import DoctorManagement from "./pages/admin/DoctorManagement";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 
@@ -124,6 +125,7 @@ function App() {
 
         <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
           <Route path="/account" element={<Account />} />
+          <Route path="/doctor-management" element={<DoctorManagement />} />
         </Route>
 
         {/* Doctor Pages */}
