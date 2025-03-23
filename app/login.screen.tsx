@@ -2,8 +2,10 @@ import { Link, useRouter } from "expo-router";
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import tw from "twrnc";
-import * as SplashScreen from 'expo-splash-screen';
-import authService from '../service/auth.service';
+import * as SplashScreen from "expo-splash-screen";
+import authService from "../service/auth.service";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import orderService from "@/service/order.service";
 
 const Logo = require("../assets/images/Logo.png");
 const GoogleLogo = require("../assets/images/GoogleLogo.png");
@@ -136,12 +138,18 @@ export default function LoginScreen() {
   }, []);
 
   const handleLogin = async () => {
-    const success = await authService.login(email, password);
-    if (success) {
-      router.replace("/home.screen"); // Use replace instead of push
+    const response = await authService.login(email, password);
+    if (response) {
+      try {
+        const orders = await orderService.getMemberOrders();
+        const user = { ...response.user, subscription: orders };
+        await AsyncStorage.setItem("user", JSON.stringify(user));
+      } catch (error) {
+        console.warn("No orders found");
+      }
+      router.replace("/home.screen");
     } else {
       console.log("Login failed");
-      // Optionally, show an error message to the user
     }
   };
 

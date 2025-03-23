@@ -3,29 +3,43 @@ import axiosInstance from "../utils/axiosInstance";
 
 interface AuthService {
   signup(username: string, email: string, password: string): Promise<boolean>;    
-  login(email: string, password: string): Promise<boolean>;
+  login(email: string, password: string): Promise<LoginResponse | null>;
   logout(): Promise<void>;
   isAuthenticated(): Promise<boolean>;
 }
 
+interface LoginResponse {
+  message: string;
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    role: string;
+    userName: string;
+    subscription: string;
+  };
+}
+
 class AuthServiceImpl implements AuthService {
   private readonly tokenKey = "authToken";
+  private readonly userKey = "user";
 
-  async login(email: string, password: string): Promise<boolean> {
+  async login(email: string, password: string): Promise<LoginResponse | null> {
     try {
-      const response = await axiosInstance.post("/auth/login", {
+      const response = await axiosInstance.post<LoginResponse>("/auth/login", {
         email,
         password,
       });
 
       if (response.data && response.data.token) {
         await AsyncStorage.setItem(this.tokenKey, response.data.token);
-        return true;
+        await AsyncStorage.setItem(this.userKey, JSON.stringify(response.data.user));
+        return response.data;
       }
-      return false;
+      return null;
     } catch (error) {
       console.error("Login failed", error);
-      return false;
+      return null;
     }
   }
 
@@ -43,6 +57,7 @@ class AuthServiceImpl implements AuthService {
 
       if (response.data && response.data.token) {
         await AsyncStorage.setItem(this.tokenKey, response.data.token);
+        await AsyncStorage.setItem(this.userKey, JSON.stringify(response.data.user));
         return true;
       }
       return false;
@@ -54,6 +69,7 @@ class AuthServiceImpl implements AuthService {
 
   async logout(): Promise<void> {
     await AsyncStorage.removeItem(this.tokenKey);
+    await AsyncStorage.removeItem(this.userKey);
   }
 
   async isAuthenticated(): Promise<boolean> {

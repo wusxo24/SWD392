@@ -14,28 +14,39 @@ import { Link } from "expo-router";
 type Props = {
   avatar: string;
   name: string;
-  subscriptionId: number;
   subscriptionPlan: string;
 };
 
-const subscriptionColors: { [key: number]: string } = {
-  1: "bg-gray-400", // Silver
-  2: "bg-orange-400", // Gold
-  3: "bg-sky-500", // Platinum
-  4: "bg-violet-600", // Diamond
+const subscriptionColors: { [key: string]: string } = {
+  "Free": "bg-slate-300",
+  "1": "bg-gray-400", // Silver
+  "2": "bg-orange-400", // Gold
+  "3": "bg-sky-500", // Platinum
+  "4": "bg-violet-600", // Diamond
 };
 
-export const UserCenter = ({
-  avatar,
-  name,
-  subscriptionId,
-  subscriptionPlan,
-}: Props) => {
-  const bgColor = subscriptionColors[subscriptionId] || "bg-white";
+const subscriptionName: { [key: string]: string } = {
+  "Free": "Free",
+  "1": "Sprout",
+  "2": "Bloom",
+  "3": "Thrive",
+  "4": "Peak",
+};
 
+export const UserCenter = ({ avatar, name, subscriptionPlan }: Props) => {
+  const bgColor = subscriptionColors[subscriptionPlan] || "bg-white";
+  const planName = subscriptionName[subscriptionPlan] || "Free";
   const renderIcon = () => {
-    switch (subscriptionId) {
-      case 1:
+    switch (subscriptionPlan) {
+      case "Free":
+        return (
+          <View
+            style={tw`flex items-center justify-center rounded-full h-4 w-4 bg-white`}
+          >
+            <Text style={tw`text-xs text-slate-600`}>-</Text>
+          </View>
+        );
+      case "1":
         return (
           <View
             style={tw`flex items-center justify-center rounded-full h-4 w-4 bg-white`}
@@ -43,7 +54,7 @@ export const UserCenter = ({
             <SilverIcon />
           </View>
         );
-      case 2:
+      case "2":
         return (
           <View
             style={tw`flex items-center justify-center rounded-full h-4 w-4 bg-white`}
@@ -51,7 +62,7 @@ export const UserCenter = ({
             <GoldIcon />
           </View>
         );
-      case 3:
+      case "3":
         return (
           <View
             style={tw`flex items-center justify-center rounded-full h-4 w-4 bg-white`}
@@ -59,7 +70,7 @@ export const UserCenter = ({
             <PlatinumIcon />
           </View>
         );
-      case 4:
+      case "4":
         return (
           <View
             style={tw`flex items-center justify-center rounded-full h-4 w-4 bg-white`}
@@ -84,7 +95,7 @@ export const UserCenter = ({
           >
             {renderIcon()}
             <Text style={tw`font-semibold text-white pr-1`}>
-              {subscriptionPlan} Plan
+              {planName} Plan
             </Text>
           </View>
         </View>

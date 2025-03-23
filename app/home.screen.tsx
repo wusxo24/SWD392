@@ -1,13 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import tw from "twrnc";
-
-import { View, Text, TouchableOpacity, Modal, StyleSheet, Linking } from "react-native";
-
+import { View, Text } from "react-native";
 import { UserCenter } from "@/components/index/UserCenter.component";
 import ArrowDownIcon from "@/assets/icons/ArrowDown.icon";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import IndexStat from "@/components/index/IndexStat.component";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+interface UserData {
+  id: string;
+  email: string;
+  role: string;
+  userName: string;
+  subscription: string;
+  avatar: string;
+}
 
 const ChildSelector = () => {
   return (
@@ -28,42 +35,52 @@ const ChildSelector = () => {
 };
 
 export default function HomeScreen() {
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<UserData>({
+    id: "",
+    email: "",
+    role: "",
+    userName: "",
+    subscription: "No subscriptions",
     avatar: "https://picsum.photos/150",
-    name: "John Doe",
-    subscriptionId: 4,
-    subscriptionPlan: "Gold",
   });
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const avatar = await AsyncStorage.getItem("avatar");
-        const name = await AsyncStorage.getItem("name");
-        const subscriptionId = await AsyncStorage.getItem("subscriptionId");
-        const subscriptionPlan = await AsyncStorage.getItem("subscriptionPlan");
-
-        setUserData({
-          avatar: avatar || "https://picsum.photos/150",
-          name: name || "John Doe",
-          subscriptionId: subscriptionId ? parseInt(subscriptionId) : 4,
-          subscriptionPlan: subscriptionPlan || "Gold",
-        });
+        const userString = await AsyncStorage.getItem("user");
+        if (userString) {
+          const user = JSON.parse(userString);
+          setUserData({
+            ...user,
+            avatar: user.avatar || "https://picsum.photos/150",
+          });
+        }
       } catch (error) {
         console.error("Failed to fetch user data from AsyncStorage", error);
       }
     };
 
     fetchUserData();
+
+    const logAsyncStorage = async () => {
+      try {
+        const keys = await AsyncStorage.getAllKeys();
+        const result = await AsyncStorage.multiGet(keys);
+        console.log("Current AsyncStorage contents:", JSON.stringify(result, null, 2));
+      } catch (error) {
+        console.error("Failed to log AsyncStorage contents", error);
+      }
+    };
+
+    logAsyncStorage();
   }, []);
 
   return (
     <View style={tw`p-4`}>
       <UserCenter
-        avatar="{userData.avatar}"
-        name="{userData.name}"
-        subscriptionId={4}
-        subscriptionPlan="Gold"
+        avatar={userData.avatar}
+        name={userData.userName}
+        subscriptionPlan={userData.subscription}
       />
       <ChildSelector />
       <IndexStat />
