@@ -12,7 +12,7 @@ const DoctorList = () => {
   const [currentPage, setCurrentPage] = useState(1); // Start at page 1 for MUI Pagination
   const [totalPages, setTotalPages] = useState(0);
   const itemsPerPage = 10; // Number of doctors per page
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchDoctorData = async () => {
       try {
