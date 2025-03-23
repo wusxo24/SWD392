@@ -1,8 +1,9 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity, Alert } from "react-native";
 import tw from "twrnc";
 import * as SplashScreen from 'expo-splash-screen';
+import authService from "../service/auth.service";
 
 const Logo = require("../assets/images/Logo.png");
 const GoogleLogo = require("../assets/images/GoogleLogo.png");
@@ -98,6 +99,7 @@ export default function SignUpScreen() {
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
   const confirmPasswordInputRef = useRef<TextInput>(null);
+  const router = useRouter();
 
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();
@@ -106,16 +108,23 @@ export default function SignUpScreen() {
     };
   }, []);
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     setIsUsernameFocused(false);
     setIsEmailFocused(false);
     setIsPasswordFocused(false);
     setIsConfirmPasswordFocused(false);
-    // Handle sign-up logic here
-    console.log("Username:", username);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Confirm Password:", confirmPassword);
+
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    const success = await authService.signup(username, email, password);
+    if (success) {
+      router.push("/home.screen");
+    } else {
+      Alert.alert("Error", "Signup failed");
+    }
   };
 
   return (

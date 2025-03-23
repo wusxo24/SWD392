@@ -11,6 +11,10 @@ module.exports = {
       fontFamily: {
         sans: ['Noto Sans', 'sans-serif'],
       },
+      colors: {
+        'gradient-start': '#50FF5699',
+        'gradient-end': '#058BBB99',
+      },
     },
   },
   plugins: [],
