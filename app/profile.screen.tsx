@@ -1,6 +1,5 @@
 import { Link } from "expo-router";
 import { View, Text } from "react-native";
-import { LinearGradient } from "react-native-linear-gradient";
 import tw from "twrnc";
 
 const UserCenter = () => {
@@ -14,14 +13,13 @@ const UserCenter = () => {
 const SubscriptionPlanButton = () => {
   return (
     <Link href="/subscription-plan.screen">
-      <LinearGradient
-        colors={["#50FF5699", "#058BBB99"]}
-        style={tw`p-4 rounded-lg shadow-md`}
+      <View
+        style={tw`w-full flex items-center justify-center h-16 rounded-lg shadow-md bg-sky-500 border-4 border-white`}
       >
-        <Text style={tw`text-center text-lg font-semibold text-white`}>
+        <Text style={tw`text-center text-xl font-bold text-white`}>
           Subscription Plan
         </Text>
-      </LinearGradient>
+      </View>
     </Link>
   );
 };
