@@ -10,6 +10,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { LoadingScreen } from "@/components/loadingScreen";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Table, TableCell, TableHead, TableRow, TextField } from "@mui/material";
+import { Button } from "react-scroll";
 
 const Subscription = () => {
   const [subscription, setSubscription] = useState([]);
@@ -126,19 +128,7 @@ const Subscription = () => {
     <div className="flex">
       <SidebarManager />
       <div className="w-full p-5">
-      <ToastContainer
-  position="top-right"
-  autoClose={5000}
-
-  hideProgressBar={false}
-  newestOnTop={true}
-  closeOnClick
-  rtl={false}
-  pauseOnFocusLoss
-  draggable
-  pauseOnHover
-/>
-
+      <ToastContainer/>
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded mb-4 cursor-pointer"
             onClick={() => handleOpenModal()}
@@ -147,9 +137,9 @@ const Subscription = () => {
           </button>
         {/* Subscription Table */}
         <div className="relative overflow-visible">
-          <table className="min-w-full bg-white shadow-md rounded-lg">
-            <thead className="bg-blue-400 text-white">
-              <tr>
+          <Table className="min-w-full bg-white shadow-md rounded-lg">
+            <TableHead className="bg-blue-400 text-white">
+              <TableRow>
                 <th className="py-2 px-4">Name</th>
                 <th className="py-2 px-4">Description</th>
                 <th className="py-2 px-4">Features</th>
@@ -158,28 +148,28 @@ const Subscription = () => {
                 <th className="py-2 px-4">Duration</th>
                 <th className="py-2 px-4">Plan Code</th>
                 <th className="py-2 px-4">Actions</th>
-              </tr>
-            </thead>
+              </TableRow>
+            </TableHead>
             <tbody>
               {subscription.length > 0 ? (
                 subscription.map((plan) => (
-                  <tr key={plan._id} className="border-b hover:bg-gray-100">
-                    <td className="py-2 px-4">{plan.name}</td>
-                    <td className="py-2 px-4">{plan.description}</td>
-                    <td className="py-2 px-4">
+                  <TableRow key={plan._id} className="border-b hover:bg-gray-100">
+                    <TableCell className="py-2 px-4">{plan.name}</TableCell>
+                    <TableCell className="py-2 px-4">{plan.description}</TableCell>
+                    <TableCell className="py-2 px-4">
                       <ul className="list-disc pl-5">
                         {plan.features.map((feature, index) => (
                           <li key={index}>{feature}</li>
                         ))}
                       </ul>
-                    </td>
-                    <td className="py-2 px-4">
+                    </TableCell>
+                    <TableCell className="py-2 px-4">
                       <img src={plan.image} alt={plan.name} className="h-10 w-10 object-cover" />
-                    </td>
-                    <td className="py-2 px-4">{plan.price}</td>
-                    <td className="py-2 px-4">{plan.duration} months</td>
-                    <td className="py-2 px-4">{plan.plan_code}</td>
-                    <td className="py-2 px-4 relative">
+                    </TableCell>
+                    <TableCell className="py-2 px-4">{plan.price}</TableCell>
+                    <TableCell className="py-2 px-4">{plan.duration} months</TableCell>
+                    <TableCell className="py-2 px-4">{plan.plan_code}</TableCell>
+                    <TableCell className="py-2 px-4 relative">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -213,120 +203,112 @@ const Subscription = () => {
                           </button>
                         </div>
                       )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="text-center py-4 text-gray-500">
+                  <TableCell colSpan="8" className="text-center py-4 text-gray-500">
                     No subscriptions available
-                  </td>
+                  </TableCell>
                 </tr>
               )}
             </tbody>
-          </table>
+          </Table>
         </div>
          {/* Popup (Modal) for Creating Subscription Plan */}
-         {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center backdrop-blur bg-opacity-50"
-          onClick={handleCloseModal}>
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96"
-            onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-lg font-semibold mb-4">Create Subscription Plan</h2>
-              
-              <input
-                type="text"
-                placeholder="Plan Name"
-                className="w-full p-2 mb-2 border rounded"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+        <Dialog open={isModalOpen} onClose={handleCloseModal}>
+          <DialogTitle>{form._id ? "Update" : "Create"} Subscription Plan</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="Plan Name"
+              fullWidth
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              sx={{marginBottom: 2}}
+            />
+            <TextField
+              label="Description"
+              fullWidth
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              sx={{marginBottom: 2}}
+            />
+
+            {/* Features Input */}
+            <div className="mb-2">
+              <TextField
+                label="Add Feature"
+                fullWidth
+                value={newFeature}
+                onChange={(e) => setNewFeature(e.target.value)}
+                sx={{marginBottom: 2}}
               />
-
-              <input
-                type="text"
-                placeholder="Description"
-                className="w-full p-2 mb-2 border rounded"
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-              />
-
-              {/* Features Input */}
-              <div className="mb-2">
-                <input
-                  type="text"
-                  placeholder="Add Feature"
-                  className="w-full p-2 border rounded"
-                  value={newFeature}
-                  onChange={(e) => setNewFeature(e.target.value)}
-                />
-                <button
-                  className="bg-green-500 text-white px-3 py-1 rounded mt-2 cursor-pointer"
-                  onClick={handleAddFeature}
-                >
-                  Add Feature
-                </button>
-              </div>
-
-              {/* Display added features */}
-              <ul className="mb-2">
-                {form.features.map((feature, index) => (
-                  <li key={index} className="flex justify-between items-center bg-gray-100 p-2 rounded mt-1 ">
-                    {feature}
-                    <button
-                      className="text-red-500 ml-2"
-                      onClick={() => handleRemoveFeature(index)}
-                    >
-                      ✕
-                    </button>
-                  </li>
-                ))}
-              </ul>
-
-              <input
-                type="text"
-                placeholder="Image URL"
-                className="w-full p-2 mb-2 border rounded"
-                value={form.image}
-                onChange={(e) => setForm({ ...form, image: e.target.value })}
-              />
-
-              <input
-                type="number"
-                placeholder="Price"
-                className="w-full p-2 mb-2 border rounded"
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: e.target.value })}
-              />
-
-              <input
-                type="number"
-                placeholder="Duration (months)"
-                className="w-full p-2 mb-2 border rounded"
-                value={form.duration}
-                onChange={(e) => setForm({ ...form, duration: e.target.value })}
-              />
-
-              <input
-                type="text"
-                placeholder="Plan Code"
-                className="w-full p-2 mb-2 border rounded "
-                value={form.plan_code}
-                onChange={(e) => setForm({ ...form, plan_code: e.target.value })}
-              />
-
-              <div className="flex justify-end gap-2">
-              <button
-                  className={`px-3 py-1 rounded cursor-pointer ${
-                    form._id ? "bg-green-500" : "bg-blue-500"
-                  } text-white`}
-                  onClick={form._id ? handleUpdatePlan : handleCreatePlan}
-                >
-                  {form._id ? "Save" : "Create"}
-              </button>
-              </div>
+              <Button
+                className="bg-green-500 text-white px-3 py-1 rounded mt-2 cursor-pointer"
+                onClick={handleAddFeature}
+              >
+                Add Feature
+              </Button>
             </div>
-          </div>
-        )}
+
+            <ul className="mb-2">
+              {form.features.map((feature, index) => (
+                <li key={index} className="flex justify-between items-center bg-gray-100 p-2 rounded mt-1 ">
+                  {feature}
+                  <button
+                    className="text-red-500 ml-2"
+                    onClick={() => handleRemoveFeature(index)}
+                  >
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <TextField
+              label="Image URL"
+              fullWidth
+              value={form.image}
+              onChange={(e) => setForm({ ...form, image: e.target.value })}
+              sx={{marginBottom: 2}}
+            />
+
+            <TextField
+              label="Price"
+              type="number"
+              fullWidth
+              value={form.price}
+              onChange={(e) => setForm({ ...form, price: e.target.value })}
+              sx={{marginBottom: 2}}
+            />
+
+            <TextField
+              label="Duration (months)"
+              type="number"
+              fullWidth
+              value={form.duration}
+              onChange={(e) => setForm({ ...form, duration: e.target.value })}
+              sx={{marginBottom: 2}}
+            />
+
+            <TextField
+              label="Plan Code"
+              fullWidth
+              value={form.plan_code}
+              onChange={(e) => setForm({ ...form, plan_code: e.target.value })}
+              sx={{marginBottom: 2}}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              className="bg-blue-500 text-white px-3 py-1 rounded mt-2 cursor-pointer"
+              onClick={form._id ? handleUpdatePlan : handleCreatePlan}
+            >
+              {form._id ? "Save" : "Create"}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
       
     </div>
