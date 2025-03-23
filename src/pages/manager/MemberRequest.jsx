@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle, Avatar, List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, CircularProgress } from "@mui/material";
 import SidebarManager from "./SidebarManager";
-import { getAllMedicalRequests, acceptMedicalRequest, rejectMedicalRequest } from "@/services/medicalRequest";
+import { getAllMedicalRequests, acceptMedicalRequest, rejectMedicalRequest } from "@/services/medicalRequestService";
 import { toast } from "react-toastify";
 import { fetchDoctors } from "@/services/doctorService";  // Import your fetchDoctors function
+import { LoadingScreen } from "@/components/loadingScreen";
 
 const MemberRequest = () => {
   const [requests, setRequests] = useState([]);
@@ -18,7 +19,7 @@ const MemberRequest = () => {
 
   // Get ManagerId from localStorage
   useEffect(() => {
-    const storedManagerId = localStorage.getItem('userId'); // Assuming userId is the ManagerId
+    const storedManagerId = localStorage.getItem('userId') || sessionStorage.getItem('userId'); // Assuming userId is the ManagerId
     console.log("Manager ID:", storedManagerId);
     setManagerId(storedManagerId);
   }, []);
@@ -130,7 +131,7 @@ const MemberRequest = () => {
         </FormControl>
         {loading ? (
           <div className="flex justify-center items-center">
-            <CircularProgress />
+            <LoadingScreen />
           </div>
         ) : filteredRequests.length === 0 ? (
           <p>No requests available.</p>

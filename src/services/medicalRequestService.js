@@ -100,6 +100,9 @@ export const getAllMedicalRequests = async () => {
 // Accept a medical request
 export const acceptMedicalRequest = async (medicalRequestId, managerId, doctorId) => {
   try {
+    console.log("doc:", doctorId); // Debugging
+    console.log("manager:", managerId); // Debugging
+
     const response = await axios.put(`/api/medical-requests/accept/${medicalRequestId}`, { 
       ManagerId: managerId,
       DoctorId: doctorId,
