@@ -19,3 +19,13 @@ export const fetchServiceHistory = async () => {
         throw new Error("Failed to fetch service history.");
     }
 };
+
+export const fetchAllOrders = async () => {
+    try {
+        const response = await axios.get("api/orders/");  // Fetch all orders
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all orders:", error);
+        throw new Error("Failed to fetch all orders.");
+    }
+};

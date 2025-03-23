@@ -41,6 +41,7 @@ export const subscribeToPlan = async (planId) => {
       throw error;
     }
   };
+  
   export const deleteSubscriptionPlan = async (planId) => {
     try {
       const response = await axios.delete(`/api/services/${planId}`);
