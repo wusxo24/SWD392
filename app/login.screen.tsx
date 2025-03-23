@@ -6,6 +6,7 @@ import * as SplashScreen from "expo-splash-screen";
 import authService from "../service/auth.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import orderService from "@/service/order.service";
+import childService from "@/service/child.service";
 
 const Logo = require("../assets/images/Logo.png");
 const GoogleLogo = require("../assets/images/GoogleLogo.png");
@@ -141,9 +142,19 @@ export default function LoginScreen() {
     const response = await authService.login(email, password);
     if (response) {
       try {
+        // Fetch orders and update user data
         const orders = await orderService.getMemberOrders();
         const user = { ...response.user, subscription: orders };
         await AsyncStorage.setItem("user", JSON.stringify(user));
+
+        // Fetch child data
+        const children = await childService.getChildren();
+        await AsyncStorage.setItem("children", JSON.stringify(children));
+
+        // Set the first child as the default selected child if children are not null
+        if (children.length > 0) {
+          await AsyncStorage.setItem("selectedChild", JSON.stringify(children[0]));
+        }
       } catch (error) {
         console.warn("No orders found");
       }

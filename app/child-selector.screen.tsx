@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TouchableOpacity, View, Text } from "react-native";
 import tw from "twrnc";
 import { Child } from "@/models/Child.model";
 import { Header } from "@/components/Header.component";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ItemsList = ({
   items,
@@ -65,10 +66,28 @@ const ItemsList = ({
 
 export default function ChildSelectorScreen() {
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+  const [children, setChildren] = useState<Child[]>([]);
 
-  const handleSelectChild = (child: Child) => {
+  const handleSelectChild = async (child: Child) => {
     setSelectedChild(child);
+    await AsyncStorage.setItem("selectedChild", JSON.stringify(child));
   };
+
+  useEffect(() => {
+    const fetchChildren = async () => {
+      try {
+        const childrenString = await AsyncStorage.getItem("children");
+        if (childrenString) {
+          const childrenData = JSON.parse(childrenString);
+          setChildren(childrenData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch children from AsyncStorage", error);
+      }
+    };
+
+    fetchChildren();
+  }, []);
 
   return (
     <View style={tw`flex-1`}>
@@ -80,36 +99,14 @@ export default function ChildSelectorScreen() {
       />
       <View style={tw`px-4`}>
         <ItemsList
-          items={[
-            {
-              id: 1,
-              fname: "Tom",
-              lname: "Jerry",
-              memberID: 0,
-              birthDate: new Date(2010, 5, 15),
-              gender: "male",
-              picture: "",
-              bloodType: "A",
-              allergies: [],
-              notes: "Sample note for Tom Jerry",
-            },
-            {
-              id: 2,
-              fname: "Jerry",
-              lname: "Tom",
-              memberID: 0,
-              birthDate: new Date(2011, 6, 16),
-              gender: "male",
-              picture: "",
-              bloodType: "A",
-              allergies: [],
-              notes: "Sample note for Jerry Tom",
-            },
-          ]}
+          items={children}
           selectedChild={selectedChild}
           onSelectChild={handleSelectChild}
         />
       </View>
+      <Link href={{ pathname: "/child-information.screen", params: { mode: "CREATE" } }} style={tw`bg-white m-4 p-4 items-center justify-center rounded-lg`}>
+        <Text style={tw`font-semibold text-sky-500`}>Add child</Text>
+      </Link>
     </View>
   );
 }

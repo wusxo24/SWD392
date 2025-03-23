@@ -16,7 +16,7 @@ interface UserData {
   avatar: string;
 }
 
-const ChildSelector = () => {
+const ChildSelector = ({ selectedChildName }: { selectedChildName: string }) => {
   return (
     <View style={tw`flex-row items-center justify-between px-4 my-4`}>
       <Text style={tw`font-normal text-xl`}>Child: </Text>
@@ -25,7 +25,7 @@ const ChildSelector = () => {
           style={tw`rounded-full flex flex-row px-4 py-2 w-52 items-center justify-between bg-white `}
         >
           <Text style={tw`w-full text-lg font-semibold text-center`}>
-            Tom and Jerry
+            {selectedChildName}
           </Text>
           <ArrowDownIcon />
         </View>
@@ -43,6 +43,7 @@ export default function HomeScreen() {
     subscription: "No subscriptions",
     avatar: "https://picsum.photos/150",
   });
+  const [selectedChildName, setSelectedChildName] = useState("Select a child");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -60,7 +61,20 @@ export default function HomeScreen() {
       }
     };
 
+    const fetchSelectedChild = async () => {
+      try {
+        const selectedChildString = await AsyncStorage.getItem("selectedChild");
+        if (selectedChildString) {
+          const selectedChild = JSON.parse(selectedChildString);
+          setSelectedChildName(`${selectedChild.fname} ${selectedChild.lname}`);
+        }
+      } catch (error) {
+        console.error("Failed to fetch selected child from AsyncStorage", error);
+      }
+    };
+
     fetchUserData();
+    fetchSelectedChild();
 
     const logAsyncStorage = async () => {
       try {
@@ -82,7 +96,7 @@ export default function HomeScreen() {
         name={userData.userName}
         subscriptionPlan={userData.subscription}
       />
-      <ChildSelector />
+      <ChildSelector selectedChildName={selectedChildName} />
       <IndexStat />
     </View>
   );
