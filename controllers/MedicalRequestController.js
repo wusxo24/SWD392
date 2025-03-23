@@ -23,10 +23,10 @@ const rejectMedicalRequest = async (req, res) => {
 
 const acceptMedicalRequest = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { medicalRequestId } = req.params;
         const ManagerId = req.body.ManagerId;
         const DoctorId = req.body.DoctorId;
-        const response = await MedicalRequestService.acceptMedicalRequest(id, ManagerId, DoctorId);
+        const response = await MedicalRequestService.acceptMedicalRequest(medicalRequestId, ManagerId, DoctorId);
         res.status(200).json(response);
     } catch (error) {
         res.status(500).json({ error: error.message });

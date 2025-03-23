@@ -23,9 +23,9 @@ const rejectMedicalRequest = async (id) => {
     return { message: "Medical request rejected successfully" };
 };
 
-const acceptMedicalRequest = async (id, ManagerId, DoctorId) => {
+const acceptMedicalRequest = async (medicalRequestId, ManagerId, DoctorId) => {
     const medicalRequest = await MedicalRequest.findOneAndUpdate(
-        { _id: id },
+        { _id: medicalRequestId },
         { Status: "Approved", ManagerId, DoctorId, AssignedDate: Date.now() }
     );
     if (!medicalRequest) {
