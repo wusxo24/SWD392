@@ -10,7 +10,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { LoadingScreen } from "@/components/loadingScreen";
-import { Dialog, DialogActions, DialogContent, DialogTitle, Table, TableCell, TableHead, TableRow, TextField } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Paper, Table, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import { Button } from "react-scroll";
 
 const Subscription = () => {
@@ -58,11 +58,14 @@ const Subscription = () => {
   }, []);
 
   const fetchSubscriptions = async () => {
+    setLoading(true);
     try {
       const data = await getPricingPlans();
       setSubscription(data);
+      setLoading(false);
     } catch (error) {
       toast.error("Failed to fetch subscriptions.");
+      setLoading(false);
     }
   };
 
@@ -135,10 +138,10 @@ const Subscription = () => {
           >
             Create Subscription Plan
           </button>
-        {/* Subscription Table */}
-        <div className="relative overflow-visible">
-          <Table className="min-w-full bg-white shadow-md rounded-lg">
-            <TableHead className="bg-blue-400 text-white">
+           {/* Subscription Table */}
+        <TableContainer component={Paper}>
+          <Table className="min-w-full bg-white shadow-md">
+            <TableHead className="bg-blue-400 text-white rounded-lg">
               <TableRow>
                 <th className="py-2 px-4">Name</th>
                 <th className="py-2 px-4">Description</th>
@@ -151,7 +154,15 @@ const Subscription = () => {
               </TableRow>
             </TableHead>
             <tbody>
-              {subscription.length > 0 ? (
+            {loading ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-4">
+                    <div className="flex justify-center items-center">
+                      <LoadingScreen />
+                    </div>
+                  </td>
+                </tr>
+              ) : subscription.length > 0 ? (
                 subscription.map((plan) => (
                   <TableRow key={plan._id} className="border-b hover:bg-gray-100">
                     <TableCell className="py-2 px-4">{plan.name}</TableCell>
@@ -180,9 +191,7 @@ const Subscription = () => {
                         <EllipsisVerticalIcon className="h-5 w-5 text-gray-600" />
                       </button>
                       {openDropdown === plan._id && (
-                        <div
-                          className="absolute right-0 mt-2 bg-white border rounded shadow-md w-32 z-50 dropdown-menu"
-                        >
+                        <div className="absolute right-0 mt-2 bg-white border rounded shadow-md w-32 z-50 dropdown-menu">
                           <button
                             className="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left cursor-pointer"
                             onClick={() => {
@@ -202,20 +211,21 @@ const Subscription = () => {
                             Delete
                           </button>
                         </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <tr>
-                  <TableCell colSpan="8" className="text-center py-4 text-gray-500">
-                    No subscriptions available
-                  </TableCell>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-        </div>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <tr>
+                        <TableCell colSpan="8" className="text-center py-4 text-gray-500">
+                          No subscriptions available
+                        </TableCell>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+              </TableContainer>
+
          {/* Popup (Modal) for Creating Subscription Plan */}
         <Dialog open={isModalOpen} onClose={handleCloseModal}>
           <DialogTitle>{form._id ? "Update" : "Create"} Subscription Plan</DialogTitle>
