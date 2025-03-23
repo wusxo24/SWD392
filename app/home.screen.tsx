@@ -67,17 +67,6 @@ export default function HomeScreen() {
       />
       <ChildSelector />
       <IndexStat />
-      <TouchableOpacity
-        style={tw`mt-4 p-4 bg-red-500 rounded-full`}
-        onPress={() => {
-          // Clear storage logic here
-          console.log("Logging out...");
-          AsyncStorage.clear();
-          router.push("/login.screen")
-        }}
-      >
-        <Text style={tw`text-white text-center text-lg`}>Log Out</Text>
-      </TouchableOpacity>
     </View>
   );
 }

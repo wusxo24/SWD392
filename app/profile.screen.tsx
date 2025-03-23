@@ -1,5 +1,7 @@
-import { Link } from "expo-router";
-import { View, Text } from "react-native";
+import LogoutIcon from "@/assets/icons/Logout.icon";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Link, router } from "expo-router";
+import { View, Text, TouchableOpacity } from "react-native";
 import tw from "twrnc";
 
 const UserCenter = () => {
@@ -24,11 +26,30 @@ const SubscriptionPlanButton = () => {
   );
 };
 
+const LogOutButton = () => {
+  return (
+    <TouchableOpacity
+      style={tw`w-full h-12 flex flex-row gap-2 items-center justify-center bg-white rounded-xl`}
+      onPress={() => {
+        AsyncStorage.clear();
+        router.push("/login.screen");
+      }}
+    >
+      <LogoutIcon />
+      <Text style={tw`text-center text-xl font-normal text-cyan-600`}>
+        Log Out
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
 export default function ProfileScreen() {
   return (
     <View style={tw`p-4`}>
       <UserCenter />
       <SubscriptionPlanButton />
+      <Text style={tw`text-xl font-bold pt-8`}>Children Management</Text>
+      <LogOutButton />
     </View>
   );
 }
