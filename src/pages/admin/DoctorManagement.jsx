@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import moment from "moment";
 import Sidebar from "./SidebarAdmin";
-import { fetchDoctors, deleteDoctor, saveDoctor, updateDoctorStatus } from "@/services/doctorService";
+import { fetchDoctors, deleteDoctor, saveDoctor, updateDoctor, updateDoctorStatus } from "@/services/doctorService";
 import { Button, Table, Modal, Input, Select, Form, Space, Typography, Upload, message, Card, Row, Col, Switch, Image, DatePicker } from "antd";
 import { UploadOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 
@@ -77,25 +77,31 @@ export default function DoctorManagement() {
   };
 
   const filteredDoctors = doctors.filter(doctor => 
-    (doctor.username?.toLowerCase().includes(searchText.toLowerCase()) || 
-     doctor.email?.toLowerCase().includes(searchText.toLowerCase()) || 
-     doctor.clinic_name?.toLowerCase().includes(searchText.toLowerCase()))
+    (doctor.user_id?.username?.toLowerCase().includes(searchText.toLowerCase()) || 
+     doctor.user_id?.email?.toLowerCase().includes(searchText.toLowerCase()) || 
+     doctor.clinic_name?.toLowerCase().includes(searchText.toLowerCase())) ||
+     doctor.gender?.toLowerCase().includes(searchText.toLowerCase()) ||
+     doctor.experience?.toString().includes(searchText) ||
+     doctor.certificate?.toLowerCase().includes(searchText.toLowerCase()) ||
+     doctor.license_id?.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+     doctor.status?.toLowerCase().includes(searchText.toLowerCase()) ||
+     moment(doctor.date).format("YYYY-MM-DD").includes(searchText)
   );
-
   const columns = [
-    { title: "Username", dataIndex: ["user_id", "username"], key: "username", sorter: (a, b) => a.username.localeCompare(b.username) },
-    { title: "Email", dataIndex: ["user_id", "email"], key: "email" },
-    { title: "Gender", dataIndex: "gender", key: "gender" },
-    { title: "Clinic Name", dataIndex: "clinic_name", key: "clinic_name", sorter: (a, b) => a.clinic_name.localeCompare(b.clinic_name) },
-    { title: "Experience", dataIndex: "experience", key: "experience", sorter: (a, b) => a.experience - b.experience },
-    { title: "License", dataIndex: [ "license_id", "license_name"], key: "license_name" },
-    { title: "Certificate", dataIndex: [ "certificate"], key: "certificate" },
+    { title: "Username", dataIndex: ["user_id", "username"], key: "username", sorter: (a, b) => a.user_id?.username.localeCompare(b.username), align : "center" },
+    { title: "Email", dataIndex: ["user_id", "email"], key: "email" , sorter: (a, b) => a.user_id?.email.localeCompare(b.email), align : "center"},
+    { title: "Gender", dataIndex: "gender", key: "gender", sorter: (a, b) => a.gender.localeCompare(b.gender), align : "center", filters: [{ text: "Male", value: "Male" }, { text: "Female", value: "Female" }, { text: "Other", value: "Other" }], onFilter: (value, record) => record.gender === value },
+    { title: "Clinic Name", dataIndex: "clinic_name", key: "clinic_name", sorter: (a, b) => a.clinic_name.localeCompare(b.clinic_name), align : "center"},
+    { title: "Experience", dataIndex: "experience", key: "experience", sorter: (a, b) => a.experience - b.experience, align : "center"},
+    { title: "License", dataIndex: [ "license_id", "license_name"], key: "license_name", sorter: (a, b) => a.license_id.license_name.localeCompare(b.license_id.license_name), align : "center"},
+    { title: "Certificate", dataIndex: [ "certificate"], key: "certificate", sorter: (a, b) => a.certificate.localeCompare(b.certificate), align : "center"},
     { 
       title: "Date of Birth",
       dataIndex: "date",
       key: "date",
       sorter: (a, b) => new Date(a.date) - new Date(b.date),
       render: (date) => date ? new Date(date).toLocaleDateString() : "N/A",
+      align : "center"
     },    
     {
       title: "Photo",
@@ -107,6 +113,9 @@ export default function DoctorManagement() {
       title: "Status", 
       dataIndex: ["user_id", "status"], 
       key: "status",
+      sorter: (a, b) => a.user_id?.status.localeCompare(b.user_id?.status),
+      align : "center",
+      filters: [{ text: "Active", value: "Active" }, { text: "Inactive", value: "Inactive" }],
       render: (_, record) => (
         <Switch 
           checked={record.user_id?.status === "Active"} 
@@ -118,6 +127,7 @@ export default function DoctorManagement() {
     },
     {
       title: "Actions",
+      align: "center",
       render: (_, record) => (
         <Space>
           <Button type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)}>Edit</Button>
@@ -155,7 +165,6 @@ export default function DoctorManagement() {
     <div className="flex">
       <Sidebar/>
     <div className="w-full p-5" style={{ padding: "30px", backgroundColor: "#f8f9fa", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <ToastContainer />
       <Card style={{ width: "100%", maxWidth: "1500px", padding: "20px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", borderRadius: "10px" }}>
         <Space style={{ marginBottom: "20px", display: "flex", justifyContent: "space-between" }}>
           <Input placeholder="Search doctors..." prefix={<SearchOutlined />} value={searchText} onChange={(e) => setSearchText(e.target.value)} style={{ width: 300 }} />
@@ -175,7 +184,7 @@ export default function DoctorManagement() {
       >
         <Form form={form} layout="vertical">
           <Row gutter={16}>
-            <Col span={5}>
+            <Col span={6}>
               <Form.Item name="username" label="Username" rules={[{ required: true, message: "Username is required" }]}>
                 <Input placeholder="Enter username" />
               </Form.Item>
@@ -188,9 +197,11 @@ export default function DoctorManagement() {
           </Row>
 
           {!editId && (
+             <Col span={16}>
             <Form.Item name="password" label="Password" rules={[{ required: true, message: "Password is required" }]}>
               <Input.Password placeholder="Enter password" />
             </Form.Item>
+            </Col>
           )}
 
           <Row gutter={16}>
@@ -222,7 +233,7 @@ export default function DoctorManagement() {
                 <Input placeholder="Enter license ID" />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item
                 name="certificate"
                 label="Certificate"
