@@ -57,7 +57,7 @@ const Sidebar = () => {
   const handleResetPassword = async () => {
     const token = localStorage.getItem("resetToken") || sessionStorage.getItem("resetToken");
 
-    if (!token || !newPassword) {
+    if (!newPassword) {
       toast.error("Please enter a valid password.");
       return;
     }
@@ -135,7 +135,7 @@ const Sidebar = () => {
 
           {/* Logout Popup */}
           {isLogoutPopupOpen && (
-            <div ref={menuRef} className="absolute bottom-14 left-65 w-48 bg-white shadow-lg rounded-lg border border-gray-200">
+            <div ref={menuRef} className="absolute bottom-14 left-65 w-48 bg-white shadow-lg rounded-lg border border-gray-200 z-50">
               <button
                 onClick={() => setIsResetPasswordModalOpen(true)}
                 className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
