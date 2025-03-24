@@ -15,7 +15,9 @@ const createMedicalRequest = async (RecordId, requestData) => {
 };
 
 const rejectMedicalRequest = async (id) => {
-    const medicalRequest = await MedicalRequest.findOneAndUpdate({ _id: id }, { Status: "Rejected" });
+    const medicalRequest = await MedicalRequest.findOneAndUpdate(
+        { _id: id }, 
+        { Status: "Rejected" });
     if (!medicalRequest) {
         throw new Error("Medical request not found");
     }
