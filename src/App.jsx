@@ -27,7 +27,7 @@ import DoctorList from "./pages/manager/DoctorList";
 import MemberRequest from "./pages/manager/MemberRequest";
 import RatingFeedback from "./pages/manager/RatingFeedback";
 import AddInfo from "./pages/doctor/AddInfo";
-import ViewRequest from "./pages/doctor/ViewRequest";
+import MedicalRequestManagement from "./pages/doctor/MedicalRequestManagement";
 import AnalyzeReport from "./pages/doctor/AnalyzeReport";
 import { ServicesHistory } from "./pages/member/servicesHistory";
 import { SuccessPaid } from "./pages/member/successPaid";
@@ -55,7 +55,7 @@ function App() {
     Member: "/home",
     Manager: "/dashboard",
     Admin: "/member-management",
-    Doctor: "/view-medical-request",
+    Doctor: "/medical-request-management",
   };
   const hideNavFooter =
     location.pathname === "/login" ||
@@ -135,7 +135,7 @@ function App() {
         {/* Doctor Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Doctor"]} />}>
           <Route path="/add-info" element={<AddInfo />} />
-          <Route path="/view-medical-request" element={<ViewRequest />} />
+          <Route path="/medical-request-management" element={<MedicalRequestManagement />} />
           <Route path="/analyze-report" element={<AnalyzeReport />} />
         </Route>
 

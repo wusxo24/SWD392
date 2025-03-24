@@ -1,7 +1,4 @@
-import { HiChatBubbleOvalLeftEllipsis } from "react-icons/hi2";
-import { HiMiniInformationCircle } from "react-icons/hi2";
-import { HiStar } from "react-icons/hi2";
-import { HiChartBarSquare } from "react-icons/hi2";
+import { FaHandHoldingMedical } from "react-icons/fa";
 import { FaUserDoctor } from "react-icons/fa6";
 import { useEffect, useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
@@ -86,7 +83,7 @@ const Sidebar = () => {
       {/* Navigation Links */}
       <ul className="text-[#515151] mt-5 flex-1">
         {[
-          { to: "/medical-request-management", label: "Medical Request Management", icon: <HiChartBarSquare /> },
+          { to: "/medical-request-management", label: "Medical Request Management", icon: <FaHandHoldingMedical /> },
           { to: "/doctor-profile", label: "Doctor Profile", icon: <FaUserDoctor /> },
         ].map(({ to, label, icon }) => (
           <NavLink
