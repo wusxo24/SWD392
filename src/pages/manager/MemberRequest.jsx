@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle, Avatar, List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, CircularProgress } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle, Avatar, List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, CircularProgress, Menu, TablePagination, TableFooter } from "@mui/material";
 import SidebarManager from "./SidebarManager";
 import { getAllMedicalRequests, acceptMedicalRequest, rejectMedicalRequest } from "@/services/medicalRequestService";
 import { toast } from "react-toastify";
 import { fetchDoctors } from "@/services/doctorService";  // Import your fetchDoctors function
 import { LoadingScreen } from "@/components/loadingScreen";
-
+import IconButton from "@mui/material/IconButton";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 const MemberRequest = () => {
   const [requests, setRequests] = useState([]);
   const [openDoctorModal, setOpenDoctorModal] = useState(false); // Modal visibility
@@ -16,6 +17,11 @@ const MemberRequest = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(false); // Add loading state
   const [managerId, setManagerId] = useState(null); // State to store ManagerId
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedRequestId, setSelectedRequestId] = useState(null);
+    // Pagination State
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Get ManagerId from localStorage
   useEffect(() => {
@@ -46,7 +52,6 @@ const MemberRequest = () => {
         setLoading(false); // End loading
       }
     };
-  
     const fetchAvailableDoctors = async () => {
       setLoading(true); // Start loading for doctors
       try {
@@ -64,6 +69,16 @@ const MemberRequest = () => {
     fetchRequests();
     fetchAvailableDoctors();
   }, []);
+
+  const handleMenuOpen = (event, requestId) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedRequestId(requestId);
+  };
+  
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedRequestId(null);
+  };
 
   useEffect(() => {
     if (statusFilter) {
@@ -90,14 +105,32 @@ const MemberRequest = () => {
     }
     try {
       const response = await acceptMedicalRequest(currentRequestId, doctorId,managerId);
-      setRequests(requests.map(req => req._id === currentRequestId ? { ...req, Status: 'Accepted', DoctorId: doctorId } : req));
-      fetchDoctors();
+      const assignedDoctor = doctors.find(doc => doc.user_id._id === doctorId);
+      // Update the state immediately
+      setRequests(prevRequests =>
+        prevRequests.map(req =>
+          req._id === currentRequestId
+            ? { ...req, Status: 'Accepted', DoctorId: doctorId, DoctorInfo: assignedDoctor }
+            : req
+        )
+      );
+  
       setOpenDoctorModal(false); // Close modal after acceptance
       setSelectedDoctor(null); // Clear selected doctor
       toast.success("Medical request accepted successfully!");
     } catch (error) {
       console.error("Failed to accept request:", error);
     }
+  };
+
+  // Pagination Handlers
+  const handleChangePage = (_, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); 
   };
 
   const handleReject = async (medicalRequestId) => {
@@ -149,12 +182,11 @@ const MemberRequest = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredRequests.map((req) => (              
+              {filteredRequests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((req) => (              
                 <TableRow key={req._id}>
                   <TableCell>{req.CreatedDate ? new Date(req.CreatedDate).toLocaleDateString() : "N/A"}</TableCell>
                   <TableCell>{req.Reason || "No reason provided"}</TableCell>
                   <TableCell>{req.Status || "Unknown"}</TableCell>
-
                   {/* Doctor Incharge Column */}
                   <TableCell>
                     {req.DoctorInfo ? (
@@ -169,22 +201,32 @@ const MemberRequest = () => {
                       "Not Assigned"
                     )}
                   </TableCell>
-
-                  <TableCell>
+                  <TableCell style={{ width: "10%" }}>
                     {req.Status === "Pending" && (
-                      <div>
-                        <Button variant="contained" color="success" onClick={() => handleAccept(req._id)} className="mr-2">
-                          Accept
-                        </Button>
-                        <Button variant="contained" color="error" onClick={() => handleReject(req._id)}>
-                          Reject
-                        </Button>
-                      </div>
+                      <>
+                        <IconButton onClick={(e) => handleMenuOpen(e, req._id)}>
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu anchorEl={anchorEl} open={Boolean(anchorEl && selectedRequestId === req._id)} onClose={handleMenuClose}>
+                          <MenuItem onClick={() => { handleAccept(req._id); handleMenuClose(); }}>Accept</MenuItem>
+                          <MenuItem onClick={() => { handleReject(req._id); handleMenuClose(); }}>Reject</MenuItem>
+                        </Menu>
+                      </>
                     )}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                count={filteredRequests.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </TableRow>
             </Table>
           </TableContainer>
         )}

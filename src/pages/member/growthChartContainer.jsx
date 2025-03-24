@@ -99,7 +99,7 @@ const GrowthChartContainer = () => {
       }
     };
     fetchTrackingData();
-  }, [childData]);
+  }, [childData]); //waring 2 time because of this 
 
   useEffect(() => {
     if (trackingData.length > 0) {
@@ -245,9 +245,9 @@ const GrowthChartContainer = () => {
         </span>
       </Typography>
 
-      <Grid container spacing={4} justifyContent="center">
-        <Grid item xs={12} md={4}>
-          <Card sx={{ textAlign: "center", p: 3, boxShadow: 3 }}>
+      <Grid container spacing={4} justifyContent="center" alignItems="stretch">
+        <Grid item xs={12} md={4} sx={{ display: "flex" }}>
+          <Card sx={{ textAlign: "center", p: 3, boxShadow: 3, width: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <Avatar
               src={childData.picture}
               alt="Child Avatar"
@@ -296,46 +296,108 @@ const GrowthChartContainer = () => {
           </Card>
         </Grid>
 
+        <Grid item xs={12} md={6} sx={{ display: "flex" }}>
+  <Card sx={{ p: 3, boxShadow: 3, width: "100%", height: "100%" }}>
+    <CardContent>
+      <Grid container spacing={2}>
+        {/* Left Column (First 5 Fields) */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3, boxShadow: 3 }}>
-            <CardContent>
-              <Stack spacing={2}>
-                <TextField
-                  label="Height (cm)"
-                  name="Height"
-                  value={trackingData.Height || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Weight (kg)"
-                  name="Weight"
-                  value={trackingData.Weight || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Head Circumference (cm)"
-                  name="HeadCircumference"
-                  value={trackingData.HeadCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Waist Circumference (cm)"
-                  name="WaistCircumference"
-                  value={trackingData.WaistCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleUpdateGrowth}
-                >
+          <Stack spacing={2}>
+            <TextField
+              label="Height (cm)"
+              name="Height"
+              value={trackingData.Height || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Weight (kg)"
+              name="Weight"
+              value={trackingData.Weight || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Head Circumference (cm)"
+              name="HeadCircumference"
+              value={trackingData.HeadCircumference || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Waist Circumference (cm)"
+              name="WaistCircumference"
+              value={trackingData.WaistCircumference || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Hip Circumference (cm)"
+              name="HipCircumference"
+              value={trackingData.HipCircumference || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+          </Stack>
+        </Grid>
+
+        {/* Right Column (Next 5 Fields) */}
+        <Grid item xs={12} md={6}>
+          <Stack spacing={2}>
+            <TextField
+              label="Biceps Circumference (cm)"
+              name="BicepsCircumference"
+              value={trackingData.BicepsCircumference || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Triceps Circumference (cm)"
+              name="TricepsCircumference"
+              value={trackingData.TricepsCircumference || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Chest Circumference (cm)"
+              name="ChestCircumference"
+              value={trackingData.ChestCircumference || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Thigh Circumference (cm)"
+              name="ThighCircumference"
+              value={trackingData.ThighCircumference || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Calf Circumference (cm)"
+              name="CalfCircumference"
+              value={trackingData.CalfCircumference || ""}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+          </Stack>
+        </Grid>
+      </Grid>
+              {/* Submit Button (Full Width) */}
+              <Box mt={3} display="flex" justifyContent="center">
+                <Button variant="contained" color="primary" onClick={handleUpdateGrowth}>
                   Update Growth
                 </Button>
-              </Stack>
+              </Box>
             </CardContent>
           </Card>
         </Grid>
@@ -412,12 +474,12 @@ const GrowthChartContainer = () => {
       </Dialog>
 
       <ChildHealth 
-  isOpen={isChildHealthOpen} 
-  onClose={() => setIsChildHealthOpen(false)}
-  trackingData={trackingData}
-  setTrackingData={setTrackingData}  // ✅ Pass setTrackingData
-  medicalRequests={medicalRequests}
-/>
+        isOpen={isChildHealthOpen} 
+        onClose={() => setIsChildHealthOpen(false)}
+        trackingData={trackingData}
+        setTrackingData={setTrackingData}  
+        medicalRequests={medicalRequests}
+      />
       {/* Modal Component */}
       <Modal
         open={open}
