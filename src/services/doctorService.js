@@ -11,6 +11,16 @@ export const fetchDoctors = async () => {
     }
 };
 
+export const updateDoctor = async (id, data) => {
+    try {
+        const response = await axios.put(`/api/doctors/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating doctor:", error);
+        throw error;
+    }
+};
+
 // Delete a doctor by ID
 export const deleteDoctor = async (id) => {
     try {

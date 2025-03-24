@@ -1,5 +1,6 @@
-import { HiChartBarSquare } from "react-icons/hi2";
+import { LuUsersRound } from "react-icons/lu";
 import { FaUserDoctor } from "react-icons/fa6";
+import { GiBossKey } from "react-icons/gi";
 import { useEffect, useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { logout, resetPassword } from "@/services/authService"; // Import functions
@@ -83,8 +84,9 @@ const Sidebar = () => {
       {/* Navigation Links */}
       <ul className="text-[#515151] mt-5 flex-1">
         {[
-          { to: "/account", label: "Account Management", icon: <HiChartBarSquare /> },
+          { to: "/member-management", label: "Member Management", icon: <LuUsersRound /> },
           { to: "/doctor-management", label: "Doctor Management", icon: <FaUserDoctor /> },
+          { to: "/manager-management", label: "Manager Management", icon: <GiBossKey /> },
         ].map(({ to, label, icon }) => (
           <NavLink
             key={to}

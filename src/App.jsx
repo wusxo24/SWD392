@@ -26,7 +26,6 @@ import Subscription from "./pages/manager/Subscription";
 import DoctorList from "./pages/manager/DoctorList";
 import MemberRequest from "./pages/manager/MemberRequest";
 import RatingFeedback from "./pages/manager/RatingFeedback";
-import Account from "./pages/admin/Account";
 import AddInfo from "./pages/doctor/AddInfo";
 import ViewRequest from "./pages/doctor/ViewRequest";
 import AnalyzeReport from "./pages/doctor/AnalyzeReport";
@@ -39,6 +38,8 @@ import PlanDetails from "./pages/guest/PlanDetails";
 import GrowthChartContainerBaby from "./pages/member/growthChartContainerBaby";
 import DoctorManagement from "./pages/admin/DoctorManagement";
 import { ManageBlogs } from "./pages/manager/manageBlogs";
+import MemberManagement from "./pages/admin/MemberManagement";
+import ManagerManagement from "./pages/admin/ManagerManagement";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 
@@ -126,8 +127,9 @@ function App() {
         {/* Admin Pages */}
 
         <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
-          <Route path="/account" element={<Account />} />
           <Route path="/doctor-management" element={<DoctorManagement />} />
+          <Route path="/member-management" element={<MemberManagement />} />
+          <Route path="/manager-management" element={<ManagerManagement />} />
         </Route>
 
         {/* Doctor Pages */}
