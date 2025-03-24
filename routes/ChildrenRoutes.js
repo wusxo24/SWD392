@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const childrenController = require("../controllers/ChildrenController");
 const { authorizeChildOwner, authMiddleware } = require("../middleware/authMiddleware");
-
+ 
+router.get("/children", authMiddleware, childrenController.getAllChildren);
 /**
  * @swagger
  * /children:
