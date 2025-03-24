@@ -107,55 +107,101 @@ export default function MemberManagement() {
   );
 
   const columns = [
-    { title: "Username", dataIndex: "username", key: "username",sorter: (a, b) => a.user_id?.username.localeCompare(b.username), align : "center" },
-    { title: "Email", dataIndex: "email", key: "email" , sorter: (a, b) => a.user_id?.email.localeCompare(b.email), align : "center"},
-    { title: "Nickname", dataIndex: "nickname", key: "nickname" , sorter: (a, b) => a.nickname.localeCompare(b.nickname), align : "center"},
-    { title: "Fullname", dataIndex: "fullname", key: "fullname" , sorter: (a, b) => a.fullname.localeCompare(b.fullname), align : "center"},
-    { title: "Gender", dataIndex: "gender", key: "gender" , sorter: (a, b) => a.gender.localeCompare(b.gender), align : "center", filters: [{ text: "Male", value: "male" }, { text: "Female", value: "female" }], onFilter: (value, record) => record.gender === value },
-    { title: "Phone", dataIndex: "phone", key: "phone" , sorter: (a, b) => a.phone.localeCompare(b.phone), align : "center"},
-    { title: "Address", dataIndex: "address", key: "address" , sorter: (a, b) => a.address.localeCompare(b.address), align : "center"},
+    { 
+        title: "Username", 
+        dataIndex: "username", 
+        key: "username",
+        sorter: (a, b) => (a.user_id?.username || "").localeCompare(b.user_id?.username || ""), 
+        align: "center" 
+    },
+    { 
+        title: "Email", 
+        dataIndex: "email", 
+        key: "email", 
+        sorter: (a, b) => (a.user_id?.email || "").localeCompare(b.user_id?.email || ""), 
+        align: "center"
+    },
+    { 
+        title: "Nickname", 
+        dataIndex: "nickname", 
+        key: "nickname", 
+        sorter: (a, b) => (a.nickname || "").localeCompare(b.nickname || ""), 
+        align: "center"
+    },
+    { 
+        title: "Fullname", 
+        dataIndex: "fullname", 
+        key: "fullname", 
+        sorter: (a, b) => (a.fullname || "").localeCompare(b.fullname || ""), 
+        align: "center"
+    },
+    { 
+        title: "Gender", 
+        dataIndex: "gender", 
+        key: "gender", 
+        sorter: (a, b) => (a.gender || "").localeCompare(b.gender || ""), 
+        align: "center",
+        filters: [{ text: "Male", value: "Male" }, { text: "Female", value: "Female" }], 
+        onFilter: (value, record) => record.gender === value 
+    },
+    { 
+        title: "Phone", 
+        dataIndex: "phone", 
+        key: "phone", 
+        sorter: (a, b) => (a.phone || "").localeCompare(b.phone || ""), 
+        align: "center"
+    },
+    { 
+        title: "Address", 
+        dataIndex: "address", 
+        key: "address", 
+        sorter: (a, b) => (a.address || "").localeCompare(b.address || ""), 
+        align: "center"
+    },
     { 
         title: "Date of Birth",
         dataIndex: "birthdate",
         key: "date",
-        sorter: (a, b) => new Date(a.birthdate) - new Date(b.birthdate),
+        sorter: (a, b) => new Date(a.birthdate || "1970-01-01") - new Date(b.birthdate || "1970-01-01"),
         render: (date) => date ? new Date(date).toLocaleDateString() : "N/A",
-        align : "center",
-      },    
+        align: "center",
+    },    
     {
-      title: "status",
-      dataIndex: ["user_id", "status"],
-      key: "status",
-      align : "center",
-      sorter: (a, b) => a.user_id.status.localeCompare(b.user_id.status),
-      filters: [{ text: "Active", value: "Active" }, { text: "Inactive", value: "Inactive" }],
-      render: (_, record) => (
-        <Switch
-          checked={record.user_id.status === "Active"}
-          onChange={(checked) => handleStatusChange(record._id, checked)}
-          checkedChildren="Active"
-          unCheckedChildren="Inactive"
-        />
-      ),
+        title: "Status",
+        dataIndex: ["user_id", "status"],
+        key: "status",
+        align: "center",
+        sorter: (a, b) => (a.user_id?.status || "").localeCompare(b.user_id?.status || ""),
+        filters: [{ text: "Active", value: "Active" }, { text: "Inactive", value: "Inactive" }],
+        render: (_, record) => (
+            <Switch
+                checked={record.user_id?.status === "Active"}
+                onChange={(checked) => handleStatusChange(record._id, checked)}
+                checkedChildren="Active"
+                unCheckedChildren="Inactive"
+            />
+        ),
     },
     {
         title: "Photo",
         dataIndex: "picture",
         key: "photo",
-        align : "center",
+        align: "center",
         render: (photo) => (
-          <img src={photo} alt="Member" style={{ width: 50, height: 50, borderRadius: "50%" }} />),}, 
+            <img src={photo || "default-image-url.jpg"} alt="Member" style={{ width: 50, height: 50, borderRadius: "50%" }} />
+        ),
+    }, 
     {
-      title: "Actions",
-      align : "center",
-      render: (_, record) => (
-        <Space>
-           <Button type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)}>Edit</Button>
-          <Button danger icon={<DeleteOutlined />} onClick={() => handleDelete(record._id)}>Delete</Button>
-        </Space>
-      ),
+        title: "Actions",
+        align: "center",
+        render: (_, record) => (
+            <Space>
+                <Button type="primary" icon={<EditOutlined />} onClick={() => handleEdit(record)}>Edit</Button>
+                <Button danger icon={<DeleteOutlined />} onClick={() => handleDelete(record._id)}>Delete</Button>
+            </Space>
+        ),
     },
-  ];
+];
 
   return (
     <div className="flex">
@@ -171,7 +217,7 @@ export default function MemberManagement() {
               style={{ width: 300 }}
             />
           </Space>
-          <Table dataSource={filteredMembers} columns={columns} rowKey="_id" bordered pagination={{ pageSize: 5 }} />
+          <Table dataSource={filteredMembers} columns={columns} rowKey="_id" bordered pagination={{ pageSize: 4 }} />
         </Card>
         <Modal
         title={editId ? "Edit Member" : "Add Member"}

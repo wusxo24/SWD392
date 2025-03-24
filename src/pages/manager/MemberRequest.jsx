@@ -91,6 +91,7 @@ const MemberRequest = () => {
     try {
       const response = await acceptMedicalRequest(currentRequestId, doctorId,managerId);
       setRequests(requests.map(req => req._id === currentRequestId ? { ...req, Status: 'Accepted', DoctorId: doctorId } : req));
+      fetchDoctors();
       setOpenDoctorModal(false); // Close modal after acceptance
       setSelectedDoctor(null); // Clear selected doctor
       toast.success("Medical request accepted successfully!");
@@ -156,11 +157,13 @@ const MemberRequest = () => {
 
                   {/* Doctor Incharge Column */}
                   <TableCell>
-                    {doctors.find(doc => doc._id == req.DoctorId) ? (
-                     
+                    {req.DoctorInfo ? (
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar src={doctors.find(doc => doc._id == req.DoctorId)?.picture || "/default-avatar.jpg"} style={{ width: 40, height: 40, marginRight: 10 }} />
-                        <span>{doctors.find(doc => doc._id == req.DoctorId)?.user_id?.username || "Unknown Doctor"}</span>
+                        <Avatar
+                          src={req.DoctorInfo.picture || "/default-avatar.jpg"}
+                          style={{ width: 40, height: 40, marginRight: 10 }}
+                        />
+                        <span>{req.DoctorId.username || "Unknown Doctor"}</span>
                       </div>
                     ) : (
                       "Not Assigned"
@@ -201,7 +204,7 @@ const MemberRequest = () => {
                 <ListItem
                   button="true" 
                   key={doctor._id}
-                  onClick={() => handleDoctorSelection(doctor._id)}
+                  onClick={() => handleDoctorSelection(doctor.user_id._id)}
                   selected={selectedDoctor === doctor._id}
                   className="cursor-pointer min-w-[500px] items-start"
                   style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 2fr 2fr', alignItems: 'center' }}
