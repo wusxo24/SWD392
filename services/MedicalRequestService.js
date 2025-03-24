@@ -1,5 +1,6 @@
 const MedicalRequest = require("../models/MedicalRequest");
 const DoctorResponse = require("../models/DoctorResponse");
+const DoctorInfo = require("../models/DoctorInfo");
 const mongoose = require("mongoose");
 
 
@@ -66,9 +67,30 @@ const doctorStartWorkingOnMedicalRequest = async (medicalRequestId) => {
 };
 
 const getAllMedicalRequests = async () => {
-    const medicalRequests = await MedicalRequest.find();
+    const medicalRequests = await MedicalRequest.find()
+        .populate({
+            path: "DoctorId",
+            model: "User",
+            select: "username email" // Adjust fields as needed
+        })
+        .lean(); // Convert to plain objects for easier manipulation
+
+    // Fetch DoctorInfo using DoctorId (user_id)
+    for (let request of medicalRequests) {
+        if (request.DoctorId) {
+            const doctorInfo = await DoctorInfo.findOne({ user_id: request.DoctorId._id }).lean();
+            request.DoctorInfo = doctorInfo; // Attach doctor details
+        }
+    }
+
     return medicalRequests;
 };
+
+
+const getApprovedRequestsByDoctorId = async (doctorId) =>{
+    console.log(doctorId);
+    return await MedicalRequest.find({ DoctorId: new mongoose.Types.ObjectId(doctorId), Status: "Approved" });
+  }
 
 module.exports = {
     createMedicalRequest,
@@ -77,5 +99,6 @@ module.exports = {
     getMedicalRequestByRecordId,
     getMedicalRequestByDoctorId,
     doctorStartWorkingOnMedicalRequest,
-    getAllMedicalRequests
+    getAllMedicalRequests,
+    getApprovedRequestsByDoctorId
 };
