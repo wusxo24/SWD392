@@ -71,6 +71,7 @@ export default function ChildSelectorScreen() {
   const handleSelectChild = async (child: Child) => {
     setSelectedChild(child);
     await AsyncStorage.setItem("selectedChild", JSON.stringify(child));
+    router.push("/home.screen"); // Redirect to home screen
   };
 
   useEffect(() => {
