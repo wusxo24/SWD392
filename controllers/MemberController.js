@@ -24,22 +24,45 @@ const getMemberById = async (req, res) => {
 // Cập nhật thông tin thành viên
 const updateMember = async (req, res) => {
     try {
-        const { id } = req.params;
-        const updatedMember = await MemberService.updateMember(id, req.body);
-        res.status(200).json({ message: "Cập nhật thành công!", member: updatedMember });
+        const memberId = req.params.id; // Get memberId from URL
+        const memberData = req.body; // Get member data from the request body
+
+        console.log('memberId:', memberId); // Log memberId
+        console.log('memberData:', memberData); // Log memberData
+
+        // Call the service to update both member and user
+        const updatedData = await MemberService.updateMemberAndUser(memberId, memberData);
+
+        // Send the response with both updated member and user
+        res.json(updatedData);
     } catch (error) {
-        res.status(500).json({ message: "Lỗi khi cập nhật thành viên", error: error.message });
+        console.error('Error updating member and user:', error); // Log the error
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 };
+
 
 // Xóa thành viên theo ID
 const deleteMember = async (req, res) => {
     try {
-        const { id } = req.params;
-        await MemberService.deleteMember(id);
+        await MemberService.deleteMember(req.params.id);
         res.status(200).json({ message: "Xóa thành viên thành công!" });
     } catch (error) {
         res.status(500).json({ message: "Lỗi khi xóa thành viên", error: error.message });
+    }
+};
+
+const updateMemberStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        // Call the service to update member status
+        const updatedUser = await MemberService.updateMemberStatus(id, status);
+
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        res.status(500).json({ message: error.message || "Internal Server Error" });
     }
 };
 
@@ -48,5 +71,6 @@ module.exports = {
     getAllMembers,
     getMemberById,
     updateMember,
-    deleteMember
+    deleteMember,
+    updateMemberStatus
 };

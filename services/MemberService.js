@@ -3,7 +3,7 @@ const User = require("../models/User");
 const mongoose = require("mongoose");
 
 const getAllMembers = async () => {
-    return await Member.find();
+    return await Member.find().populate("user_id", "username email role status");
 };
 
 const getMemberById = async (id) => {
@@ -45,37 +45,103 @@ const getMemberById = async (id) => {
     return member[0];
 };
 
-const updateMember = async (id, updateData) => {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new Error("Invalid member ID format");
+const updateMember = async (memberId, memberData) => {
+    try {
+        // Update member in the database
+        const member = await Member.findByIdAndUpdate(memberId, memberData, { new: true, runValidators: true });
+        if (!member) {
+            throw new Error('Member not found');
+        }
+        return member;
+    } catch (error) {
+        throw new Error(`Error updating member: ${error.message}`);
     }
-
-    delete updateData._id;
-
-    const updatedMember = await Member.findOneAndUpdate(
-        { user_id: id },
-        { $set: updateData },
-        { new: true, runValidators: true }
-    );
-
-    if (!updatedMember) {
-        throw new Error("Thành viên không tồn tại!");
-    }
-
-    return updatedMember;
 };
+
+const updateMemberAndUser = async (memberId, memberData) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        // Separate member and user data from the incoming request
+        const { user_id, email, role, status, username, ...memberFields } = memberData;
+
+        // Update the member information
+        const member = await Member.findOneAndUpdate(
+            { _id: memberId },
+            { ...memberFields },
+            { new: true, runValidators: true, session }
+        );
+        if (!member) {
+            throw new Error('Member not found');
+        }
+
+        // Update the user information
+        const user = await User.findOneAndUpdate(
+            { _id: member.user_id }, // user_id is the reference in the Member model
+            { email, role, status, username },  // only update the relevant fields for the user
+            { new: true, runValidators: true, session }
+        );
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        // Commit the transaction
+        await session.commitTransaction();
+        session.endSession();
+
+        // Return both updated member and user
+        return { member, user };
+    } catch (error) {
+        // Rollback the transaction in case of error
+        await session.abortTransaction();
+        session.endSession();
+        throw new Error(`Error updating member and user: ${error.message}`);
+    }
+};
+
 
 const deleteMember = async (id) => {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new Error("Invalid member ID format");
+    const member = await Member.findById(id);
+    if (!member) {
+        throw new Error("Member not found");
     }
 
-    const deletedMember = await Member.findOneAndDelete({ user_id: id });
-    if (!deletedMember) {
-        throw new Error("Thành viên không tồn tại!");
-    }
+    // Delete associated user
+    await User.findByIdAndDelete(member.user_id);
 
-    return deletedMember;
+    // Finally, delete the member's info
+    await Member.findByIdAndDelete(id);
+
+    return { message: "Member and related data deleted successfully" };
 };
 
-module.exports = { getAllMembers, getMemberById, updateMember, deleteMember };
+const updateMemberStatus = async (memberId, status) => {
+    try {
+        console.log("Updating member ID:", memberId, "to status:", status); // Debugging log
+
+        // 🔹 Find the member by ID
+        const member = await Member.findById(memberId);
+        if (!member) {
+            throw new Error("Member not found");
+        }
+
+        // 🔹 Update the user's status (User model)
+        const updatedUser = await User.findByIdAndUpdate(
+            member.user_id, // Get user_id from MemberInfo
+            { status }, 
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            throw new Error("User not found");
+        }
+
+        return updatedUser;
+    } catch (error) {
+        console.error("Error updating member status:", error);
+        throw error; // Let the controller handle the error response
+    }
+};
+
+module.exports = { getAllMembers, getMemberById, updateMember, deleteMember, updateMemberStatus, updateMemberAndUser };

@@ -132,4 +132,6 @@ router.put("/:id", authMiddleware, authorize(["Admin"]), managerController.updat
  */
 router.delete("/:id", authMiddleware, authorize(["Admin"]), managerController.deleteManager);
 
+router.patch("/:id/status", authMiddleware, authorize(["Admin"]), managerController.updateManagerStatus);
+
 module.exports = router;
