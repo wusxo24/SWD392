@@ -110,7 +110,6 @@ export const acceptMedicalRequest = async (medicalRequestId, managerId, doctorId
     });
    
     if (response.status === 200 || response.status === 201) {
-      toast.success("Medical request accepted successfully!");
       return response.data; // Return the response data
     } else {
       throw new Error("Unexpected response from server.");

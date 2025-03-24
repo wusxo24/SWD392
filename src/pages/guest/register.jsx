@@ -6,6 +6,7 @@ import { EyeIcon } from "lucide-react";
 import { EyeOffIcon } from "lucide-react";
 import register from '@/assets/Login_image.png';
 import { registerUser } from '@/services/authService'; // Import the service
+import { toast } from 'react-toastify';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -66,8 +67,7 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
       });
-
-      alert('Registration successful! Please check your email for verification.');
+      toast.success('Registration successful! Please check your email for verification.');
       navigate('/login');
     } catch (error) {
       setServerError(
