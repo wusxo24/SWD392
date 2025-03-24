@@ -3,10 +3,10 @@ export interface Child {
   memberID: number;
   fname: string;
   lname: string;
-  birthdate?: string;
-  gender: "male" | "female" | "other";
+  birthdate: string;
+  gender: "Male" | "Female";
   picture: string;
-  bloodType: "A" | "B" | "AB" | "O";
-  allergies: string[];
+  bloodType: "A-" | "A+" | "B-" | "B+" | "AB-" | "AB+" | "O-" | "O+";
+  allergy: string;
   notes: string;
 }

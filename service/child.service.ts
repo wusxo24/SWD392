@@ -1,17 +1,5 @@
+import { Child } from "@/models/Child.model";
 import axiosInstance from "../utils/axiosInstance";
-
-interface Child {
-  id: string;
-  fname: string;
-  lname: string;
-  memberID: number;
-  birthdate: string;
-  gender: string;
-  picture: string;
-  blood_type: string;
-  allergy: string;
-  notes: string;
-}
 
 interface ChildService {
   getChildren(): Promise<Child[]>;

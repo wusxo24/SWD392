@@ -1,23 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosInstance from "../utils/axiosInstance";
+import { LoginResponse } from "@/models/LoginResponse.model";
 
 interface AuthService {
   signup(username: string, email: string, password: string): Promise<boolean>;    
   login(email: string, password: string): Promise<LoginResponse | null>;
   logout(): Promise<void>;
   isAuthenticated(): Promise<boolean>;
-}
-
-interface LoginResponse {
-  message: string;
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    role: string;
-    userName: string;
-    subscription: string;
-  };
 }
 
 class AuthServiceImpl implements AuthService {
