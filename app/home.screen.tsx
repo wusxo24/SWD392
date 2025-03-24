@@ -73,18 +73,25 @@ export default function HomeScreen() {
       }
     };
 
-    fetchUserData();
-    fetchSelectedChild();
-
     const logAsyncStorage = async () => {
       try {
         const keys = await AsyncStorage.getAllKeys();
         const result = await AsyncStorage.multiGet(keys);
-        console.log("Current AsyncStorage contents:", JSON.stringify(result, null, 2));
+        const asyncStorageContents = result.map(([key, value]) => {
+          try {
+            return [key, value ? JSON.parse(value) : value];
+          } catch (e) {
+            return [key, value];
+          }
+        });
+        console.log("Current AsyncStorage contents:", JSON.stringify(asyncStorageContents, null, 2));
       } catch (error) {
         console.error("Failed to log AsyncStorage contents", error);
       }
     };
+
+    fetchUserData();
+    fetchSelectedChild();
 
     logAsyncStorage();
   }, []);

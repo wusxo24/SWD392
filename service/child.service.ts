@@ -5,11 +5,11 @@ interface Child {
   fname: string;
   lname: string;
   memberID: number;
-  birthDate: Date;
+  birthdate: string;
   gender: string;
   picture: string;
-  bloodType: string;
-  allergies: string[];
+  blood_type: string;
+  allergy: string;
   notes: string;
 }
 
@@ -52,6 +52,10 @@ class ChildServiceImpl implements ChildService {
 
   async createChild(childData: Partial<Child>): Promise<Child> {
     try {
+      // Format the birthdate to ISO string if it exists
+      if (childData.birthdate) {
+        childData.birthdate = new Date(childData.birthdate as unknown as string).toISOString() as any;
+      }
       const response = await axiosInstance.post(this.API_URL, childData);
       return response.data;
     } catch (error) {
@@ -62,6 +66,10 @@ class ChildServiceImpl implements ChildService {
 
   async updateChild(id: string, childData: Partial<Child>): Promise<Child> {
     try {
+      // Format the birthdate to ISO string if it exists
+      if (childData.birthdate) {
+        childData.birthdate = new Date(childData.birthdate as unknown as string).toISOString() as any;
+      }
       const response = await axiosInstance.put(`${this.API_URL}/${id}`, childData);
       return response.data;
     } catch (error) {

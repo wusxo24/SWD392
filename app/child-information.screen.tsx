@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Header } from "@/components/Header.component";
 import { MaskedTextInput } from "react-native-mask-text";
 import NewImage from "@/assets/icons/NewImage.icon";
+import childService from "@/service/child.service";
 
 enum Mode {
   View = "VIEW",
@@ -32,11 +33,11 @@ const bloodTypeOptions = [
 const initialChildData = {
   fname: "",
   lname: "",
-  birthDate: "",
+  birthdate: "",
   gender: "",
   picture: "",
-  bloodType: "",
-  allergies: "",
+  blood_type: "",
+  allergy: "",
   notes: "",
 };
 
@@ -147,7 +148,13 @@ const ChildInformationScreen = () => {
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setChildData({ ...childData, [field]: value });
+    if (field === "fullName") {
+      const [fname, ...lnameParts] = value.split(" ");
+      const lname = lnameParts.join(" ");
+      setChildData({ ...childData, fname, lname });
+    } else {
+      setChildData({ ...childData, [field]: value });
+    }
   };
 
   const handleSave = async () => {
@@ -156,13 +163,29 @@ const ChildInformationScreen = () => {
       let children = childrenString ? JSON.parse(childrenString) : [];
       if (currentMode === Mode.Create) {
         // Add new child
-        const newChild = { ...childData, id: Date.now().toString() };
+        const newChild = {
+          ...childData,
+          id: Date.now().toString(),
+          birthdate: new Date(childData.birthdate.split("/").reverse().join("-")).toISOString(),
+        };
+        console.log("New child data:", newChild);
         children.push(newChild);
+        await childService.createChild(newChild);
       } else if (currentMode === Mode.Update) {
         // Update existing child
         children = children.map((child: any) =>
-          child.id === id ? { ...child, ...childData } : child
+          child.id === id
+            ? {
+                ...child,
+                ...childData,
+                birthdate: new Date(childData.birthdate.split("/").reverse().join("-")).toISOString(),
+              }
+            : child
         );
+        await childService.updateChild(id as string, {
+          ...childData,
+          birthdate: new Date(childData.birthdate.split("/").reverse().join("-")).toISOString(),
+        });
       }
       await AsyncStorage.setItem("children", JSON.stringify(children));
       setCurrentMode(Mode.View);
@@ -184,10 +207,10 @@ const ChildInformationScreen = () => {
       <Text style={tw`px-4 text-lg font-bold`}>Information</Text>
 
       <View style={tw`mx-4 mt-4 p-4 bg-white rounded-lg`}>
-        <InputField
+      <InputField
           label="Full name"
-          value={childData.fname}
-          onChangeText={(value: string) => handleInputChange("fname", value)}
+          value={`${childData.fname} ${childData.lname}`.trim()}
+          onChangeText={(value: string) => handleInputChange("fullName", value)}
           editable={currentMode !== Mode.View}
         />
         <View style={tw`flex flex-row mt-4 w-full`}>
@@ -207,12 +230,12 @@ const ChildInformationScreen = () => {
               <MaskedTextInput
                 mask="99/99/9999"
                 placeholder="DD/MM/YYYY"
-                value={childData.birthDate}
-                onChangeText={(value) => handleInputChange("birthDate", value)}
+                value={childData.birthdate}
+                onChangeText={(value) => handleInputChange("birthdate", value)}
                 style={tw`border-b py-2 text-xl`}
               />
             ) : (
-              <Text style={tw`py-2 text-xl`}>{childData.birthDate}</Text>
+              <Text style={tw`py-2 text-xl`}>{childData.birthdate}</Text>
             )}
           </View>
         </View>
@@ -220,18 +243,18 @@ const ChildInformationScreen = () => {
           <View style={tw`w-1/3 pr-2`}>
             <PickerField
               label="Blood Type"
-              value={childData.bloodType}
+              value={childData.blood_type}
               options={bloodTypeOptions}
               showPicker={showBloodTypePicker}
               setShowPicker={setShowBloodTypePicker}
-              onValueChange={(value: string) => handleInputChange("bloodType", value)}
+              onValueChange={(value: string) => handleInputChange("blood_type", value)}
             />
           </View>
           <View style={tw`w-2/3 pl-4`}>
             <InputField
               label="Allergies"
-              value={childData.allergies}
-              onChangeText={(value: string) => handleInputChange("allergies", value)}
+              value={childData.allergy}
+              onChangeText={(value: string) => handleInputChange("allergy", value)}
               editable={currentMode !== Mode.View}
             />
           </View>
