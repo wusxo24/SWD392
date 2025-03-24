@@ -197,7 +197,7 @@ const MemberRequest = () => {
                 <ListItem
                   button="true" 
                   key={doctor._id}
-                  onClick={() => handleDoctorSelection(doctor._id)}
+                  onClick={() => handleDoctorSelection(doctor.user_id._id)}
                   selected={selectedDoctor === doctor._id}
                   className="cursor-pointer min-w-[500px] items-start"
                   style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 2fr 2fr', alignItems: 'center' }}
