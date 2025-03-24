@@ -170,7 +170,7 @@ export default function DoctorManagement() {
           <Input placeholder="Search doctors..." prefix={<SearchOutlined />} value={searchText} onChange={(e) => setSearchText(e.target.value)} style={{ width: 300 }} />
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>Add Doctor</Button>
         </Space>
-        <Table dataSource={filteredDoctors} columns={columns} rowKey="_id" bordered pagination={{ pageSize: 5 }} />
+        <Table dataSource={filteredDoctors} columns={columns} rowKey="_id" bordered pagination={{ pageSize: 4 }} />
       </Card>
       <Modal
         title={editId ? "Edit Doctor" : "Add Doctor"}

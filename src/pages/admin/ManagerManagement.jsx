@@ -186,7 +186,7 @@ const ManagerManagement = () => {
             rowKey="_id"
             loading={loading}
             bordered
-            pagination={{ pageSize: 5 }}
+            pagination={{ pageSize: 4 }}
           />
         </Card>
         <Modal

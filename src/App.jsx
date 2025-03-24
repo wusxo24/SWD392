@@ -54,7 +54,7 @@ function App() {
     Guest: "/home",
     Member: "/home",
     Manager: "/dashboard",
-    Admin: "/account",
+    Admin: "/member-management",
     Doctor: "/view-medical-request",
   };
   const hideNavFooter =
