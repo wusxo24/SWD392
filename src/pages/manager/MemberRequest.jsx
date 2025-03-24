@@ -33,7 +33,6 @@ const MemberRequest = () => {
           // Priority sorting by status (Pending > Normal)
           if (a.Status === "Pending" && b.Status !== "Pending") return -1;
           if (b.Status === "Pending" && a.Status !== "Pending") return 1;
-          console.log("medical Id", response._id);
           // If status is the same, sort by CreatedDate (newest first)
           return new Date(b.CreatedDate) - new Date(a.CreatedDate);
         });
@@ -52,6 +51,7 @@ const MemberRequest = () => {
       setLoading(true); // Start loading for doctors
       try {
         const doctorsList = await fetchDoctors(); // Call the fetchDoctors function
+        console.log("Doctors List:", doctorsList);
         setDoctors(doctorsList); // Set the doctors list
       } catch (error) {
         console.error("Failed to fetch doctors", error);
@@ -136,48 +136,52 @@ const MemberRequest = () => {
         ) : filteredRequests.length === 0 ? (
           <p>No requests available.</p>
         ) : (
-          <TableContainer component={Paper} className="mb-4 mt-4">
-            <Table>
-              <TableHead style={{ background: "#51a2ff" }}>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Reason</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell>
+        <TableContainer component={Paper} className="mb-4 mt-4">
+          <Table>
+            <TableHead style={{ background: "#51a2ff" }}>
+              <TableRow>
+                <TableCell>Date</TableCell>
+                <TableCell>Reason</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Doctor Incharge</TableCell> {/* New column */}
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredRequests.map((req) => (              
+                <TableRow key={req._id}>
+                  <TableCell>{req.CreatedDate ? new Date(req.CreatedDate).toLocaleDateString() : "N/A"}</TableCell>
+                  <TableCell>{req.Reason || "No reason provided"}</TableCell>
+                  <TableCell>{req.Status || "Unknown"}</TableCell>
+
+                  {/* Doctor Incharge Column */}
+                  <TableCell>
+                    {doctors.find(doc => doc._id == req.DoctorId) ? (
+                     
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Avatar src={doctors.find(doc => doc._id == req.DoctorId)?.picture || "/default-avatar.jpg"} style={{ width: 40, height: 40, marginRight: 10 }} />
+                        <span>{doctors.find(doc => doc._id == req.DoctorId)?.user_id?.username || "Unknown Doctor"}</span>
+                      </div>
+                    ) : (
+                      "Not Assigned"
+                    )}
+                  </TableCell>
+
+                  <TableCell>
+                    {req.Status === "Pending" && (
+                      <div>
+                        <Button variant="contained" color="success" onClick={() => handleAccept(req._id)} className="mr-2">
+                          Accept
+                        </Button>
+                        <Button variant="contained" color="error" onClick={() => handleReject(req._id)}>
+                          Reject
+                        </Button>
+                      </div>
+                    )}
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredRequests.map((req) => (
-                  <TableRow key={req._id}>
-                    <TableCell>
-                      {req.CreatedDate ? new Date(req.CreatedDate).toLocaleDateString() : "N/A"}
-                    </TableCell>
-                    <TableCell>{req.Reason || "No reason provided"}</TableCell>
-                    <TableCell>{req.Status || "Unknown"}</TableCell>
-                    <TableCell>
-                      {req.Status === "Pending" && (
-                        <div>
-                          <Button
-                            variant="contained"
-                            color="success"
-                            onClick={() => handleAccept(req._id)}
-                            className="mr-2"
-                          >
-                            Accept
-                          </Button>
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => handleReject(req._id)}
-                          >
-                            Reject
-                          </Button>
-                        </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+              ))}
+            </TableBody>
             </Table>
           </TableContainer>
         )}
