@@ -67,16 +67,31 @@ const getDoctorById = async (id) => {
 
 const updateDoctor = async (id, updateData) => {
     try {
-        const doctor = await DoctorInfo.findByIdAndUpdate(id, updateData, { new: true });
+        // Find the doctor by ID
+        const doctor = await DoctorInfo.findById(id);
         if (!doctor) {
             return { error: "Doctor not found" };
         }
-        return doctor;
+
+        // Update the doctor information
+        const updatedDoctor = await DoctorInfo.findByIdAndUpdate(id, updateData, { new: true });
+
+        // If there are updates related to the User model, update them as well
+        if (updateData.username || updateData.email || updateData.status) {
+            await User.findByIdAndUpdate(doctor.user_id, {
+                ...(updateData.username && { username: updateData.username }),
+                ...(updateData.email && { email: updateData.email }),
+                ...(updateData.status && { status: updateData.status }),
+            });
+        }
+
+        return updatedDoctor;
     } catch (error) {
         console.error("Database error:", error);
         throw new Error("Error updating doctor");
     }
 };
+
 
 const deleteDoctor = async (id) => {
     const doctor = await DoctorInfo.findById(id);

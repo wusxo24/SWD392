@@ -3,7 +3,8 @@ const {
     getAllMembers,
     getMemberById,
     updateMember,
-    deleteMember
+    deleteMember,
+    updateMemberStatus
 } = require("../controllers/MemberController");
 
 const router = express.Router();
@@ -84,7 +85,7 @@ router.get("/:id", authMiddleware, getMemberById);
  *       404:
  *         description: Member not found
  */
-router.put("/:id", authMiddleware, authorize(["Member", "Manager"]), updateMember);
+router.put("/:id", authMiddleware, authorize(["Member", "Manager", "Admin"]), updateMember);
 
 /**
  * @swagger
@@ -108,5 +109,7 @@ router.put("/:id", authMiddleware, authorize(["Member", "Manager"]), updateMembe
  *         description: Member not found
  */
 router.delete("/:id", authMiddleware, authorize(["Admin"]), deleteMember);
+
+router.patch("/:id/status", authMiddleware, authorize(["Admin"]), updateMemberStatus);
 
 module.exports = router;

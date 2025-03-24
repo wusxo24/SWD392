@@ -26,9 +26,13 @@ exports.createManager = async (req, res) => {
         const newManager = await ManagerService.createManager(req.body);
         res.status(201).json(newManager);
     } catch (err) {
-        res.status(500).json({ error: "Failed to create manager" });
+        console.error("Manager creation error:", err.message);
+        res.status(500).json({ 
+            error: process.env.NODE_ENV === "development" ? err.message : "Failed to create manager" 
+        });
     }
 };
+
 
 // Update a Manager
 exports.updateManager = async (req, res) => {
@@ -47,5 +51,14 @@ exports.deleteManager = async (req, res) => {
         res.json({ message: "Manager deleted successfully" });
     } catch (err) {
         res.status(500).json({ error: "Failed to delete manager" });
+    }
+};
+
+exports.updateManagerStatus = async (req, res) => {
+    try {
+        const updatedManager = await ManagerService.updateManagerStatus(req.params.id);
+        res.json(updatedManager);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to update manager status" });
     }
 };
