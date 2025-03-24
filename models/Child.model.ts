@@ -1,9 +1,9 @@
 export interface Child {
-  id: number;
+  _id: string;
   memberID: number;
   fname: string;
   lname: string;
-  birthDate?: Date;
+  birthdate?: string;
   gender: "male" | "female" | "other";
   picture: string;
   bloodType: "A" | "B" | "AB" | "O";

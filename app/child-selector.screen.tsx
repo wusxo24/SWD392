@@ -19,10 +19,10 @@ const ItemsList = ({
     <View style={tw`flex flex-col gap-4`}>
       {items.map((item) => (
         <TouchableOpacity
-          key={item.id}
+          key={item._id}
           style={[
             tw`flex flex-col p-4 rounded-lg bg-white justify-between`,
-            selectedChild?.id === item.id
+            selectedChild?._id === item._id
               ? tw`border border-sky-600`
               : tw`border border-white`,
           ]}
@@ -30,7 +30,9 @@ const ItemsList = ({
         >
           <View style={tw`flex flex-row items-center justify-between w-full`}>
             <View style={tw`flex flex-row items-center gap-2`}>
-              <Text style={tw`font-semibold text-lg`}>{item.id}</Text>
+              <Text style={tw`font-semibold text-lg`}>
+                {item._id.slice(-6).toUpperCase()} {/* Display last 6 characters of _id */}
+              </Text>
               <View style={tw`w-[2px] bg-slate-600 h-5`} />
               <Text style={tw`text-lg`}>
                 {item.fname.toUpperCase() + " " + item.lname.toUpperCase()}
@@ -39,7 +41,7 @@ const ItemsList = ({
             <View
               style={tw`h-5 w-5 rounded-full border border-sky-600 items-center justify-center`}
             >
-              {selectedChild?.id === item.id && (
+              {selectedChild?._id === item._id && (
                 <View style={tw`h-3 w-3 rounded-full bg-sky-600`} />
               )}
             </View>
@@ -49,9 +51,9 @@ const ItemsList = ({
             <Text
               style={tw`text-xs font-semibold text-green-600 bg-green-200 rounded px-2 py-1 mt-2 self-start`}
             >
-              {item.birthDate &&
+              {item.birthdate &&
                 Math.floor(
-                  (new Date().getTime() - new Date(item.birthDate).getTime()) /
+                  (new Date().getTime() - new Date(item.birthdate).getTime()) /
                     (1000 * 60 * 60 * 24 * 365.25)
                 )}{" "}
               years old
@@ -78,9 +80,14 @@ export default function ChildSelectorScreen() {
     const fetchChildren = async () => {
       try {
         const childrenString = await AsyncStorage.getItem("children");
+        const selectedChildString = await AsyncStorage.getItem("selectedChild");
         if (childrenString) {
           const childrenData = JSON.parse(childrenString);
           setChildren(childrenData);
+        }
+        if (selectedChildString) {
+          const selectedChildData = JSON.parse(selectedChildString);
+          setSelectedChild(selectedChildData);
         }
       } catch (error) {
         console.error("Failed to fetch children from AsyncStorage", error);

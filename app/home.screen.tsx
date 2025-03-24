@@ -6,6 +6,7 @@ import ArrowDownIcon from "@/assets/icons/ArrowDown.icon";
 import { Link } from "expo-router";
 import IndexStat from "@/components/index/IndexStat.component";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import childService from "@/service/child.service";
 
 interface UserData {
   id: string;
@@ -35,6 +36,7 @@ const ChildSelector = ({ selectedChildName }: { selectedChildName: string }) => 
 };
 
 export default function HomeScreen() {
+  
   const [userData, setUserData] = useState<UserData>({
     id: "",
     email: "",
@@ -55,6 +57,14 @@ export default function HomeScreen() {
             ...user,
             avatar: user.avatar || "https://picsum.photos/150",
           });
+        }
+
+        const children = await childService.getChildren();
+        await AsyncStorage.setItem("children", JSON.stringify(children));
+
+        // Set the first child as the default selected child if children are not null
+        if (children.length > 0) {
+          await AsyncStorage.setItem("selectedChild", JSON.stringify(children[0]));
         }
       } catch (error) {
         console.error("Failed to fetch user data from AsyncStorage", error);
