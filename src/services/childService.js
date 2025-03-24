@@ -29,6 +29,16 @@ export const getChildren = async () => {
       throw new Error("Failed to fetch child details");
     }
   };
+
+  export const fetchAllChildren = async () => {
+    try {
+      const response = await axios.get("/api/children/children");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching children:", error);
+      throw error;
+    }
+  };
   
   export const updateChildDetails = async (id, data) => {
     try {

@@ -22,17 +22,16 @@ import {
   Box,
   Grid,
 } from "@mui/material";
-import WeightForAgeChart from "./WeightForAgeChart";
-import LengthForAgeChart from "./LengthForAgeChart";
-import WeightForLengthChart from "./WeightForLengthChart";
-import HeadCircumferenceChart from "./HeadCircumferenceChart.jsx";
-import WeightForStatureChart from "./WeightForStatureChart";
+import WeightForAgeChart from "@/pages/member/WeightForAgeChart";
+import LengthForAgeChart from "@/pages/member/LengthForAgeChart";
+import WeightForLengthChart from "@/pages/member/WeightForLengthChart";
+import HeadCircumferenceChart from "@/pages/member/HeadCircumferenceChart.jsx";
+import WeightForStatureChart from "@/pages/member/WeightForStatureChart";
 import { MedicalRequest } from "@/services/medicalRequestService";
-import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
+import { Tracking, getChildByRecordId } from "@/services/tracking";
 import { useParams } from "react-router-dom";
-import ChildHealth from "./childHeath";
 
-const GrowthChartContainer = () => {
+const GrowthChartContainerBabyDoctor = () => {
   const { recordId } = useParams();
   const [tabIndex, setTabIndex] = useState(0);
   const [childData, setChildData] = useState({});
@@ -90,17 +89,6 @@ const GrowthChartContainer = () => {
     setTrackingData({ ...trackingData, [e.target.name]: e.target.value });
   };
 
-  const handleUpdateGrowth = async () => {
-    try {
-      const currentDate = new Date().toISOString().split("T")[0]; // Use the current date
-
-      await postTracking(recordId, currentDate, trackingData);
-      toast.success("Growth data updated successfully.");
-    } catch (error) {
-      console.error("Error updating tracking data:", error);
-      toast.error("Failed to update growth data.");
-    }
-  };
 
   const handleModalOpen = () => {
     setOpenModal(true);
@@ -182,7 +170,7 @@ const GrowthChartContainer = () => {
       </button>
       <ToastContainer />
       <Typography variant="h3" align="center" fontWeight={600} gutterBottom>
-        Your Child's{" "}
+        Child's{" "}
         <span style={{ color: "#0DBFFF", textDecoration: "underline" }}>
           Growth
         </span>
@@ -229,61 +217,10 @@ const GrowthChartContainer = () => {
                 View Child Health
               </Button>
             </div>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 3, width: "100%", fontWeight: "bold" }}
-              onClick={handleModalOpen}
-            >
-              Send to Doctor
-            </Button>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3, boxShadow: 3 }}>
-            <CardContent>
-              <Stack spacing={2}>
-                <TextField
-                  label="Height (cm)"
-                  name="Height"
-                  value={trackingData.Height || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Weight (kg)"
-                  name="Weight"
-                  value={trackingData.Weight || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Head Circumference (cm)"
-                  name="HeadCircumference"
-                  value={trackingData.HeadCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Waist Circumference (cm)"
-                  name="WaistCircumference"
-                  value={trackingData.WaistCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleUpdateGrowth}
-                >
-                  Update Growth
-                </Button>
-              </Stack>
-            </CardContent>
           </Card>
         </Grid>
       </Grid>
+
       <Card sx={{ mt: 6, p: 3, boxShadow: 3 }}>
         <Tabs
           value={tabIndex}
@@ -339,49 +276,7 @@ const GrowthChartContainer = () => {
           )}
         </CardContent>
       </Card>
-
-      <Dialog open={openModal} onClose={handleModalClose} fullWidth>
-        <DialogTitle>Send Medical Request</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2}>
-            <TextField
-              label="Reason"
-              name="Reason"
-              value={requestData.Reason}
-              onChange={handleRequestChange}
-              fullWidth
-              required
-            />
-            <TextField
-              label="Notes"
-              name="Notes"
-              value={requestData.Notes}
-              onChange={handleRequestChange}
-              fullWidth
-              multiline
-              rows={3}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleModalClose} color="secondary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmitRequest}
-            color="primary"
-            variant="contained"
-          >
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <ChildHealth
-        isOpen={isChildHealthOpen}
-        onClose={() => setIsChildHealthOpen(false)}
-        trackingData={trackingData}
-        setTrackingData={setTrackingData} // ✅ Pass setTrackingData
-      />
+     
       {/* Modal Component */}
       <Modal
         open={open}
@@ -447,4 +342,4 @@ const GrowthChartContainer = () => {
   );
 };
 
-export default GrowthChartContainer;
+export default GrowthChartContainerBabyDoctor;

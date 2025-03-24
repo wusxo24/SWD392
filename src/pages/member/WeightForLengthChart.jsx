@@ -50,7 +50,7 @@
         }
         };
       
-      const GrowthChart = ({ gender = "Female", title, yLabel }) => {
+      const GrowthChart = ({ gender = "Female",  data = [], title, yLabel }) => {
         const chartRef = useRef(null);
         const chartInstanceRef = useRef(null);
       
@@ -128,7 +128,7 @@
               chartInstanceRef.current.destroy();
             }
           };
-        }, [gender, yLabel]);
+        }, [gender, data, yLabel]);
       
         return (
           <div style={{ width: "926px", height: "1098px" }}>
@@ -137,8 +137,8 @@
         );
       };
       
-      export const WeightForLengthChart = ({ gender }) => {
-        return <GrowthChart gender={gender} title="Weight-for-Length Growth Chart" yLabel="Weight (kg)" />;
+      export const WeightForLengthChart = ({ gender, data }) => {
+        return <GrowthChart gender={gender} data={data} title="Weight-for-Length Growth Chart" yLabel="Weight (kg)" />;
       };
       
       export default WeightForLengthChart;

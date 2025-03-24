@@ -14,35 +14,29 @@ import {
   Tab,
   Container,
   Modal,
+  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  MenuItem,
   Box,
-  Grid,
+  MenuItem,
 } from "@mui/material";
-import WeightForAgeChart from "./WeightForAgeChart";
-import LengthForAgeChart from "./LengthForAgeChart";
-import WeightForLengthChart from "./WeightForLengthChart";
-import HeadCircumferenceChart from "./HeadCircumferenceChart.jsx";
-import WeightForStatureChart from "./WeightForStatureChart";
-import { MedicalRequest } from "@/services/medicalRequestService";
-import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
+import HeightChart from "@/pages/member/heightChart";
+import WeightChart from "@/pages/member/weightChart";
+import { ChildGrowth } from "@/pages/member/childGrowth";
+import { Tracking, getChildByRecordId } from "@/services/tracking";
 import { useParams } from "react-router-dom";
-import ChildHealth from "./childHeath";
-
-const GrowthChartContainer = () => {
+const GrowthChartContainerDoctor = () => {
   const { recordId } = useParams();
   const [tabIndex, setTabIndex] = useState(0);
-  const [childData, setChildData] = useState({});
+  const [childData, setChildData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [requestData, setRequestData] = useState({ Reason: "", Notes: "" });
   const [trackingData, setTrackingData] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [ageData, setAgeData] = useState([]);
-  const [isChildHealthOpen, setIsChildHealthOpen] = useState(false);
   const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const birthDate = new Date(childData?.birthdate);
   const today = new Date();
@@ -53,6 +47,7 @@ const GrowthChartContainer = () => {
   const ageMonths = ageInMonths.toFixed(1);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
 
   useEffect(() => {
     const fetchChildData = async () => {
@@ -66,11 +61,10 @@ const GrowthChartContainer = () => {
       }
     };
     fetchChildData();
-  }, [recordId]);
+  }, []);
 
   useEffect(() => {
-    console.log(recordId);
-
+    console.log(recordId)
     const fetchTrackingData = async () => {
       try {
         const data = await Tracking(recordId);
@@ -86,21 +80,29 @@ const GrowthChartContainer = () => {
     fetchTrackingData();
   }, [childData]);
 
+  useEffect(() => {
+    if (trackingData.length > 0) {
+      const latestRecord = trackingData[trackingData.length - 1]; 
+      const trackingsEntries = Object.entries(latestRecord.Trackings); // Convert to array [date, data]
+      if (trackingsEntries.length === 0) return;
+      const latestTracking = trackingsEntries[trackingsEntries.length - 1]; // Get last [date, data] pair
+      const latestDate = latestTracking[0]; // Extract date
+      const latestEntry = latestTracking[1]; // Extract data object
+      if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
+        toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`
+          ,{ autoClose: 10000, // 10 seconds (default is 5000ms or 5s)
+            closeOnClick: true, // Allows closing on click
+            pauseOnHover: true, // Keeps it visible when hovering
+            draggable: true // Allows dragging the toast
+          });
+      }
+    }
+  }, [trackingData]);
+
   const handleChange = (e) => {
     setTrackingData({ ...trackingData, [e.target.name]: e.target.value });
   };
 
-  const handleUpdateGrowth = async () => {
-    try {
-      const currentDate = new Date().toISOString().split("T")[0]; // Use the current date
-
-      await postTracking(recordId, currentDate, trackingData);
-      toast.success("Growth data updated successfully.");
-    } catch (error) {
-      console.error("Error updating tracking data:", error);
-      toast.error("Failed to update growth data.");
-    }
-  };
 
   const handleModalOpen = () => {
     setOpenModal(true);
@@ -116,23 +118,6 @@ const GrowthChartContainer = () => {
     setRequestData({ ...requestData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitRequest = async () => {
-    if (isSubmitting) return; // Prevent multiple clicks
-    setIsSubmitting(true);
-
-    try {
-      if (!requestData.Reason.trim()) {
-        toast.error("Reason is required.");
-        return;
-      }
-
-      await MedicalRequest(recordId, requestData);
-      handleModalClose();
-    } catch (error) {
-      console.error("Error sending medical request:", error);
-      toast.error("Failed to send request. Please try again.");
-    }
-  };
 
   const processTrackingData = (trackingData, yearOfBirth) => {
     if (!yearOfBirth) {
@@ -173,6 +158,7 @@ const GrowthChartContainer = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
+      <ToastContainer />
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-200"
@@ -180,18 +166,16 @@ const GrowthChartContainer = () => {
         <ArrowLeft className="w-5 h-5" />
         <span>Back</span>
       </button>
-      <ToastContainer />
       <Typography variant="h3" align="center" fontWeight={600} gutterBottom>
-        Your Child's{" "}
+         Child's{" "}
         <span style={{ color: "#0DBFFF", textDecoration: "underline" }}>
           Growth
         </span>
       </Typography>
+
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} md={4}>
-          <Card
-            sx={{ textAlign: "center", p: 4, boxShadow: 3, borderRadius: 2 }}
-          >
+          <Card sx={{ textAlign: "center", p: 3, boxShadow: 3 }}>
             <Avatar
               src={childData.picture}
               alt="Child Avatar"
@@ -220,168 +204,44 @@ const GrowthChartContainer = () => {
               >
                 View Child Details
               </Button>
-
-              <Button
-                variant="outlined"
-                className="flex-1 py-3 rounded-lg shadow-md"
-                onClick={() => setIsChildHealthOpen(true)}
-              >
-                View Child Health
-              </Button>
             </div>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 3, width: "100%", fontWeight: "bold" }}
-              onClick={handleModalOpen}
-            >
-              Send to Doctor
-            </Button>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3, boxShadow: 3 }}>
-            <CardContent>
-              <Stack spacing={2}>
-                <TextField
-                  label="Height (cm)"
-                  name="Height"
-                  value={trackingData.Height || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Weight (kg)"
-                  name="Weight"
-                  value={trackingData.Weight || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Head Circumference (cm)"
-                  name="HeadCircumference"
-                  value={trackingData.HeadCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Waist Circumference (cm)"
-                  name="WaistCircumference"
-                  value={trackingData.WaistCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleUpdateGrowth}
-                >
-                  Update Growth
-                </Button>
-              </Stack>
-            </CardContent>
           </Card>
         </Grid>
       </Grid>
+
       <Card sx={{ mt: 6, p: 3, boxShadow: 3 }}>
         <Tabs
           value={tabIndex}
-          onChange={(e, newIndex) => setTabIndex(newIndex)}
+          onChange={(event, newIndex) => setTabIndex(newIndex)}
           centered
         >
-          <Tab label="Weight for Age" />
-          <Tab label="Length for Age" />
-          <Tab label="Weight for Length" />
-          <Tab label="Head Circumference" />
-          <Tab label="Weight for Stature" />
+          <Tab label="Height Chart" />
+          <Tab label="Weight Chart" />
+          <Tab label="BMI Chart" />
         </Tabs>
 
         <CardContent>
           {tabIndex === 0 && (
-            <WeightForAgeChart
+            <HeightChart
+              gender={childData.gender}
+              data={ageData.map(({ age, Height }) => ({ x: age, y: Height }))}
+            />
+          )}
+          {tabIndex === 1 && (
+            <WeightChart
               gender={childData.gender}
               data={ageData.map(({ age, Weight }) => ({ x: age, y: Weight }))}
             />
           )}
-          {tabIndex === 1 && (
-            <LengthForAgeChart
-              gender={childData.gender}
-              data={ageData.map(({ age, Length }) => ({ x: age, y: Length }))}
-            />
-          )}
           {tabIndex === 2 && (
-            <WeightForLengthChart
+            <ChildGrowth
               gender={childData.gender}
-              data={ageData.map(({ Length, Weight }) => ({
-                x: Length,
-                y: Weight,
-              }))}
-            />
-          )}
-          {tabIndex === 3 && (
-            <HeadCircumferenceChart
-              gender={childData.gender}
-              data={ageData.map(({ age, HeadCircumference }) => ({
-                x: age,
-                y: HeadCircumference,
-              }))}
-            />
-          )}
-          {tabIndex === 4 && (
-            <WeightForStatureChart
-              gender={childData.gender}
-              data={ageData.map(({ Stature, Weight }) => ({
-                x: Stature,
-                y: Weight,
-              }))}
+              data={ageData.map(({ age, BMI }) => ({ x: age, y: BMI }))}
             />
           )}
         </CardContent>
       </Card>
 
-      <Dialog open={openModal} onClose={handleModalClose} fullWidth>
-        <DialogTitle>Send Medical Request</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2}>
-            <TextField
-              label="Reason"
-              name="Reason"
-              value={requestData.Reason}
-              onChange={handleRequestChange}
-              fullWidth
-              required
-            />
-            <TextField
-              label="Notes"
-              name="Notes"
-              value={requestData.Notes}
-              onChange={handleRequestChange}
-              fullWidth
-              multiline
-              rows={3}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleModalClose} color="secondary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmitRequest}
-            color="primary"
-            variant="contained"
-          >
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <ChildHealth
-        isOpen={isChildHealthOpen}
-        onClose={() => setIsChildHealthOpen(false)}
-        trackingData={trackingData}
-        setTrackingData={setTrackingData} // ✅ Pass setTrackingData
-      />
       {/* Modal Component */}
       <Modal
         open={open}
@@ -414,12 +274,6 @@ const GrowthChartContainer = () => {
           {/* Child Details */}
           <Stack spacing={1} alignItems="left">
             <Typography variant="body2" sx={{ textAlign: "left" }}>
-              <strong>Blood Type:</strong> {childData.blood_type}
-            </Typography>
-            <Typography variant="body2" sx={{ textAlign: "left" }}>
-              <strong>Allergy:</strong> {childData.allergy || "None"}
-            </Typography>
-            <Typography variant="body2" sx={{ textAlign: "left" }}>
               <strong>Gender:</strong> {childData.gender}
             </Typography>
             <Typography variant="body2" sx={{ textAlign: "left" }}>
@@ -428,11 +282,7 @@ const GrowthChartContainer = () => {
             <Typography variant="body2" sx={{ textAlign: "left" }}>
               <strong>Month Age:</strong> {ageMonths}
             </Typography>
-            <Typography variant="body2" sx={{ textAlign: "left" }}>
-              <strong>Notes:</strong> {childData.notes || "No additional notes"}
-            </Typography>
           </Stack>
-
           {/* Close Button */}
           <Button
             variant="contained"
@@ -447,4 +297,4 @@ const GrowthChartContainer = () => {
   );
 };
 
-export default GrowthChartContainer;
+export default GrowthChartContainerDoctor;

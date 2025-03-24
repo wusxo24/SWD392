@@ -28,7 +28,6 @@ import MemberRequest from "./pages/manager/MemberRequest";
 import RatingFeedback from "./pages/manager/RatingFeedback";
 import AddInfo from "./pages/doctor/AddInfo";
 import MedicalRequestManagement from "./pages/doctor/MedicalRequestManagement";
-import AnalyzeReport from "./pages/doctor/AnalyzeReport";
 import { ServicesHistory } from "./pages/member/servicesHistory";
 import { SuccessPaid } from "./pages/member/successPaid";
 import { FaildedPaid } from "./pages/member/failedPaid";
@@ -40,6 +39,8 @@ import DoctorManagement from "./pages/admin/DoctorManagement";
 import { ManageBlogs } from "./pages/manager/manageBlogs";
 import MemberManagement from "./pages/admin/MemberManagement";
 import ManagerManagement from "./pages/admin/ManagerManagement";
+import GrowthChartContainerDoctor from "./pages/doctor/GrowthChartContrainerDoctor";
+import GrowthChartContainerBabyDoctor from "./pages/doctor/GrowthChartContainerBabyDoctor";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 
@@ -136,7 +137,14 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={["Doctor"]} />}>
           <Route path="/add-info" element={<AddInfo />} />
           <Route path="/medical-request-management" element={<MedicalRequestManagement />} />
-          <Route path="/analyze-report" element={<AnalyzeReport />} />
+          <Route
+            path="/childGrowthDoctor/:recordId"
+            element={<GrowthChartContainerDoctor />}
+          />
+          <Route
+            path="/childGrowthDoctor/:recordId"
+            element={<GrowthChartContainerBabyDoctor />}
+          />
         </Route>
 
         {/* Company Shared Pages */}

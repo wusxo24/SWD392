@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import TrackingSection from "@/components/TrackingSection";
+import DoctorResponseModal from "@/components/DoctorResponseModal";
+import { fetchAllChildren } from "@/services/childService";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -17,13 +20,70 @@ export default function ViewRequest() {
   const [sortOrder, setSortOrder] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(3);
-  const sectionStyles = {
-    record: "bg-gray-600 hover:bg-gray-700 text-white",
-    member: "bg-blue-500 hover:bg-blue-600 text-white",
-    child: "bg-green-500 hover:bg-green-600 text-white",
-    tracking: "bg-yellow-500 hover:bg-yellow-600 text-white", // New color for tracking
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState(null);
+  const [children, setChildren] = useState([]);
   const navigate = useNavigate();
+
+  const handleOpenModal = (requestId) => {
+    setSelectedRequestId(requestId); // ✅ Store the selected request ID
+    setIsModalOpen(true);
+  };
+
+  useEffect(() => {
+    fetchChildren();
+  }, []);
+
+    const fetchChildren = async () => {
+      try {
+        const data = await fetchAllChildren();
+        setChildren(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching children:", error);
+        toast.error("Failed to load children");
+      }
+    };
+
+   const getChildAgeInMonths = (childId) => {
+      console.log(childId);
+      console.log(children);
+      const child = children.find((c) => c._id === childId);
+      console.log("Child Data:", child); // Debugging log
+    
+      if (!child) {
+        console.error("Child not found for ID:", childId);
+        return null;
+      }
+      if (!child.birthdate) {  // Use birthdate instead of DOB
+        console.error("Child birthdate is missing for:", child);
+        return null;
+      }
+    
+      const birthDate = new Date(child.birthdate); // Correct field
+      const today = new Date();
+      const ageInMonths =
+        (today.getFullYear() - birthDate.getFullYear()) * 12 +
+        (today.getMonth() - birthDate.getMonth());
+    
+      return ageInMonths;
+    };
+    const handleRedirect = (record) => {
+      if (!record.ChildId) return;
+    
+      const ageInMonths = getChildAgeInMonths(record.ChildId._id);
+      if (ageInMonths === null) {
+        toast.error("Child's date of birth is missing.");
+        return;
+      }
+    
+      if (ageInMonths <= 36) {
+        window.location.href = `/childGrowthBabyDoctor/${record._id}`;
+      } else if (ageInMonths >= 36 && ageInMonths <= 240) {
+        window.location.href = `/childGrowthDoctor/${record._id}`;
+      } else {
+        toast.error("Child's age is out of the valid range.");
+      }
+    };
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -118,7 +178,8 @@ export default function ViewRequest() {
               <CardContent className="p-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-gray-700 light:text-gray-300 text-lg font-semibold">
+                  <h3 className="text-gray-700 light:text-gray-300 text-lg font-semibold">Medical Request: {request._id}</h3>
+                    <p className="text-gray-600 light:text-gray-400">
                       <strong>Date:</strong> {new Date(request.CreatedDate).toLocaleString()}
                     </p>
                     <p className="text-gray-600 light:text-gray-400">
@@ -128,37 +189,56 @@ export default function ViewRequest() {
                       <strong>Notes:</strong> {request.Notes || "No notes provided"}
                     </p>
                   </div>
-                  <Button
-                    onClick={() => navigate(`/analyze-report/${request._id}`)}
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold py-2 px-5 rounded-lg shadow-md transition-transform transform hover:scale-105"
-                  >
-                    Reply
-                  </Button>
+                  <div className="mt-3 flex gap-3">
+                    <button 
+                      onClick={() => handleRedirect(request.RecordId)}
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:scale-105 text-white font-semibold py-2 px-5 rounded-lg shadow-md transition"
+                    >
+                      Analyze
+                    </button>
+
+                    <button 
+                      onClick={() => handleOpenModal(request._id)}
+                      className="bg-green-500 hover:scale-105 text-white font-semibold py-2 px-5 rounded-lg shadow-md transition"
+                    >
+                      Reply
+                    </button>
+                  </div>
                 </div>
 
-                {/* Toggle Buttons */}
-                <div className="mt-4 flex space-x-3">
-                  {["record", "member", "child", "tracking"].map((section, index) => (
-                          <Button
-                          key={section}
-                          onClick={() => toggleExpand(request._id, section)}
-                          className={`flex items-center space-x-2 px-4 py-2 rounded-lg shadow transition-transform transform hover:scale-105 ${sectionStyles[section]}`}
-                          aria-expanded={expanded}
-                        >
-                          {section === "record" ? (
-                            <FaClipboardList />
-                          ) : section === "member" ? (
-                            <FaUser />
-                          ) : section === "child" ? (
-                            <FaChild />
-                          ) : (
-                            <FaChartLine /> // Icon for tracking
-                          )}
-                          <span>{expanded ? `Hide ${section}` : `Show ${section}`}</span>
-                          {expanded ? <FaChevronUp /> : <FaChevronDown />}
-                        </Button>
-                  ))}
-                </div>
+              {/* Toggle Buttons */}
+              <div className="mt-4 flex space-x-3">
+                {["record", "member", "child", "tracking"].map((section) => {
+                  const isExpanded = expanded[request._id]?.[section] || false; // Ensure it doesn't break when undefined
+                  const sectionStyles = {
+                    record: "bg-gray-600 hover:bg-gray-700 text-white",
+                    member: "bg-blue-500 hover:bg-blue-600 text-white",
+                    child: "bg-green-500 hover:bg-green-600 text-white",
+                    tracking: "bg-yellow-500 hover:bg-yellow-600 text-white",
+                  };
+
+                  return (
+                    <Button
+                      key={section}
+                      onClick={() => toggleExpand(request._id, section)}
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-lg shadow transition-transform transform hover:scale-105 ${sectionStyles[section]}`}
+                      aria-expanded={isExpanded}
+                    >
+                      {section === "record" ? (
+                        <FaClipboardList />
+                      ) : section === "member" ? (
+                        <FaUser />
+                      ) : section === "child" ? (
+                        <FaChild />
+                      ) : (
+                        <FaChartLine />
+                      )}
+                      <span>{isExpanded ? `Hide ${section}` : `Show ${section}`}</span>
+                      {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
+                    </Button>
+                  );
+                })}
+              </div>
 
               {/* Animated Details Section */}
               {["record", "member", "child", "tracking"].map((section, index) => (
@@ -255,26 +335,11 @@ export default function ViewRequest() {
                       </>
                     ) : (
                       <>
-                        {request.RecordId?.trackingInfo?.length > 0 ? (
-                          request.RecordId.trackingInfo.map((tracking, i) => (
-                            <div key={i} className="mt-2 p-3 border rounded-md bg-gray-50 dark:bg-yellow-50">
-                              <h4 className="text-md font-semibold mb-2">📆 {tracking.MonthYear}</h4>
-                              {Object.entries(tracking.Trackings).map(([date, details]) => (
-                                <div key={date} className="mb-2 p-2 border-l-4 border-yellow-400 pl-4">
-                                  <p><strong>📏 Height:</strong> {details.Height} cm</p>
-                                  <p><strong>⚖️ Weight:</strong> {details.Weight} kg</p>
-                                  <p><strong>📊 BMI:</strong> {details.BMI}</p>
-                                  <p><strong>📈 BMI Z-Score:</strong> {details.BMIZScore}</p>
-                                  <p><strong>📌 BMI Result:</strong> {details.BMIResult}</p>
-                                  <p><strong>🎩 Head Circumference:</strong> {details.HeadCircumference} cm</p>
-                                  <p><strong>👖 Waist Circumference:</strong> {details.WaistCircumference} cm</p>
-                                </div>
-                              ))}
-                            </div>
-                          ))
-                        ) : (
-                          <p>No tracking information available.</p>
-                        )}
+                      {request.RecordId?.trackingInfo?.length > 0 ? (
+                        <TrackingSection trackingInfo={request.RecordId.trackingInfo} />
+                      ) : (
+                        <p>No tracking information available.</p>
+                      )}
                       </>
                     )}
                   </motion.div>
@@ -285,6 +350,14 @@ export default function ViewRequest() {
             </Card>
           ))
         )}
+          {/* ✅ Move Modal Outside the Loop */}
+          {isModalOpen && (
+            <DoctorResponseModal 
+              isOpen={isModalOpen} 
+              onClose={() => setIsModalOpen(false)} 
+              requestId={selectedRequestId} 
+            />
+          )}
           <div className="flex justify-center mt-6">
           <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
             Previous
