@@ -1,6 +1,8 @@
 const MedicalRequest = require("../models/MedicalRequest");
 const DoctorResponse = require("../models/DoctorResponse");
 const DoctorInfo = require("../models/DoctorInfo");
+const MemberInfo = require("../models/MemberInfo");
+const User = require("../models/User");
 const mongoose = require("mongoose");
 
 
@@ -47,13 +49,47 @@ const getMedicalRequestByRecordId = async (recordId) => {
 };
 
 const getMedicalRequestByDoctorId = async (doctorId) => {
-    const medicalRequest = await MedicalRequest.find({ DoctorId: doctorId });
-    if (!medicalRequest) {
+    const medicalRequest = await MedicalRequest.find({ DoctorId: doctorId })
+        .populate({
+            path: "RecordId",
+            select: "OrderId ChildId CreatedDate ModifiedDate Status ExpiredDate trackingInfo",
+            populate: [
+                {
+                    path: "ChildId",
+                    model: "Children",
+                    select: "fname lname birthdate gender picture blood_type allergy notes"
+                },
+                {
+                    path: "OrderId",
+                    model: "Order",
+                    select: "memberId buyerName",
+                    populate: {
+                        path: "memberId",
+                        model: "User",
+                        select: "username email status",
+                        populate: {
+                            path: "memberInfo",
+                            model: "MemberInfo",
+                            select: "nickname gender birthdate phone address picture"
+                        }
+                    }
+                },
+                {
+                    path: "trackingInfo",
+                    model: "Tracking",
+                    select: "MonthYear Trackings"
+                }
+            ]
+        })
+        .lean(); // Converts Mongoose documents to plain JSON objects
+
+    if (!medicalRequest || medicalRequest.length === 0) {
         throw new Error("No medical request found");
     }
 
     return medicalRequest;
 };
+
 
 const doctorStartWorkingOnMedicalRequest = async (medicalRequestId) => {
     const medicalRequest = await MedicalRequest.findOneAndUpdate({ _id: medicalRequestId }, { Status: "InProgress" });

@@ -9,4 +9,15 @@ const RecordSchema = new mongoose.Schema({
     ExpiredDate: { type: Date },
 });
 
+// Virtual field for tracking records related to this Record
+RecordSchema.virtual("trackingInfo", {
+    ref: "Tracking",
+    localField: "_id",
+    foreignField: "RecordId", // This should match the field in TrackingSchema
+    justOne: false // false because a Record can have multiple Tracking entries
+});
+
+RecordSchema.set("toJSON", { virtuals: true });
+RecordSchema.set("toObject", { virtuals: true });
+
 module.exports = mongoose.model("Record", RecordSchema);
