@@ -178,3 +178,13 @@ export const getApprovedRequestsByDoctorId = async () => {
     toast.error("Failed to fetch approved requests.");
   }
 };
+
+export const getDoctorResponse = async (medicalRequestId) => {
+  try {
+    const response = await axios.get(`api/medical-requests/doctor-response/${medicalRequestId}`);
+    return response.data; // Axios automatically parses JSON
+  } catch (error) {
+    console.error("Error fetching doctor response:", error.response?.data || error.message);
+    throw error;
+  }
+};

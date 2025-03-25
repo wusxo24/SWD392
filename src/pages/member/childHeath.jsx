@@ -2,13 +2,25 @@ import React, { useState } from "react";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { postTracking } from "@/services/tracking";
 import { toast } from "react-toastify";
+import { getDoctorResponse } from "@/services/medicalRequestService"; // Import the service
+
 
 const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRequests }) => {
   const [editingDates, setEditingDates] = useState({});
   const [editedValues, setEditedValues] = useState({});
   const [activeTab, setActiveTab] = useState("tracking"); 
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [doctorResponses, setDoctorResponses] = useState({});
   if (!isOpen) return null;
+
+  const fetchDoctorResponse = async (medicalRequestId) => {
+    try {
+      const data = await getDoctorResponse(medicalRequestId);
+      setDoctorResponses((prev) => ({ ...prev, [medicalRequestId]: data }));
+    } catch (error) {
+      console.error("Failed to fetch doctor response:", error);
+    }
+  };
 
   const formatValue = (value) =>
     value !== null && value !== undefined && value !== "" ? value : "N/A";
@@ -214,31 +226,65 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
         )}
 
 
-        {activeTab === "medical" && (
-          <>
-           {medicalRequestsArray.length > 0 ? (
-              medicalRequestsArray.map((request, index) => (
-                <div key={index} className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50">
-                  <h3 className="text-lg font-semibold">
-                    Status: <span className={`text-lg font-semibold ${
-                      request.Status == "Pending"
-                        ? "text-yellow-500"
-                        : request.Status == "Completed"
-                        ? "text-green-500"
-                        : request.Status == "Rejected"
-                        ? "text-red-500"
-                        : request.Status == "InProgress"
-                        ? "text-blue-500"
-                        : "text-gray-500" // Default for Completed
-                    }`}>{request.Status}</span> 
-                  </h3>
-                  <p className="text-gray-700"><strong>Request Reason:</strong> {request.Reason}</p>
-                  <p className="text-gray-700"><strong>Notes:</strong> {request.Notes}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">No medical requests available.</p>
-            )}
+          {activeTab === "medical" && (
+            <>
+            {medicalRequestsArray.length > 0 ? (
+          medicalRequestsArray.map((request, index) => (
+            <div key={index} className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50">
+              <h3 className="text-lg font-semibold">
+                Status:{" "}
+                <span className={`text-lg font-semibold ${
+                  request.Status === "Pending"
+                    ? "text-yellow-500"
+                    : request.Status === "Completed"
+                    ? "text-green-500"
+                    : request.Status === "Rejected"
+                    ? "text-red-500"
+                    : request.Status === "InProgress"
+                    ? "text-blue-500"
+                    : "text-gray-500"
+                }`}>
+                  {request.Status}
+                </span>
+              </h3>
+              <p className="text-gray-700">
+                <strong>Request Reason:</strong> {request.Reason}
+              </p>
+              <p className="text-gray-700">
+                <strong>Notes:</strong> {request.Notes}
+              </p>
+
+             {request.Status === "Completed" && (
+                <>
+                  <button
+                    className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-blue-700"
+                    onClick={() => fetchDoctorResponse(request._id)}
+                  >
+                    Show Doctor's Response
+                  </button>
+                  {doctorResponses[request._id] && (
+                    <div className="mt-4 p-4 bg-white border border-gray-300 rounded-lg shadow-md">
+                      <h4 className="text-lg font-semibold text-gray-800">Doctor's Response:</h4>
+                      <div className="mt-2 space-y-2">
+                      <p><strong className="text-gray-700">Diagnosis:</strong> {doctorResponses[request._id].Diagnosis}</p>
+                      <p><strong className="text-gray-700">Recommendations:</strong> {doctorResponses[request._id].Recommendations}</p>
+                      <p><strong className="text-gray-700">Additional Notes:</strong> {doctorResponses[request._id].AdditionalNotes}</p>
+                      </div>
+                      <button
+                        className="mt-4 px-4 py-2 bg-red-500 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-red-600"
+                        onClick={() => setDoctorResponses((prev) => ({ ...prev, [request._id]: null }))}
+                      >
+                        Close Response
+                      </button>
+                    </div>
+                  )} 
+                </>
+              )}
+            </div>
+          ))
+        ) : (
+          <p>No medical requests found.</p>
+        )}
           </>
         )}
       </div>
