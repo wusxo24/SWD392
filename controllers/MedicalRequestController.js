@@ -7,9 +7,18 @@ const createMedicalRequest = async (req, res) => {
         const medicalRequest = await MedicalRequestService.createMedicalRequest(recordId, req.body);
         res.status(201).json(medicalRequest);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        // Check for validation errors (e.g., duplicate pending request)
+        if (error.message.includes("pending medical request already exists")) {
+            return res.status(400).json({ error: error.message });
+        }
+
+        // Handle unexpected errors (e.g., database connection issues)
+        console.error("Error creating medical request:", error);
+        return res.status(500).json({ error: "Internal Server Error. Please try again later." });
     }
 };
+
+
 
 const rejectMedicalRequest = async (req, res) => {
     try {
