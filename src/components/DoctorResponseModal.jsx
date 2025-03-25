@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "../utils/axiosInstance"; 
+import { toast } from "react-hot-toast";
 
 const DoctorResponseModal = ({ isOpen, onClose, requestId }) => {
   const [diagnosis, setDiagnosis] = useState("");
@@ -22,12 +23,16 @@ const DoctorResponseModal = ({ isOpen, onClose, requestId }) => {
 
   const handleSubmit = async () => {
     try {
-      await axios.post("/api/doctor-responses/", {
+      const response = await axios.post("/api/doctor-responses/", {
         MedicalRequestId: requestId,
         Diagnosis: diagnosis,
         Recommendations: recommendation,
         AdditionalNotes: additionalNotes,
       });
+      if (response.status === 200 || response.status === 201) {
+        toast.success("Response submitted successfully!");
+        await axios.put(`/api/doctor-responses/${response.data._id}/complete`);
+      }
       onClose();
     } catch (error) {
       console.error("Error submitting response:", error);

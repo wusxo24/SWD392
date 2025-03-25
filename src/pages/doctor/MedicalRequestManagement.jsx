@@ -32,6 +32,7 @@ export default function ViewRequest() {
 
   useEffect(() => {
     fetchChildren();
+    fetchRequests();
   }, []);
 
     const fetchChildren = async () => {
@@ -41,6 +42,19 @@ export default function ViewRequest() {
       } catch (error) {
         console.error("Error fetching children:", error);
         toast.error("Failed to load children");
+      }
+    };
+
+    const fetchRequests = async () => {
+      try {
+        setLoading(true);
+        const data = await getApprovedRequestsByDoctorId();
+        setRequests(data || []);
+        setFilteredRequests(data || []);
+      } catch (error) {
+        toast.error("Failed to fetch requests.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -84,23 +98,6 @@ export default function ViewRequest() {
         toast.error("Child's age is out of the valid range.");
       }
     };
-
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        setLoading(true);
-        const data = await getApprovedRequestsByDoctorId();
-        setRequests(data || []);
-        setFilteredRequests(data || []);
-      } catch (error) {
-        toast.error("Failed to fetch requests.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRequests();
-  }, []);
 
   useEffect(() => {
     const filtered = requests.filter((request) =>
@@ -354,7 +351,10 @@ export default function ViewRequest() {
           {isModalOpen && (
             <DoctorResponseModal 
               isOpen={isModalOpen} 
-              onClose={() => setIsModalOpen(false)} 
+              onClose={() => {
+                setIsModalOpen(false);
+                fetchRequests();
+              }}
               requestId={selectedRequestId} 
             />
           )}
