@@ -26,9 +26,8 @@ import Subscription from "./pages/manager/Subscription";
 import DoctorList from "./pages/manager/DoctorList";
 import MemberRequest from "./pages/manager/MemberRequest";
 import RatingFeedback from "./pages/manager/RatingFeedback";
-import AddInfo from "./pages/doctor/AddInfo";
-import ViewRequest from "./pages/doctor/ViewRequest";
-import AnalyzeReport from "./pages/doctor/AnalyzeReport";
+import DoctorProfile from "./pages/doctor/DoctorProfile";
+import MedicalRequestManagement from "./pages/doctor/MedicalRequestManagement";
 import { ServicesHistory } from "./pages/member/servicesHistory";
 import { SuccessPaid } from "./pages/member/successPaid";
 import { FaildedPaid } from "./pages/member/failedPaid";
@@ -37,9 +36,11 @@ import GrowthChartContainer from "./pages/member/growthChartContainer";
 import PlanDetails from "./pages/guest/PlanDetails";
 import GrowthChartContainerBaby from "./pages/member/growthChartContainerBaby";
 import DoctorManagement from "./pages/admin/DoctorManagement";
-import { ManageBlogs } from "./pages/manager/manageBlogs";
 import MemberManagement from "./pages/admin/MemberManagement";
 import ManagerManagement from "./pages/admin/ManagerManagement";
+import GrowthChartContainerDoctor from "./pages/doctor/GrowthChartContrainerDoctor";
+import GrowthChartContainerBabyDoctor from "./pages/doctor/GrowthChartContainerBabyDoctor";
+import NewsManagement from "./pages/manager/NewsManagement";
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 
@@ -55,7 +56,7 @@ function App() {
     Member: "/home",
     Manager: "/dashboard",
     Admin: "/member-management",
-    Doctor: "/view-medical-request",
+    Doctor: "/medical-request-management",
   };
   const hideNavFooter =
     location.pathname === "/login" ||
@@ -116,7 +117,7 @@ function App() {
 
         {/* Manager Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Manager"]} />}>
-          <Route path="/manageBlogs" element={<ManageBlogs />} />
+          <Route path="/news-management" element={<NewsManagement />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/subscription" element={<Subscription />} />
           <Route path="/doctor-list" element={<DoctorList />} />
@@ -134,9 +135,16 @@ function App() {
 
         {/* Doctor Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Doctor"]} />}>
-          <Route path="/add-info" element={<AddInfo />} />
-          <Route path="/view-medical-request" element={<ViewRequest />} />
-          <Route path="/analyze-report" element={<AnalyzeReport />} />
+          <Route path="/doctor-profile" element={<DoctorProfile />} />
+          <Route path="/medical-request-management" element={<MedicalRequestManagement />} />
+          <Route
+            path="/childGrowthDoctor/:recordId"
+            element={<GrowthChartContainerDoctor />}
+          />
+          <Route
+            path="/childGrowthBabyDoctor/:recordId"
+            element={<GrowthChartContainerBabyDoctor />}
+          />
         </Route>
 
         {/* Company Shared Pages */}

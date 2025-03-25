@@ -85,6 +85,7 @@ const GrowthChartContainer = () => {
   }, [recordId]);
 
   useEffect(() => {
+    if (!childData || !childData.birthdate) return; // Ensure childData is available
     console.log(recordId)
     const fetchTrackingData = async () => {
       try {
@@ -99,7 +100,7 @@ const GrowthChartContainer = () => {
       }
     };
     fetchTrackingData();
-  }, [childData]); //waring 2 time because of this 
+  },  [recordId, childData?.birthdate]);
 
   useEffect(() => {
     if (trackingData.length > 0) {
@@ -416,7 +417,7 @@ const handleSubmitRequest = async () => {
           centered
         >
           <Tab label="Height Chart" />
-          <Tab label="Weight Chart" /> 
+          <Tab label="Weight Chart" />
           <Tab label="BMI Chart" />
         </Tabs>
 

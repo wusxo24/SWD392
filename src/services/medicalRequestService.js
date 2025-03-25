@@ -161,3 +161,30 @@ export const rejectMedicalRequest = async (medicalRequestId) => {
     }
   }
 };
+
+export const getApprovedRequestsByDoctorId = async () => {
+  try {
+
+    const response = await axios.get(`/api/medical-requests/doctor/requests`);
+
+    if (response.status === 200) {
+      console.log("Approved Requests:", response.data);
+      return response.data;
+    } else {
+      throw new Error("Unexpected response from server.");
+    }
+  } catch (error) {
+    console.error("Fetch approved requests error:", error.response?.data || error.message);
+    toast.error("Failed to fetch approved requests.");
+  }
+};
+
+export const getDoctorResponse = async (medicalRequestId) => {
+  try {
+    const response = await axios.get(`api/medical-requests/doctor-response/${medicalRequestId}`);
+    return response.data; // Axios automatically parses JSON
+  } catch (error) {
+    console.error("Error fetching doctor response:", error.response?.data || error.message);
+    throw error;
+  }
+};

@@ -22,17 +22,16 @@ import {
   Box,
   Grid,
 } from "@mui/material";
-import WeightForAgeChart from "./WeightForAgeChart";
-import LengthForAgeChart from "./LengthForAgeChart";
-import WeightForLengthChart from "./WeightForLengthChart";
-import HeadCircumferenceChart from "./HeadCircumferenceChart.jsx";
-import WeightForStatureChart from "./WeightForStatureChart";
+import WeightForAgeChart from "@/pages/member/WeightForAgeChart";
+import LengthForAgeChart from "@/pages/member/LengthForAgeChart";
+import WeightForLengthChart from "@/pages/member/WeightForLengthChart";
+import HeadCircumferenceChart from "@/pages/member/HeadCircumferenceChart.jsx";
+import WeightForStatureChart from "@/pages/member/WeightForStatureChart";
 import { MedicalRequest } from "@/services/medicalRequestService";
-import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
+import { Tracking, getChildByRecordId } from "@/services/tracking";
 import { useParams } from "react-router-dom";
-import ChildHealth from "./childHeath";
 
-const GrowthChartContainer = () => {
+const GrowthChartContainerBabyDoctor = () => {
   const { recordId } = useParams();
   const [tabIndex, setTabIndex] = useState(0);
   const [childData, setChildData] = useState({});
@@ -68,23 +67,8 @@ const GrowthChartContainer = () => {
     fetchChildData();
   }, [recordId]);
 
-   useEffect(() => {
-      const fetchMedicalRequests = async () => {
-        try {
-          const data = await getMedicalRequest(recordId);
-          if (data) {
-            setMedicalRequests(data);
-            
-          }
-        } catch (error) {
-          console.error("Error fetching medical requests:", error);
-        }
-      };
-      fetchMedicalRequests();
-    }, [recordId]);
-
   useEffect(() => {
-    if (!childData || !childData.birthdate) return; 
+    if (!childData || !childData.birthdate) return;
     console.log(recordId);
 
     const fetchTrackingData = async () => {
@@ -111,7 +95,7 @@ const GrowthChartContainer = () => {
         const latestDate = latestTracking[0]; // Extract date
         const latestEntry = latestTracking[1]; // Extract data object
         if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
-          toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`
+          toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category.`
             ,{ autoClose: 10000, // 10 seconds (default is 5000ms or 5s)
               closeOnClick: true, // Allows closing on click
               pauseOnHover: true, // Keeps it visible when hovering
@@ -121,81 +105,6 @@ const GrowthChartContainer = () => {
       }
     }, [trackingData]);
 
-  const handleChange = (e) => {
-    setTrackingData({ ...trackingData, [e.target.name]: e.target.value });
-  };
-
-  const handleUpdateGrowth = async () => {
-      try {
-        const currentDate = new Date().toISOString().split("T")[0]; // Use the current date
-  
-        await postTracking(recordId, currentDate, trackingData);
-        toast.success("Growth data updated successfully.");
-        const updatedData = await Tracking(recordId);
-      if (updatedData) {
-        setTrackingData(updatedData);
-  
-        // 🔹 Extract latest BMI entry after update
-        const latestRecord = updatedData[updatedData.length - 1];
-        const trackingsEntries = Object.entries(latestRecord.Trackings);
-        if (trackingsEntries.length === 0) return;
-  
-        const latestTracking = trackingsEntries[trackingsEntries.length - 1]; 
-        const latestDate = latestTracking[0]; 
-        const latestEntry = latestTracking[1]; 
-  
-        // 🔥 Show warning if BMI is not normal
-        if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
-          toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`, {
-            autoClose: 10000, // 10 seconds
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true
-          });
-        }
-      }
-      } catch (error) {
-        console.error("Error updating tracking data:", error);
-        toast.error("Failed to update growth data.");
-      }
-    };
-
-  const handleModalOpen = () => {
-    setOpenModal(true);
-  };
-
-  const handleModalClose = () => {
-    setOpenModal(false);
-    setIsSubmitting(false);
-    setRequestData({ Reason: "", Notes: "" });
-  };
-
-  const handleRequestChange = (e) => {
-    setRequestData({ ...requestData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmitRequest = async () => {
-    if (isSubmitting) return; // Prevent multiple clicks
-    setIsSubmitting(true);
-
-    try {
-      if (!requestData.Reason.trim()) {
-        toast.error("Reason is required.");
-        return;
-      }
-
-      await MedicalRequest(recordId, requestData);
-
-      // 🔹 Fetch updated requests immediately
-      const updatedRequests = await getMedicalRequest(recordId);
-      setMedicalRequests(updatedRequests);
-      handleModalClose();
-      
-    } catch (error) {
-      console.error("Error sending medical request:", error);
-      toast.error("Failed to send request. Please try again.");
-    }
-  };
 
   const processTrackingData = (trackingData, yearOfBirth) => {
     if (!yearOfBirth) {
@@ -245,7 +154,7 @@ const GrowthChartContainer = () => {
       </button>
       <ToastContainer />
       <Typography variant="h3" align="center" fontWeight={600} gutterBottom>
-        Your Child's{" "}
+        Child's{" "}
         <span style={{ color: "#0DBFFF", textDecoration: "underline" }}>
           Growth
         </span>
@@ -292,61 +201,10 @@ const GrowthChartContainer = () => {
                 View Child Health
               </Button>
             </div>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 3, width: "100%", fontWeight: "bold" }}
-              onClick={handleModalOpen}
-            >
-              Send to Doctor
-            </Button>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3, boxShadow: 3 }}>
-            <CardContent>
-              <Stack spacing={2}>
-                <TextField
-                  label="Height (cm)"
-                  name="Height"
-                  value={trackingData.Height || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Weight (kg)"
-                  name="Weight"
-                  value={trackingData.Weight || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Head Circumference (cm)"
-                  name="HeadCircumference"
-                  value={trackingData.HeadCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Waist Circumference (cm)"
-                  name="WaistCircumference"
-                  value={trackingData.WaistCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleUpdateGrowth}
-                >
-                  Update Growth
-                </Button>
-              </Stack>
-            </CardContent>
           </Card>
         </Grid>
       </Grid>
+
       <Card sx={{ mt: 6, p: 3, boxShadow: 3 }}>
         <Tabs
           value={tabIndex}
@@ -402,49 +260,7 @@ const GrowthChartContainer = () => {
           )}
         </CardContent>
       </Card>
-
-      <Dialog open={openModal} onClose={handleModalClose} fullWidth>
-        <DialogTitle>Send Medical Request</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2}>
-            <TextField
-              label="Reason"
-              name="Reason"
-              value={requestData.Reason}
-              onChange={handleRequestChange}
-              fullWidth
-              required
-            />
-            <TextField
-              label="Notes"
-              name="Notes"
-              value={requestData.Notes}
-              onChange={handleRequestChange}
-              fullWidth
-              multiline
-              rows={3}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleModalClose} color="secondary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmitRequest}
-            color="primary"
-            variant="contained"
-          >
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <ChildHealth
-        isOpen={isChildHealthOpen}
-        onClose={() => setIsChildHealthOpen(false)}
-        trackingData={trackingData}
-        setTrackingData={setTrackingData} // ✅ Pass setTrackingData
-      />
+     
       {/* Modal Component */}
       <Modal
         open={open}
@@ -510,4 +326,4 @@ const GrowthChartContainer = () => {
   );
 };
 
-export default GrowthChartContainer;
+export default GrowthChartContainerBabyDoctor;

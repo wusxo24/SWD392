@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import SidebarManager from "./SidebarManager";
 import { getAllMedicalRequests, acceptMedicalRequest, rejectMedicalRequest } from "@/services/medicalRequestService";
 import { toast } from "react-toastify";
-import { fetchDoctors } from "@/services/doctorService";  // Import your fetchDoctors function
+import { fetchApprovedAvailableDoctors } from "@/services/doctorService";  // Import your fetchDoctors function
 import { LoadingScreen } from "@/components/loadingScreen";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -55,7 +55,7 @@ const MemberRequest = () => {
     const fetchAvailableDoctors = async () => {
       setLoading(true); // Start loading for doctors
       try {
-        const doctorsList = await fetchDoctors(); // Call the fetchDoctors function
+        const doctorsList = await fetchApprovedAvailableDoctors(); // Call the fetchDoctors function
         console.log("Doctors List:", doctorsList);
         setDoctors(doctorsList); // Set the doctors list
       } catch (error) {
@@ -104,17 +104,24 @@ const MemberRequest = () => {
       return;
     }
     try {
-      const response = await acceptMedicalRequest(currentRequestId, doctorId,managerId);
-      const assignedDoctor = doctors.find(doc => doc.user_id._id === doctorId);
+      const response = await acceptMedicalRequest(currentRequestId, doctorId, managerId);
+      const assignedDoctor = doctors.find(doc => doc.user_id === doctorId);
       // Update the state immediately
       setRequests(prevRequests =>
         prevRequests.map(req =>
           req._id === currentRequestId
-            ? { ...req, Status: 'Accepted', DoctorId: doctorId, DoctorInfo: assignedDoctor }
+            ? { 
+                ...req, 
+                Status: 'Approved', 
+                DoctorId: { 
+                  _id: doctorId, 
+                  username: assignedDoctor?.username // Ensure username is included
+                }, 
+                DoctorInfo: assignedDoctor
+              }
             : req
         )
       );
-  
       setOpenDoctorModal(false); // Close modal after acceptance
       setSelectedDoctor(null); // Clear selected doctor
       toast.success("Medical request accepted successfully!");
@@ -159,7 +166,6 @@ const MemberRequest = () => {
             <MenuItem value="Pending">Pending</MenuItem>
             <MenuItem value="Approved">Approved</MenuItem>
             <MenuItem value="Rejected">Rejected</MenuItem>
-            <MenuItem value="InProgress">In Progress</MenuItem>
             <MenuItem value="Completed">Completed</MenuItem>
           </Select>
         </FormControl>
@@ -246,7 +252,7 @@ const MemberRequest = () => {
                 <ListItem
                   button="true" 
                   key={doctor._id}
-                  onClick={() => handleDoctorSelection(doctor.user_id._id)}
+                  onClick={() => handleDoctorSelection(doctor.user_id)}
                   selected={selectedDoctor === doctor._id}
                   className="cursor-pointer min-w-[500px] items-start"
                   style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 2fr 2fr', alignItems: 'center' }}
@@ -257,7 +263,7 @@ const MemberRequest = () => {
                     style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                   />
                   <ListItemText 
-                    primary={doctor.user_id?.username} 
+                    primary={doctor.username} 
                     style={{ margin: 0 }}
                   />
                   <ListItemText 
