@@ -12,7 +12,7 @@ import Logo from "@/assets/Logo.png";
 import { toast, ToastContainer } from "react-toastify";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import BookIcon from '@mui/icons-material/Book';
+import { FaRegNewspaper } from "react-icons/fa6";
 const Sidebar = () => {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
@@ -89,7 +89,7 @@ const Sidebar = () => {
           { to: "/doctor-list", label: "Doctor List", icon: <HiClipboardDocumentList /> },
           { to: "/member-request", label: "Member Request", icon: <HiChatBubbleLeftEllipsis /> },
           { to: "/rating-feedback", label: "Rating and Feedback", icon: <HiMiniHeart /> },
-          { to: "/manageBlogs", label: "Blogs", icon: <BookIcon /> },
+          { to: "/news-management", label: "News", icon: <FaRegNewspaper /> },
         ].map(({ to, label, icon }) => (
           <NavLink
             key={to}
