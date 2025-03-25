@@ -2,16 +2,21 @@ const DoctorResponse = require("../models/DoctorResponse");
 const MedicalRequest = require("../models/MedicalRequest");
 
 const createDoctorResponse = async (MedicalRequestId, responseData) => {
-    const { Diagnosis, Recommendations, AdditionalNotes } = responseData;
+    try {
+        const { Diagnosis, Recommendations, AdditionalNotes } = responseData;
 
-    const doctorResponse = await DoctorResponse.create({
-        MedicalRequestId,
-        Diagnosis,
-        Recommendations,
-        AdditionalNotes,
-    });
+        const doctorResponse = await DoctorResponse.create({
+            MedicalRequestId,
+            Diagnosis,
+            Recommendations,
+            AdditionalNotes,
+        });
 
-    return doctorResponse;
+        return doctorResponse;
+    } catch (error) {
+        console.error("Error in createDoctorResponse service:", error);
+        throw new Error("Failed to create doctor response");
+    }
 };
 
 const updateDoctorResponse = async (id, responseData) => {

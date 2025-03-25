@@ -2,10 +2,17 @@ const DoctorResponseService = require("../services/DoctorResponseService");
 
 const createDoctorResponse = async (req, res) => {
     try {
-        const { MedicalRequestId } = req.params;
-        const doctorResponse = await DoctorResponseService.createDoctorResponse(MedicalRequestId, req.body);
+        const { MedicalRequestId, Diagnosis, Recommendations, AdditionalNotes } = req.body;
+
+        const doctorResponse = await DoctorResponseService.createDoctorResponse(MedicalRequestId, {
+            Diagnosis,
+            Recommendations,
+            AdditionalNotes,
+        });
+
         res.status(201).json(doctorResponse);
     } catch (error) {
+        console.error("Error creating doctor response:", error);
         res.status(500).json({ error: error.message });
     }
 };
