@@ -12,9 +12,9 @@ export const fetchDoctors = async () => {
     }
 };
 
-export const fetchAvailableDoctors = async () => {
+export const fetchApprovedAvailableDoctors = async () => {
     try {
-        const response = await axios.get("/api/doctors/Available"); // Updated endpoint
+        const response = await axios.get("/api/doctors/Approved/Available"); // Updated endpoint
         return response.data;
     } catch (error) {
         console.error("Error fetching available doctors:", error.response?.data || error);
