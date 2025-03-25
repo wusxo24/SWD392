@@ -115,7 +115,7 @@ router.put("/:id", authMiddleware, authorize(["Admin", "Doctor"]), updateDoctor)
 router.delete("/:id", authMiddleware, authorize(["Admin"]), deleteDoctor);
 
 
-router.get("/:id", authMiddleware, authorize(["Admin"]), getDoctorById);
+router.get("/:id", authMiddleware, authorize(["Admin", "Doctor"]), getDoctorById);
 
 // Soft delete doctor (update status to "Inactive")
 router.put("/:id/soft-delete", authMiddleware, authorize(["Admin"]), softDeleteDoctor);
