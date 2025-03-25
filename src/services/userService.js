@@ -11,7 +11,7 @@ export const getUserProfile = async (userId) => {
 
 export const updateUserProfile = async (userId, formData) => {
   try {
-    await axios.put(`api/members/${userId}`, formData);
+    await axios.put(`api/members/${userId}/member`, formData);
     return true;
   } catch (error) {
     throw new Error("Failed to update profile.");

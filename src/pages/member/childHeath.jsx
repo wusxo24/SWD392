@@ -228,8 +228,10 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
 
           {activeTab === "medical" && (
             <>
-            {medicalRequestsArray.length > 0 ? (
-          medicalRequestsArray.map((request, index) => (
+        {medicalRequestsArray.length > 0 ? (
+          medicalRequestsArray
+          .filter(request => request)
+          .map((request, index) => (
             <div key={index} className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50">
               <h3 className="text-lg font-semibold">
                 Status:{" "}
@@ -244,7 +246,7 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
                     ? "text-blue-500"
                     : "text-gray-500"
                 }`}>
-                  {request.Status}
+                   {request?.Status ?? "Unknown"}
                 </span>
               </h3>
               <p className="text-gray-700">
@@ -254,7 +256,7 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
                 <strong>Notes:</strong> {request.Notes}
               </p>
 
-             {request.Status === "Completed" && (
+             {request?.Status === "Completed" && (
                 <>
                   <button
                     className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-blue-700"
