@@ -27,8 +27,15 @@ import LengthForAgeChart from "./LengthForAgeChart";
 import WeightForLengthChart from "./WeightForLengthChart";
 import HeadCircumferenceChart from "./HeadCircumferenceChart.jsx";
 import WeightForStatureChart from "./WeightForStatureChart";
-import { MedicalRequest } from "@/services/medicalRequestService";
-import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
+import {
+  getMedicalRequest,
+  MedicalRequest,
+} from "@/services/medicalRequestService";
+import {
+  Tracking,
+  getChildByRecordId,
+  postTracking,
+} from "@/services/tracking";
 import { useParams } from "react-router-dom";
 import ChildHealth from "./childHeath";
 
@@ -41,6 +48,7 @@ const GrowthChartContainer = () => {
   const [trackingData, setTrackingData] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ageData, setAgeData] = useState([]);
+  const [medicalRequests, setMedicalRequests] = useState([]);
   const [isChildHealthOpen, setIsChildHealthOpen] = useState(false);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -68,23 +76,22 @@ const GrowthChartContainer = () => {
     fetchChildData();
   }, [recordId]);
 
-   useEffect(() => {
-      const fetchMedicalRequests = async () => {
-        try {
-          const data = await getMedicalRequest(recordId);
-          if (data) {
-            setMedicalRequests(data);
-            
-          }
-        } catch (error) {
-          console.error("Error fetching medical requests:", error);
+  useEffect(() => {
+    const fetchMedicalRequests = async () => {
+      try {
+        const data = await getMedicalRequest(recordId);
+        if (data) {
+          setMedicalRequests(data);
         }
-      };
-      fetchMedicalRequests();
-    }, [recordId]);
+      } catch (error) {
+        console.error("Error fetching medical requests:", error);
+      }
+    };
+    fetchMedicalRequests();
+  }, [recordId]);
 
   useEffect(() => {
-    if (!childData || !childData.birthdate) return; 
+    if (!childData || !childData.birthdate) return;
     console.log(recordId);
 
     const fetchTrackingData = async () => {
@@ -103,62 +110,71 @@ const GrowthChartContainer = () => {
   }, [recordId, childData?.birthdate]);
 
   useEffect(() => {
-      if (trackingData.length > 0) {
-        const latestRecord = trackingData[trackingData.length - 1]; 
-        const trackingsEntries = Object.entries(latestRecord.Trackings); // Convert to array [date, data]
-        if (trackingsEntries.length === 0) return;
-        const latestTracking = trackingsEntries[trackingsEntries.length - 1]; // Get last [date, data] pair
-        const latestDate = latestTracking[0]; // Extract date
-        const latestEntry = latestTracking[1]; // Extract data object
-        if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
-          toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`
-            ,{ autoClose: 10000, // 10 seconds (default is 5000ms or 5s)
-              closeOnClick: true, // Allows closing on click
-              pauseOnHover: true, // Keeps it visible when hovering
-              draggable: true // Allows dragging the toast
-            });
-        }
+    if (trackingData.length > 0) {
+      const latestRecord = trackingData[trackingData.length - 1];
+      const trackingsEntries = Object.entries(latestRecord.Trackings); // Convert to array [date, data]
+      if (trackingsEntries.length === 0) return;
+      const latestTracking = trackingsEntries[trackingsEntries.length - 1]; // Get last [date, data] pair
+      const latestDate = latestTracking[0]; // Extract date
+      const latestEntry = latestTracking[1]; // Extract data object
+      if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
+        toast.warning(
+          `⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+          {
+            autoClose: 10000, // 10 seconds (default is 5000ms or 5s)
+            closeOnClick: true, // Allows closing on click
+            pauseOnHover: true, // Keeps it visible when hovering
+            draggable: true, // Allows dragging the toast
+          }
+        );
       }
-    }, [trackingData]);
+    }
+  }, [trackingData]);
 
   const handleChange = (e) => {
     setTrackingData({ ...trackingData, [e.target.name]: e.target.value });
   };
 
   const handleUpdateGrowth = async () => {
-      try {
-        const currentDate = new Date().toISOString().split("T")[0]; // Use the current date
-  
-        await postTracking(recordId, currentDate, trackingData);
-        toast.success("Growth data updated successfully.");
-        const updatedData = await Tracking(recordId);
+    try {
+      const currentDate = new Date().toISOString().split("T")[0]; // Use the current date
+
+      await postTracking(recordId, currentDate, trackingData);
+      toast.success("Growth data updated successfully.");
+      const updatedData = await Tracking(recordId);
       if (updatedData) {
         setTrackingData(updatedData);
-  
+
         // 🔹 Extract latest BMI entry after update
         const latestRecord = updatedData[updatedData.length - 1];
         const trackingsEntries = Object.entries(latestRecord.Trackings);
         if (trackingsEntries.length === 0) return;
-  
-        const latestTracking = trackingsEntries[trackingsEntries.length - 1]; 
-        const latestDate = latestTracking[0]; 
-        const latestEntry = latestTracking[1]; 
-  
+
+        const latestTracking = trackingsEntries[trackingsEntries.length - 1];
+        const latestDate = latestTracking[0];
+        const latestEntry = latestTracking[1];
+
         // 🔥 Show warning if BMI is not normal
-        if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
-          toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`, {
-            autoClose: 10000, // 10 seconds
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true
-          });
+        if (
+          latestEntry.BMIResult &&
+          latestEntry.BMIResult !== "Normal Weight"
+        ) {
+          toast.warning(
+            `⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+            {
+              autoClose: 10000, // 10 seconds
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            }
+          );
         }
       }
-      } catch (error) {
-        console.error("Error updating tracking data:", error);
-        toast.error("Failed to update growth data.");
-      }
-    };
+    } catch (error) {
+      console.error("Error updating tracking data:", error);
+      toast.error("Failed to update growth data.");
+    }
+  };
 
   const handleModalOpen = () => {
     setOpenModal(true);
@@ -190,7 +206,6 @@ const GrowthChartContainer = () => {
       const updatedRequests = await getMedicalRequest(recordId);
       setMedicalRequests(updatedRequests);
       handleModalClose();
-      
     } catch (error) {
       console.error("Error sending medical request:", error);
       toast.error("Failed to send request. Please try again.");
@@ -303,38 +318,104 @@ const GrowthChartContainer = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 3, boxShadow: 3 }}>
+        <Grid item xs={12} md={6} sx={{ display: "flex" }}>
+          <Card sx={{ p: 3, boxShadow: 3, width: "100%", height: "100%" }}>
             <CardContent>
-              <Stack spacing={2}>
-                <TextField
-                  label="Height (cm)"
-                  name="Height"
-                  value={trackingData.Height || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Weight (kg)"
-                  name="Weight"
-                  value={trackingData.Weight || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Head Circumference (cm)"
-                  name="HeadCircumference"
-                  value={trackingData.HeadCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
-                <TextField
-                  label="Waist Circumference (cm)"
-                  name="WaistCircumference"
-                  value={trackingData.WaistCircumference || ""}
-                  onChange={handleChange}
-                  fullWidth
-                />
+              <Grid container spacing={2}>
+                {/* Left Column (First 5 Fields) */}
+                <Grid item xs={12} md={6}>
+                  <Stack spacing={2}>
+                    <TextField
+                      label="Height (cm)"
+                      name="Height"
+                      value={trackingData.Height || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Weight (kg)"
+                      name="Weight"
+                      value={trackingData.Weight || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Head Circumference (cm)"
+                      name="HeadCircumference"
+                      value={trackingData.HeadCircumference || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Waist Circumference (cm)"
+                      name="WaistCircumference"
+                      value={trackingData.WaistCircumference || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Hip Circumference (cm)"
+                      name="HipCircumference"
+                      value={trackingData.HipCircumference || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                  </Stack>
+                </Grid>
+
+                {/* Right Column (Next 5 Fields) */}
+                <Grid item xs={12} md={6}>
+                  <Stack spacing={2}>
+                    <TextField
+                      label="Biceps Circumference (cm)"
+                      name="BicepsCircumference"
+                      value={trackingData.BicepsCircumference || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Triceps Circumference (cm)"
+                      name="TricepsCircumference"
+                      value={trackingData.TricepsCircumference || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Chest Circumference (cm)"
+                      name="ChestCircumference"
+                      value={trackingData.ChestCircumference || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Thigh Circumference (cm)"
+                      name="ThighCircumference"
+                      value={trackingData.ThighCircumference || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Calf Circumference (cm)"
+                      name="CalfCircumference"
+                      value={trackingData.CalfCircumference || ""}
+                      onChange={handleChange}
+                      fullWidth
+                      size="small"
+                    />
+                  </Stack>
+                </Grid>
+              </Grid>
+              {/* Submit Button (Full Width) */}
+              <Box mt={3} display="flex" justifyContent="center">
                 <Button
                   variant="contained"
                   color="primary"
@@ -342,11 +423,12 @@ const GrowthChartContainer = () => {
                 >
                   Update Growth
                 </Button>
-              </Stack>
+              </Box>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
+      
       <Card sx={{ mt: 6, p: 3, boxShadow: 3 }}>
         <Tabs
           value={tabIndex}
@@ -444,6 +526,7 @@ const GrowthChartContainer = () => {
         onClose={() => setIsChildHealthOpen(false)}
         trackingData={trackingData}
         setTrackingData={setTrackingData} // ✅ Pass setTrackingData
+        medicalRequests={medicalRequests}
       />
       {/* Modal Component */}
       <Modal

@@ -193,13 +193,6 @@ const GrowthChartContainerBabyDoctor = () => {
                 View Child Details
               </Button>
 
-              <Button
-                variant="outlined"
-                className="flex-1 py-3 rounded-lg shadow-md"
-                onClick={() => setIsChildHealthOpen(true)}
-              >
-                View Child Health
-              </Button>
             </div>
           </Card>
         </Grid>
