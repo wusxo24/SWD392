@@ -27,7 +27,7 @@ import LengthForAgeChart from "./LengthForAgeChart";
 import WeightForLengthChart from "./WeightForLengthChart";
 import HeadCircumferenceChart from "./HeadCircumferenceChart.jsx";
 import WeightForStatureChart from "./WeightForStatureChart";
-import { MedicalRequest } from "@/services/medicalRequestService";
+import { getMedicalRequest, MedicalRequest } from "@/services/medicalRequestService";
 import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
 import { useParams } from "react-router-dom";
 import ChildHealth from "./childHeath";
@@ -44,6 +44,7 @@ const GrowthChartContainer = () => {
   const [isChildHealthOpen, setIsChildHealthOpen] = useState(false);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [medicalRequests, setMedicalRequests] = useState([]);
   const birthDate = new Date(childData?.birthdate);
   const today = new Date();
   const diffInMilliseconds = today - birthDate;

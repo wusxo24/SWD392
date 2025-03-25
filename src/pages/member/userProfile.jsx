@@ -60,8 +60,8 @@ export const UserProfile = () => {
     }
 
     try {
-      await updateUserProfile(userId, { ...formData, picture: file });
-      setMember({ ...formData, picture: file });
+      await updateUserProfile(userId, { ...formData }); // No need to include 'file'
+      setMember({ ...formData });
       setIsEditing(false);
       toast.success("Profile updated successfully!");
     } catch {
