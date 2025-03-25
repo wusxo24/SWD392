@@ -124,11 +124,14 @@ const ChildInformationScreen = () => {
   const [showBloodTypePicker, setShowBloodTypePicker] = useState(false);
 
   useEffect(() => {
+    console.log("Mode from URL:", mode);
     if (mode) {
       setCurrentMode(mode as Mode);
     }
     if (mode === Mode.Update && id) {
       fetchChildData(id as string);
+    } else if (mode === Mode.View) {
+      fetchSelectedChildData();
     }
   }, [mode, id]);
 
@@ -139,11 +142,23 @@ const ChildInformationScreen = () => {
         const children = JSON.parse(childrenString);
         const child = children.find((c: any) => c.id === childId);
         if (child) {
-          setChildData({ ...child, birthDate: new Date(child.birthDate).toLocaleDateString("en-GB") });
+          setChildData({ ...child, birthdate: new Date(child.birthdate).toLocaleDateString("en-GB") });
         }
       }
     } catch (error) {
       console.error("Failed to fetch child data from AsyncStorage", error);
+    }
+  };
+
+  const fetchSelectedChildData = async () => {
+    try {
+      const selectedChildString = await AsyncStorage.getItem("selectedChild");
+      if (selectedChildString) {
+        const selectedChild = JSON.parse(selectedChildString);
+        setChildData({ ...selectedChild, birthdate: new Date(selectedChild.birthdate).toLocaleDateString("en-GB") });
+      }
+    } catch (error) {
+      console.error("Failed to fetch selected child data from AsyncStorage", error);
     }
   };
 
@@ -207,7 +222,7 @@ const ChildInformationScreen = () => {
       <Text style={tw`px-4 text-lg font-bold`}>Information</Text>
 
       <View style={tw`mx-4 mt-4 p-4 bg-white rounded-lg`}>
-      <InputField
+        <InputField
           label="Full name"
           value={`${childData.fname} ${childData.lname}`.trim()}
           onChangeText={(value: string) => handleInputChange("fullName", value)}
@@ -215,14 +230,23 @@ const ChildInformationScreen = () => {
         />
         <View style={tw`flex flex-row mt-4 w-full`}>
           <View style={tw`w-1/3 pr-2`}>
-            <PickerField
-              label="Gender identity"
-              value={childData.gender}
-              options={genderOptions}
-              showPicker={showGenderPicker}
-              setShowPicker={setShowGenderPicker}
-              onValueChange={(value: string) => handleInputChange("gender", value)}
-            />
+            {currentMode !== Mode.View ? (
+              <PickerField
+                label="Gender identity"
+                value={childData.gender}
+                options={genderOptions}
+                showPicker={showGenderPicker}
+                setShowPicker={setShowGenderPicker}
+                onValueChange={(value: string) => handleInputChange("gender", value)}
+              />
+            ) : (
+              <InputField
+                label="Gender identity"
+                value={childData.gender}
+                onChangeText={() => {}}
+                editable={false}
+              />
+            )}
           </View>
           <View style={tw`w-2/3 pl-4`}>
             <Text style={tw`font-normal text-slate-500`}>Date of birth</Text>
@@ -241,14 +265,23 @@ const ChildInformationScreen = () => {
         </View>
         <View style={tw`flex flex-row mt-4 w-full`}>
           <View style={tw`w-1/3 pr-2`}>
-            <PickerField
-              label="Blood Type"
-              value={childData.blood_type}
-              options={bloodTypeOptions}
-              showPicker={showBloodTypePicker}
-              setShowPicker={setShowBloodTypePicker}
-              onValueChange={(value: string) => handleInputChange("blood_type", value)}
-            />
+            {currentMode !== Mode.View ? (
+              <PickerField
+                label="Blood Type"
+                value={childData.blood_type}
+                options={bloodTypeOptions}
+                showPicker={showBloodTypePicker}
+                setShowPicker={setShowBloodTypePicker}
+                onValueChange={(value: string) => handleInputChange("blood_type", value)}
+              />
+            ) : (
+              <InputField
+                label="Blood Type"
+                value={childData.blood_type}
+                onChangeText={() => {}}
+                editable={false}
+              />
+            )}
           </View>
           <View style={tw`w-2/3 pl-4`}>
             <InputField
@@ -282,7 +315,7 @@ const ChildInformationScreen = () => {
   );
 
   return (
-    <View style={tw`flex-1`}>
+    <View key={`${mode}-${id}-${currentMode}`} style={tw`flex-1`}>
       <Header
         screenTitle="Child Information"
         onBackPress={() => {
@@ -294,8 +327,7 @@ const ChildInformationScreen = () => {
         <TouchableOpacity
           style={tw`bg-blue-500 p-2 rounded mt-4`}
           onPress={() => {
-            setChildData(initialChildData); // Clear the form when switching to create mode
-            setCurrentMode(Mode.Create);
+            setCurrentMode(Mode.Update);
           }}
         >
           <Text style={tw`text-white text-center`}>Click to Edit</Text>

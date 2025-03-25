@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import tw from "twrnc";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { UserCenter } from "@/components/index/UserCenter.component";
 import ArrowDownIcon from "@/assets/icons/ArrowDown.icon";
 import { Link } from "expo-router";
 import IndexStat from "@/components/index/IndexStat.component";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import childService from "@/service/child.service";
+import ProfileIcon from "@/assets/icons/Profile.icon";
 
 interface UserData {
   id: string;
@@ -17,7 +18,11 @@ interface UserData {
   avatar: string;
 }
 
-const ChildSelector = ({ selectedChildName }: { selectedChildName: string }) => {
+const ChildSelector = ({
+  selectedChildName,
+}: {
+  selectedChildName: string;
+}) => {
   return (
     <View style={tw`flex-row items-center justify-between px-4 my-4`}>
       <Text style={tw`font-normal text-xl`}>Child: </Text>
@@ -36,7 +41,6 @@ const ChildSelector = ({ selectedChildName }: { selectedChildName: string }) => 
 };
 
 export default function HomeScreen() {
-  
   const [userData, setUserData] = useState<UserData>({
     id: "",
     email: "",
@@ -64,7 +68,10 @@ export default function HomeScreen() {
 
         // Set the first child as the default selected child if children are not null
         if (children.length > 0) {
-          await AsyncStorage.setItem("selectedChild", JSON.stringify(children[0]));
+          await AsyncStorage.setItem(
+            "selectedChild",
+            JSON.stringify(children[0])
+          );
         }
       } catch (error) {
         console.error("Failed to fetch user data from AsyncStorage", error);
@@ -79,7 +86,10 @@ export default function HomeScreen() {
           setSelectedChildName(`${selectedChild.fname} ${selectedChild.lname}`);
         }
       } catch (error) {
-        console.error("Failed to fetch selected child from AsyncStorage", error);
+        console.error(
+          "Failed to fetch selected child from AsyncStorage",
+          error
+        );
       }
     };
 
@@ -94,7 +104,10 @@ export default function HomeScreen() {
             return [key, value];
           }
         });
-        console.log("Current AsyncStorage contents:", JSON.stringify(asyncStorageContents, null, 2));
+        console.log(
+          "Current AsyncStorage contents:",
+          JSON.stringify(asyncStorageContents, null, 2)
+        );
       } catch (error) {
         console.error("Failed to log AsyncStorage contents", error);
       }
@@ -115,6 +128,26 @@ export default function HomeScreen() {
       />
       <ChildSelector selectedChildName={selectedChildName} />
       <IndexStat />
+      <View style={tw`mt-4 flex flex-row gap-4 justify-between`}>
+        <TouchableOpacity style={tw`flex-row w-5/11 bg-sky-500 p-2 rounded-lg`}>
+          <Link
+            href="/child-information.screen?mode=VIEW"
+            style={tw`flex flex-row gap-2 items-center justify-center`}
+          >
+            <ProfileIcon />
+            <Text style={tw`text-white font-bold text-lg`}>Information</Text>
+          </Link>
+        </TouchableOpacity>
+        <TouchableOpacity style={tw`flex-row w-5/11 bg-sky-500 p-2 rounded-lg`}>
+          <Link
+            href="/child-information.screen?mode=VIEW"
+            style={tw`flex flex-row gap-2 items-center justify-center`}
+          >
+            <ProfileIcon />
+            <Text style={tw`text-white font-bold`}>Statistic</Text>
+          </Link>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

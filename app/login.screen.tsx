@@ -7,6 +7,7 @@ import authService from "../service/auth.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import orderService from "@/service/order.service";
 import childService from "@/service/child.service";
+import recordService from "@/service/record.service";
 
 const Logo = require("../assets/images/Logo.png");
 const GoogleLogo = require("../assets/images/GoogleLogo.png");
@@ -143,17 +144,29 @@ export default function LoginScreen() {
     if (response) {
       try {
         // Fetch orders and update user data
-        const orders = await orderService.getMemberOrders();
-        const user = { ...response.user, subscription: orders };
+        const ordersCode = await orderService.getMemberOrdersCode();
+        const user = {
+          ...response.user,
+          subscription: ordersCode.planCode || "No Subscription",
+          subscription_id: ordersCode._id || "No Subscription",
+        };
         await AsyncStorage.setItem("user", JSON.stringify(user));
 
         // Fetch child data
         const children = await childService.getChildren();
         await AsyncStorage.setItem("children", JSON.stringify(children));
 
+        // Fetch records
+        const recordsResponse = await recordService.getRecordsByMemberId();
+        const records = recordsResponse.data || [];
+        await AsyncStorage.setItem("records", JSON.stringify(records));
+
         // Set the first child as the default selected child if children are not null
         if (children.length > 0) {
-          await AsyncStorage.setItem("selectedChild", JSON.stringify(children[0]));
+          await AsyncStorage.setItem(
+            "selectedChild",
+            JSON.stringify(children[0])
+          );
         }
       } catch (error) {
         console.warn("No orders found");

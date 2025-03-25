@@ -13,7 +13,7 @@ const StatBox = () => (
 const IndexBackground = require("@/assets/images/Index-Background.png");
 const IndexStat = () => {
   return (
-    <View style={tw`mt-4`}>
+    <View style={tw`mt-4 h-[440px]`}>
       <Image
         source={IndexBackground}
         style={tw`absolute w-full h-[440px] opacity-60 bg-white rounded-3xl`}

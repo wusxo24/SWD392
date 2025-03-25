@@ -1,10 +1,12 @@
+import { Order } from "@/models/Order.model";
 import axiosInstance from "../utils/axiosInstance";
 import subscriptionService from "./subscription.service";
 
 interface OrderService {
   createOrder(orderData: any): Promise<any>;
   getOrders(): Promise<any>;
-  getMemberOrders(): Promise<any>;
+  getMemberOrder(): Promise<Order[]>;
+  getMemberOrdersCode(): Promise<any>;
   deleteOrder(orderId: string): Promise<any>;
 }
 
@@ -31,28 +33,40 @@ class OrderServiceImpl implements OrderService {
     }
   }
 
-  async getMemberOrders(): Promise<any> {
+  async getMemberOrder(): Promise<Order[]> {
     try {
       const response = await axiosInstance.get(`${this.API_URL}/member`);
-      const orders = response.data;
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching member orders:", error);
+      throw error;
+    }
+  }
 
+  async getMemberOrdersCode(): Promise<{ planCode: string | null, _id: string } | string> {
+    try {
+      const response = await axiosInstance.get(`${this.API_URL}/member`);
+      const orders: Order[] = response.data;
+  
       // Filter orders with status "Paid"
-      const paidOrders = orders.filter((order: any) => order.status === "Paid");
-
+      const paidOrders = orders.filter(order => order.status === "Paid");
+  
       if (paidOrders.length === 0) {
         console.warn("No paid orders found");
         return "Free";
       }
-
+  
       // Sort orders by createdAt in descending order
-      paidOrders.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-      // Get the serviceId of the newest paid order
-      const newestPaidOrderId = paidOrders[0].serviceId;
-
+      paidOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  
+      // Get the serviceId and _id of the newest paid order
+      const newestPaidOrder = paidOrders[0];
+      const newestPaidOrderId = newestPaidOrder.serviceId;
+      const newestPaidOrder_Id = newestPaidOrder._id;
+  
       // Get the plan_code using the serviceId
       const planCode = await subscriptionService.getSubscriptionCode(newestPaidOrderId);
-      return planCode;
+      return { planCode, _id: newestPaidOrder_Id };
     } catch (error) {
       const err = error as any;
       if (err.response && err.response.status === 500 && err.response.data.message === "No orders found") {
