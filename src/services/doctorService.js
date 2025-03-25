@@ -57,3 +57,13 @@ export const updateDoctorStatus = async (id, status) => {
         throw error;
     }
 };
+
+export const getDoctorById = async (id) => {
+    try {
+        const response = await axios.get(`/api/doctors/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching doctor by ID:", error);
+        throw error;
+    }
+};

@@ -61,8 +61,12 @@ const TrackingSection = ({ trackingInfo }) => {
       {currentRecords.length > 0 ? (
         currentRecords.map((tracking, i) => (
           <div key={i} className="mt-2 p-3 border rounded-md bg-gray-50 dark:bg-yellow-50">
+            <h2 className="text-lg font-semibold text-yellow-700">
+              Timeline: {tracking.MonthYear}
+            </h2>
             {Object.entries(tracking.Trackings).map(([date, details]) => (
               <div key={date} className="mb-2 p-2 border-l-4 border-yellow-400 pl-4">
+                <p><strong>📅 Date:</strong> {date}</p>
                 <p><strong>📏 Height:</strong> {details.Height} cm</p>
                 <p><strong>⚖️ Weight:</strong> {details.Weight} kg</p>
                 <p><strong>📊 BMI:</strong> {details.BMI}</p>

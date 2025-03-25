@@ -19,7 +19,7 @@ export default function ViewRequest() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(3);
+  const [itemsPerPage] = useState(2);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const [children, setChildren] = useState([]);
@@ -178,7 +178,7 @@ export default function ViewRequest() {
               <CardContent className="p-6">
                 <div className="flex justify-between items-center">
                   <div>
-                  <h3 className="text-gray-700 light:text-gray-300 text-lg font-semibold">Medical Request: {request._id}</h3>
+                  <h3 className="text-gray-700 light:text-gray-300 text-lg font-semibold">Medical Request</h3>
                     <p className="text-gray-600 light:text-gray-400">
                       <strong>Date:</strong> {new Date(request.CreatedDate).toLocaleString()}
                     </p>

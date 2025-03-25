@@ -26,7 +26,7 @@ import Subscription from "./pages/manager/Subscription";
 import DoctorList from "./pages/manager/DoctorList";
 import MemberRequest from "./pages/manager/MemberRequest";
 import RatingFeedback from "./pages/manager/RatingFeedback";
-import AddInfo from "./pages/doctor/AddInfo";
+import DoctorProfile from "./pages/doctor/DoctorProfile";
 import MedicalRequestManagement from "./pages/doctor/MedicalRequestManagement";
 import { ServicesHistory } from "./pages/member/servicesHistory";
 import { SuccessPaid } from "./pages/member/successPaid";
@@ -135,14 +135,14 @@ function App() {
 
         {/* Doctor Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Doctor"]} />}>
-          <Route path="/add-info" element={<AddInfo />} />
+          <Route path="/doctor-profile" element={<DoctorProfile />} />
           <Route path="/medical-request-management" element={<MedicalRequestManagement />} />
           <Route
             path="/childGrowthDoctor/:recordId"
             element={<GrowthChartContainerDoctor />}
           />
           <Route
-            path="/childGrowthDoctor/:recordId"
+            path="/childGrowthBabyDoctor/:recordId"
             element={<GrowthChartContainerBabyDoctor />}
           />
         </Route>
