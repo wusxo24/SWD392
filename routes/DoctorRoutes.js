@@ -124,5 +124,5 @@ router.put("/:id/soft-delete", authMiddleware, authorize(["Admin"]), softDeleteD
 router.put("/:id/restore", authMiddleware, authorize(["Admin"]), restoreDoctor);
 
 router.patch("/:id/status", authMiddleware, authorize(["Admin"]), updateDoctorStatus);
-router.get("/Available", authMiddleware, authorize(["Manager"]), getAvailableDoctors);
+router.get("/Available", authMiddleware, getAvailableDoctors);
 module.exports = router;
