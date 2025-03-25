@@ -85,6 +85,21 @@ const doctorStartWorkingOnMedicalRequest = async (req, res) => {
     }
 };
 
+const getApprovedRequestsByDoctorId = async (req, res) => {
+    try {
+        const doctorId = req.user?.id;
+        if (!doctorId) {
+            return res.status(400).json({ message: "Doctor ID is required" });
+        }
+
+        const requests = await MedicalRequestService.getApprovedRequestsByDoctorId(doctorId);
+        res.status(200).json(requests);
+    } catch (error) {
+        console.error("Error fetching approved requests:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
 module.exports = {
     createMedicalRequest,
     rejectMedicalRequest,
@@ -92,5 +107,6 @@ module.exports = {
     getMedicalRequestByRecordId,
     getMedicalRequestByDoctorId,
     doctorStartWorkingOnMedicalRequest,
-    getAllMedicalRequests
+    getAllMedicalRequests,
+    getApprovedRequestsByDoctorId
 };

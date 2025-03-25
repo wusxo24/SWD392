@@ -162,5 +162,7 @@ router.put("/doctor/:medicalRequestId", authMiddleware, authorize(["Doctor"]), m
 
 router.get("/", authMiddleware, authorize(["Manager", "Doctor"]), medicalRequestController.getAllMedicalRequests);
 
+router.get("/doctor/requests", authMiddleware, authorize(["Manager", "Doctor"]), medicalRequestController.getApprovedRequestsByDoctorId);
+
 module.exports = router;
 
