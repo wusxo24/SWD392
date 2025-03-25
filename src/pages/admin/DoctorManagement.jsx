@@ -57,7 +57,7 @@ export default function DoctorManagement() {
       experience: doctor?.experience || 0,
       license_id: doctor?.license_id._id || "",
       certificate: doctor?.certificate || "",
-      date: doctor?.date ? moment(doctor.date) : null,
+      date: doctor?.date ? moment(doctor.date).format("YYYY-MM-DD") : "",
       picture: doctor?.picture || "",
       status: doctor?.user_id?.status || "Inactive",
     });
@@ -246,7 +246,7 @@ export default function DoctorManagement() {
           <Row gutter={16}>
           <Col span={8}>
               <Form.Item name="date" label="Birth Date" rules={[{ required: true, message: "Date is required" }]}>
-                <DatePicker style={{ width: "100%" }} />
+              <Input type="date" />
               </Form.Item>
           </Col>
           <Col span={8}>
