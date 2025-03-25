@@ -168,6 +168,14 @@ const getAvailableDoctors = async () => {
     const doctors = await DoctorInfo.aggregate([
         {
             $lookup: {
+                from: "users",
+                localField: "user_id",
+                foreignField: "_id",
+                as: "userDetails"
+            }
+        },
+        {
+            $lookup: {
                 from: "medicalrequests",
                 localField: "user_id",
                 foreignField: "DoctorId",
@@ -176,12 +184,12 @@ const getAvailableDoctors = async () => {
         },
         {
             $addFields: {
-                inProgressCount: {
+                approvedCount: {
                     $size: {
                         $filter: {
                             input: "$assignedRequests",
                             as: "req",
-                            cond: { $eq: ["$$req.Status", "InProgress"] }
+                            cond: { $eq: ["$$req.Status", "Approved"] }
                         }
                     }
                 }
@@ -189,18 +197,20 @@ const getAvailableDoctors = async () => {
         },
         {
             $match: {
-                inProgressCount: { $lt: 10 } // Only doctors with <10 InProgress requests
+                approvedCount: { $lt: 10 } // Only doctors with <10 Pending requests
             }
-        },
+        },  
         {
             $project: {
                 _id: 1,
                 user_id: 1,
+                username: "$userDetails.username", // Include username from User collection
                 picture: 1,
                 gender: 1,
                 clinic_name: 1,
                 experience: 1,
-                inProgressCount: 1 // Show in-progress count
+                certificate: 1,
+                approvedCount: 1 // Show pending count
             }
         }
     ]);

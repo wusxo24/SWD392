@@ -109,6 +109,33 @@ const getApprovedRequestsByDoctorId = async (req, res) => {
     }
 };
 
+const getDoctorResponseUsingMedicalRequestId = async (req, res) => {
+    try {
+      const { medicalRequestId } = req.params;
+  
+      // Find medical request
+      const medicalRequest = await MedicalRequestService.getMedicalRequestById(medicalRequestId);
+      if (!medicalRequest) {
+        return res.status(404).json({ message: "Medical request not found" });
+      }
+  
+      // Ensure it's completed before fetching response
+      if (medicalRequest.Status !== "Completed") {
+        return res.status(400).json({ message: "Medical request is not completed yet" });
+      }
+  
+      // Find doctor response
+      const doctorResponse = await MedicalRequestService.getDoctorResponseByMedicalRequestId(medicalRequestId);
+      if (!doctorResponse) {
+        return res.status(404).json({ message: "No doctor response found" });
+      }
+  
+      res.json(doctorResponse);
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error });
+    }
+  };
+
 module.exports = {
     createMedicalRequest,
     rejectMedicalRequest,
@@ -117,5 +144,6 @@ module.exports = {
     getMedicalRequestByDoctorId,
     doctorStartWorkingOnMedicalRequest,
     getAllMedicalRequests,
-    getApprovedRequestsByDoctorId
+    getApprovedRequestsByDoctorId,
+    getDoctorResponseUsingMedicalRequestId
 };

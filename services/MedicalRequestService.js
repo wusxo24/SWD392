@@ -153,6 +153,14 @@ const getApprovedRequestsByDoctorId = async (doctorId) =>{
     return await MedicalRequest.find({ DoctorId: new mongoose.Types.ObjectId(doctorId), Status: "Approved" });
   }
 
+  const getMedicalRequestById = async (medicalRequestId) => {
+    return await MedicalRequest.findById(medicalRequestId);
+  };
+  
+  const getDoctorResponseByMedicalRequestId = async (medicalRequestId) => {
+    return await DoctorResponse.findOne({ MedicalRequestId: medicalRequestId });
+  };
+
 module.exports = {
     createMedicalRequest,
     rejectMedicalRequest,
@@ -161,5 +169,7 @@ module.exports = {
     getMedicalRequestByDoctorId,
     doctorStartWorkingOnMedicalRequest,
     getAllMedicalRequests,
-    getApprovedRequestsByDoctorId
+    getApprovedRequestsByDoctorId,
+    getMedicalRequestById,
+    getDoctorResponseByMedicalRequestId
 };
