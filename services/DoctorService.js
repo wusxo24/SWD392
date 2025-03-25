@@ -199,7 +199,7 @@ const getAvailableDoctors = async () => {
             $match: {
                 approvedCount: { $lt: 10 } // Only doctors with <10 Pending requests
             }
-        },
+        },  
         {
             $project: {
                 _id: 1,

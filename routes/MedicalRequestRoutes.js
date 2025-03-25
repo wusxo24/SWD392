@@ -164,5 +164,7 @@ router.get("/", authMiddleware, authorize(["Manager", "Doctor"]), medicalRequest
 
 router.get("/doctor/requests", authMiddleware, authorize(["Manager", "Doctor"]), medicalRequestController.getApprovedRequestsByDoctorId);
 
+router.get("/doctor-response/:medicalRequestId", authMiddleware, authorize(["Manager", "Doctor", "Member"]), medicalRequestController.getDoctorResponseUsingMedicalRequestId);
+
 module.exports = router;
 
