@@ -41,6 +41,25 @@ const updateMember = async (req, res) => {
     }
 };
 
+const updateMemberForMember = async (req, res) => {
+    try {
+        const memberId = req.params.id; // Get memberId from URL
+        const memberData = req.body; // Get member data from the request body
+
+        console.log('memberId:', memberId); // Log memberId
+        console.log('memberData:', memberData); // Log memberData
+
+        // Call the service to update both member and user
+        const updatedData = await MemberService.updateMemberAndUserForMember(memberId, memberData);
+
+        // Send the response with both updated member and user
+        res.json(updatedData);
+    } catch (error) {
+        console.error('Error updating member and user:', error); // Log the error
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    }
+};
+
 
 // Xóa thành viên theo ID
 const deleteMember = async (req, res) => {
@@ -72,5 +91,6 @@ module.exports = {
     getMemberById,
     updateMember,
     deleteMember,
-    updateMemberStatus
+    updateMemberStatus,
+    updateMemberForMember
 };
