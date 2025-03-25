@@ -68,6 +68,7 @@ const GrowthChartContainerBabyDoctor = () => {
   }, [recordId]);
 
   useEffect(() => {
+    if (!childData || !childData.birthdate) return;
     console.log(recordId);
 
     const fetchTrackingData = async () => {
@@ -83,44 +84,27 @@ const GrowthChartContainerBabyDoctor = () => {
       }
     };
     fetchTrackingData();
-  }, [childData]);
+  }, [recordId, childData?.birthdate]);
 
-  const handleChange = (e) => {
-    setTrackingData({ ...trackingData, [e.target.name]: e.target.value });
-  };
-
-
-  const handleModalOpen = () => {
-    setOpenModal(true);
-  };
-
-  const handleModalClose = () => {
-    setOpenModal(false);
-    setIsSubmitting(false);
-    setRequestData({ Reason: "", Notes: "" });
-  };
-
-  const handleRequestChange = (e) => {
-    setRequestData({ ...requestData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmitRequest = async () => {
-    if (isSubmitting) return; // Prevent multiple clicks
-    setIsSubmitting(true);
-
-    try {
-      if (!requestData.Reason.trim()) {
-        toast.error("Reason is required.");
-        return;
+  useEffect(() => {
+      if (trackingData.length > 0) {
+        const latestRecord = trackingData[trackingData.length - 1]; 
+        const trackingsEntries = Object.entries(latestRecord.Trackings); // Convert to array [date, data]
+        if (trackingsEntries.length === 0) return;
+        const latestTracking = trackingsEntries[trackingsEntries.length - 1]; // Get last [date, data] pair
+        const latestDate = latestTracking[0]; // Extract date
+        const latestEntry = latestTracking[1]; // Extract data object
+        if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
+          toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category.`
+            ,{ autoClose: 10000, // 10 seconds (default is 5000ms or 5s)
+              closeOnClick: true, // Allows closing on click
+              pauseOnHover: true, // Keeps it visible when hovering
+              draggable: true // Allows dragging the toast
+            });
+        }
       }
+    }, [trackingData]);
 
-      await MedicalRequest(recordId, requestData);
-      handleModalClose();
-    } catch (error) {
-      console.error("Error sending medical request:", error);
-      toast.error("Failed to send request. Please try again.");
-    }
-  };
 
   const processTrackingData = (trackingData, yearOfBirth) => {
     if (!yearOfBirth) {

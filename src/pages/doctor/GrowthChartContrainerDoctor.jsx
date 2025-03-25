@@ -64,6 +64,7 @@ const GrowthChartContainerDoctor = () => {
   }, []);
 
   useEffect(() => {
+    if (!childData || !childData.birthdate) return;
     console.log(recordId)
     const fetchTrackingData = async () => {
       try {
@@ -78,7 +79,7 @@ const GrowthChartContainerDoctor = () => {
       }
     };
     fetchTrackingData();
-  }, [childData]);
+  }, [recordId, childData?.birthdate]);
 
   useEffect(() => {
     if (trackingData.length > 0) {
@@ -89,7 +90,7 @@ const GrowthChartContainerDoctor = () => {
       const latestDate = latestTracking[0]; // Extract date
       const latestEntry = latestTracking[1]; // Extract data object
       if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
-        toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`
+        toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category.`
           ,{ autoClose: 10000, // 10 seconds (default is 5000ms or 5s)
             closeOnClick: true, // Allows closing on click
             pauseOnHover: true, // Keeps it visible when hovering
@@ -98,25 +99,6 @@ const GrowthChartContainerDoctor = () => {
       }
     }
   }, [trackingData]);
-
-  const handleChange = (e) => {
-    setTrackingData({ ...trackingData, [e.target.name]: e.target.value });
-  };
-
-
-  const handleModalOpen = () => {
-    setOpenModal(true);
-  };
-
-  const handleModalClose = () => {
-    setOpenModal(false);
-    setIsSubmitting(false);
-    setRequestData({ Reason: "", Notes: "" });
-  };
-
-  const handleRequestChange = (e) => {
-    setRequestData({ ...requestData, [e.target.name]: e.target.value });
-  };
 
 
   const processTrackingData = (trackingData, yearOfBirth) => {
