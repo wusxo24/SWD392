@@ -58,7 +58,13 @@ const getDoctors = async () => {
 };
 
 const getDoctorById = async (id) => {
-    const doctor = await DoctorInfo.findById(id).populate("user_id", "username email");
+    const doctor = await DoctorInfo.findOne({ user_id: id }) // 🔹 Find doctor by user_id
+        .populate({
+            path: "user_id",
+            select: "username email role status"
+        })
+        .populate("license_id"); // If you need license details
+
     if (!doctor) {
         throw new Error("Doctor not found");
     }

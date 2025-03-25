@@ -21,8 +21,6 @@ const getDoctors = async (req, res) => {
 
 const updateDoctor = async (req, res) => {
     try {
-
-        console.log("Updating doctor with ID:", req.body);
         
         req.body.license_id = new mongoose.Types.ObjectId(req.body.license_id);
 
