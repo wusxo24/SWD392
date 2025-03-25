@@ -26,7 +26,7 @@ export const MedicalRequest = async (recordId, requestData, handleModalClose) =>
     if (error.response) {
       const { status, data } = error.response;
       if (status === 400) {
-        toast.error(data.message || "Invalid request data.");
+        toast.error(data.message || "You already have a pending request.");
       } else if (status === 404) {
         toast.error("Record not found.");
       } else if (status === 500) {

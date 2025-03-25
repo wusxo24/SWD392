@@ -173,23 +173,29 @@ const GrowthChartContainer = () => {
     setRequestData({ ...requestData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitRequest = async () => {
-    if (isSubmitting) return; // Prevent multiple clicks
-    setIsSubmitting(true);
+const handleSubmitRequest = async () => {
+  if (isSubmitting) return; // Prevent multiple clicks
+  setIsSubmitting(true);
 
-    try {
-      if (!requestData.Reason.trim()) {
-        toast.error("Reason is required.");
-        return;
-      }
-
-      await MedicalRequest(recordId, requestData);
-      handleModalClose();
-    } catch (error) {
-      console.error("Error sending medical request:", error);
-      toast.error("Failed to send request. Please try again.");
+  try {
+    if (!requestData.Reason.trim()) {
+      toast.error("Reason is required.");
+      return;
     }
-  };
+
+    await MedicalRequest(recordId, requestData);
+
+    // 🔹 Fetch updated requests immediately
+    const updatedRequests = await getMedicalRequest(recordId);
+    setMedicalRequests(updatedRequests);
+
+    handleModalClose();
+  } catch (error) {
+    console.error("Error sending medical request:", error);
+    toast.error("Failed to send request. Please try again.");
+  }
+};
+
 
   const processTrackingData = (trackingData, yearOfBirth) => {
     if (!yearOfBirth) {
