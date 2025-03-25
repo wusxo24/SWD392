@@ -88,5 +88,12 @@ const updateDoctorStatus = async (req, res) => {
         res.status(500).json({ message: error.message || "Internal Server Error" });
     }
 };
-
-module.exports = { createDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, softDeleteDoctor, restoreDoctor, updateDoctorStatus };
+const getAvailableDoctors = async (req, res) => {
+    try {
+        const doctors = await doctorService.getAvailableDoctors();
+        res.status(200).json(doctors);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+module.exports = { createDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, softDeleteDoctor, restoreDoctor, updateDoctorStatus,getAvailableDoctors };

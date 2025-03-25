@@ -164,5 +164,49 @@ const updateDoctorStatus = async (doctorId, status) => {
     }
 };
 
+const getAvailableDoctors = async () => {
+    const doctors = await DoctorInfo.aggregate([
+        {
+            $lookup: {
+                from: "medicalrequests",
+                localField: "user_id",
+                foreignField: "DoctorId",
+                as: "assignedRequests"
+            }
+        },
+        {
+            $addFields: {
+                inProgressCount: {
+                    $size: {
+                        $filter: {
+                            input: "$assignedRequests",
+                            as: "req",
+                            cond: { $eq: ["$$req.Status", "InProgress"] }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $match: {
+                inProgressCount: { $lt: 10 } // Only doctors with <10 InProgress requests
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                user_id: 1,
+                picture: 1,
+                gender: 1,
+                clinic_name: 1,
+                experience: 1,
+                inProgressCount: 1 // Show in-progress count
+            }
+        }
+    ]);
 
-module.exports = { createDoctor, getDoctors, getDoctorById, updateDoctor, deleteDoctor, softDeleteDoctor, restoreDoctor, updateDoctorStatus };
+    return doctors;
+};
+
+
+module.exports = { createDoctor, getDoctors, getDoctorById, updateDoctor, deleteDoctor, softDeleteDoctor, restoreDoctor, updateDoctorStatus,getAvailableDoctors };

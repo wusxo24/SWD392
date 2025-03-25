@@ -8,6 +8,18 @@ const mongoose = require("mongoose");
 
 const createMedicalRequest = async (RecordId, requestData) => {
     const { Reason, Notes } = requestData;
+
+    // Check if there is an existing "Pending" request for the record
+    const existingRequest = await MedicalRequest.findOne({
+        RecordId,
+        Status: "Pending"
+    });
+
+    if (existingRequest) {
+        throw new Error("A pending medical request already exists for this record.");
+    }
+
+    // Proceed with creating a new medical request
     const medicalRequest = await MedicalRequest.create({
         RecordId,
         Reason,
@@ -29,16 +41,29 @@ const rejectMedicalRequest = async (id) => {
 };
 
 const acceptMedicalRequest = async (medicalRequestId, DoctorId, ManagerId) => {
+    // Count how many "InProgress" requests the doctor has
+    const inProgressCount = await MedicalRequest.countDocuments({
+        DoctorId: DoctorId,
+        Status: "InProgress"
+    });
+
+    if (inProgressCount >= 10) {
+        throw new Error("Doctor has reached the limit of 10 in-progress requests");
+    }
+
+    // Proceed with assignment if under the limit
     const medicalRequest = await MedicalRequest.findOneAndUpdate(
         { _id: medicalRequestId },
-        { Status: "Approved", ManagerId : ManagerId, DoctorId : DoctorId, AssignedDate: Date.now() }
+        { Status: "Approved", ManagerId: ManagerId, DoctorId: DoctorId, AssignedDate: Date.now() }
     );
+
     if (!medicalRequest) {
         throw new Error("Medical request not found");
     }
 
     return { message: "Medical request accepted successfully" };
 };
+
 
 const getMedicalRequestByRecordId = async (recordId) => {
     if (!mongoose.Types.ObjectId.isValid(recordId)) {
