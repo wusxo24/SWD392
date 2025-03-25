@@ -74,7 +74,7 @@ const getMedicalRequestByRecordId = async (recordId) => {
 };
 
 const getMedicalRequestByDoctorId = async (doctorId) => {
-    const medicalRequest = await MedicalRequest.find({ DoctorId: doctorId })
+    const medicalRequest = await MedicalRequest.find({ DoctorId: doctorId , Status: "Approved" })
         .populate({
             path: "RecordId",
             select: "OrderId ChildId CreatedDate ModifiedDate Status ExpiredDate trackingInfo",
