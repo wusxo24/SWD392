@@ -1,5 +1,5 @@
 const express = require("express");
-const { createDoctor, getDoctors, updateDoctor, updateDoctorInfo, deleteDoctor } = require("../controllers/DoctorController");
+const { createDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, softDeleteDoctor, restoreDoctor, updateDoctorStatus } = require("../controllers/DoctorController");
 const { authMiddleware, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -113,5 +113,16 @@ router.put("/:id", authMiddleware, authorize(["Admin", "Doctor"]), updateDoctor)
  *         description: Doctor not found
  */
 router.delete("/:id", authMiddleware, authorize(["Admin"]), deleteDoctor);
+
+
+router.get("/:id", authMiddleware, authorize(["Admin"]), getDoctorById);
+
+// Soft delete doctor (update status to "Inactive")
+router.put("/:id/soft-delete", authMiddleware, authorize(["Admin"]), softDeleteDoctor);
+
+// Restore doctor (update status to "Active")
+router.put("/:id/restore", authMiddleware, authorize(["Admin"]), restoreDoctor);
+
+router.patch("/:id/status", authMiddleware, authorize(["Admin"]), updateDoctorStatus);
 
 module.exports = router;

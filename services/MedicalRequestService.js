@@ -15,7 +15,9 @@ const createMedicalRequest = async (RecordId, requestData) => {
 };
 
 const rejectMedicalRequest = async (id) => {
-    const medicalRequest = await MedicalRequest.findOneAndUpdate({ _id: id }, { Status: "Rejected" });
+    const medicalRequest = await MedicalRequest.findOneAndUpdate(
+        { _id: id }, 
+        { Status: "Rejected" });
     if (!medicalRequest) {
         throw new Error("Medical request not found");
     }
@@ -23,10 +25,10 @@ const rejectMedicalRequest = async (id) => {
     return { message: "Medical request rejected successfully" };
 };
 
-const acceptMedicalRequest = async (id, ManagerId, DoctorId) => {
+const acceptMedicalRequest = async (medicalRequestId, DoctorId, ManagerId) => {
     const medicalRequest = await MedicalRequest.findOneAndUpdate(
-        { _id: id },
-        { Status: "Approved", ManagerId, DoctorId, AssignedDate: Date.now() }
+        { _id: medicalRequestId },
+        { Status: "Approved", ManagerId : ManagerId, DoctorId : DoctorId, AssignedDate: Date.now() }
     );
     if (!medicalRequest) {
         throw new Error("Medical request not found");
@@ -35,13 +37,12 @@ const acceptMedicalRequest = async (id, ManagerId, DoctorId) => {
     return { message: "Medical request accepted successfully" };
 };
 
-const getMedicalRequestByRecordId = async (RecordId) => {
-    const medicalRequest = await MedicalRequest.findOne({ RecordId });
-    if (!medicalRequest) {
-        throw new Error("Medical request not found");
+const getMedicalRequestByRecordId = async (recordId) => {
+    if (!mongoose.Types.ObjectId.isValid(recordId)) {
+        throw new Error(`Invalid RecordId format: ${recordId}`);
     }
 
-    return medicalRequest;
+    return await MedicalRequest.find({ RecordId: new mongoose.Types.ObjectId(recordId) });
 };
 
 const getMedicalRequestByDoctorId = async (doctorId) => {
@@ -64,11 +65,17 @@ const doctorStartWorkingOnMedicalRequest = async (medicalRequestId) => {
     return { message: "Medical request accepted successfully" };
 };
 
+const getAllMedicalRequests = async () => {
+    const medicalRequests = await MedicalRequest.find();
+    return medicalRequests;
+};
+
 module.exports = {
     createMedicalRequest,
     rejectMedicalRequest,
     acceptMedicalRequest,
     getMedicalRequestByRecordId,
     getMedicalRequestByDoctorId,
-    doctorStartWorkingOnMedicalRequest
+    doctorStartWorkingOnMedicalRequest,
+    getAllMedicalRequests
 };

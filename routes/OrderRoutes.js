@@ -62,7 +62,7 @@ router.get("/member", authMiddleware, orderController.getOrdersByMemberId);
  *       403:
  *         description: Forbidden
  */
-router.get("/", authMiddleware, authorize(["Admin"]), orderController.getAllOrders);
+router.get("/", authMiddleware, authorize(["Admin", "Manager"]), orderController.getAllOrders);
 
 /**
  * @swagger
