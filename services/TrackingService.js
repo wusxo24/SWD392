@@ -1,11 +1,10 @@
-const Record = require ("../models/Record.js");
-
-const Tracking = require("../models/Tracking.js");
-const Child = require("../models/Children.js");
-const fs = require("fs");
+import Record from "../models/Record.js";
+import Tracking from "../models/Tracking.js";
+import Child from "../models/Children.js";
+import fs from "fs";
 
 // Load the extracted LMS data from WHO
-const path = require("path");
+import path from "path";
 const bmiReference5_19 = JSON.parse(fs.readFileSync(path.join(process.cwd(), "utils", "bmi_zscore5-19.json"), "utf8"));
 const bmiReference0_2 = JSON.parse(fs.readFileSync(path.join(process.cwd(), "utils", "bmi_zscore_0-2.json"), "utf8"));
 const bmiReference2_5 = JSON.parse(fs.readFileSync(path.join(process.cwd(), "utils", "bmi_zscore_2-5.json"), "utf8"));
@@ -136,4 +135,4 @@ const getTrackingsByRecordIdWithStartAndEndDates = async (recordId, startDate, e
     }
     return trackings;
 }
-module.export = { updateTracking, getAllTrackingsByRecordId, getChildByRecordId, getTrackingsByRecordIdWithStartAndEndDates };
+export { updateTracking, getAllTrackingsByRecordId, getChildByRecordId, getTrackingsByRecordIdWithStartAndEndDates };
