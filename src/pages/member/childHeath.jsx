@@ -7,6 +7,7 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
   const [editingDates, setEditingDates] = useState({});
   const [editedValues, setEditedValues] = useState({});
   const [activeTab, setActiveTab] = useState("tracking"); 
+  const [selectedMonth, setSelectedMonth] = useState("");
   if (!isOpen) return null;
 
   const formatValue = (value) =>
@@ -37,6 +38,15 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
     }));
   };
 
+  // Handle dropdown selection
+  const handleMonthChange = (event) => {
+    setSelectedMonth(event.target.value);
+  };
+
+  // Filter tracking data based on selected month
+  const filteredTrackingData = selectedMonth
+    ? trackingData.filter((entry) => entry.MonthYear === selectedMonth)
+    : trackingData;
   const handleInputChange = (date, field, value) => {
     if (bmiFields.includes(field)) return;
     setEditedValues((prev) => ({
@@ -118,26 +128,38 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
 
         {activeTab == "tracking" && (
           <>
-            {trackingData.length > 0 ? (
-              trackingData.map((entry, index) => (
-                <div
-                  key={index}
-                  className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50"
-                >
+          <div className="mb-4 ">
+              <label className="font-semibold text-gray-700 ">Select Month:</label>
+              <select
+                value={selectedMonth}
+                onChange={handleMonthChange}
+                className="ml-2 p-2 border rounded-lg cursor-pointer"
+              >
+                <option value="">All Months</option>
+                {[...new Set(trackingData.map((entry) => entry.MonthYear))].map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {filteredTrackingData.length > 0 ? (
+              filteredTrackingData.map((entry, index) => (
+                <div key={index} className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50">
                   <h3 className="text-lg font-semibold text-blue-600">
                     <CalendarMonthIcon /> {entry.MonthYear}
                   </h3>
-                  {Object.entries(entry.Trackings).map(([date, details]) => (
-                    <div key={date} className="mt-2 p-2 border-t">
-                      <h4 className="font-semibold text-gray-700">
-                        <CalendarMonthIcon /> {date}
-                      </h4>
-                      <ul className="list-disc ml-5 text-gray-600">
-                        {allFields.map((key) => (
-                          <li key={key} className="flex items-center space-x-2">
-                            <span className="w-40 text-gray-600">
-                              {key.replace(/([A-Z])/g, " $1").trim()}:
-                            </span>
+                  {Object.entries(entry.Trackings)
+                    .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA)) // Sort dates in descending order
+                    .map(([date, details]) => (
+                      <div key={date} className="mt-2 p-2 border-t">
+                        <h4 className="font-semibold text-gray-700">
+                          <CalendarMonthIcon /> {date}
+                        </h4>
+                        <ul className="list-disc ml-5 text-gray-600">
+                          {allFields.map((key) => (
+                            <li key={key} className="flex items-center space-x-2">
+                              <span className="w-40 text-gray-600">{key.replace(/([A-Z])/g, " $1").trim()}:</span>
                             {bmiFields.includes(key) ? (
                               <span className="font-semibold text-gray-800">
                                 {formatValue(details[key])}

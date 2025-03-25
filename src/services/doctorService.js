@@ -1,4 +1,5 @@
 import axios from "@/utils/axiosInstance";
+
 export const fetchDoctors = async () => {
     try {
         
@@ -7,6 +8,16 @@ export const fetchDoctors = async () => {
         
     } catch (error) {
         console.error("Error fetching doctors:", error);
+        throw error;
+    }
+};
+
+export const fetchAvailableDoctors = async () => {
+    try {
+        const response = await axios.get("/api/doctors/Available"); // Updated endpoint
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching available doctors:", error.response?.data || error);
         throw error;
     }
 };

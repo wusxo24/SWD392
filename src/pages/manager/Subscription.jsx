@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { LoadingScreen } from "@/components/loadingScreen";
 import { Dialog, DialogActions, DialogContent, DialogTitle, Paper, Table, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
-import { Button } from "react-scroll";
+import { Button } from "@mui/material";
 
 const Subscription = () => {
   const [subscription, setSubscription] = useState([]);
