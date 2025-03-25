@@ -45,19 +45,6 @@ export const UserProfile = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFileChange = async (e) => {
-    const selectedFile = e.target.files[0];
-    if (!selectedFile) return;
-
-    setFile(selectedFile);
-    try {
-      const base64String = await convertFileToBase64(selectedFile);
-      setFile(base64String);
-    } catch (error) {
-      console.error("Error converting file to Base64:", error);
-    }
-  };
-
   const handleSave = async () => {
     if (!formData.fullname || formData.fullname.length < 3) {
       toast.error("Full name must be at least 3 characters long.");
@@ -96,17 +83,22 @@ export const UserProfile = () => {
         <div className="p-6 rounded-lg bg-white">
           {/* Profile Header */}
           <div className="flex gap-4 items-center mb-4">
-            <Avatar
-              src={
-                member.picture
-                  ? `data:image/png;base64,${member.picture}`
-                  : image
-              }
-              alt="Avatar"
-              sx={{ width: 80, height: 80 }}
-            />
+          <Avatar
+            src={formData.picture || image}  // Now uses a direct URL
+            alt="Avatar"
+            sx={{ width: 80, height: 80 }}
+          />
             {isEditing && (
-              <input type="file" accept="image/*" onChange={handleFileChange} />
+              <TextField
+              label="Profile Picture URL"
+              name="picture"
+              value={formData.picture || ""}
+              onChange={handleInputChange}
+              fullWidth
+              disabled={!isEditing}
+              sx={{ mb: 2 }}
+            />
+            
             )}
             <div>
               <h3 className="text-xl font-semibold">
@@ -164,34 +156,33 @@ export const UserProfile = () => {
                 <p className="font-bold">My email Address</p>
 
                 <TextField
-name="email"
-value={formData.email || ""}
-onChange={handleInputChange}
-fullWidth
-disabled={!isEditing}
-variant="standard" // Removes the outlined box
-InputProps={{
-  disableUnderline: true, // Removes the underline
-  startAdornment: (
-    <Box
-      sx={{
-        width: 40,
-        height: 40,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: "50%",
-        backgroundColor: "#b3e5fc", // Standard muted color
-        marginRight: 1,
-      }}
-    >
-      <EmailIcon sx={{ color: "#0091ea", width:"30px"}} />
-    </Box>
-  ),
-}}
-sx={{ mt: 2 }}
-/>
-
+                  name="email"
+                  value={formData.email || ""}
+                  onChange={handleInputChange}
+                  fullWidth
+                  disabled={!isEditing}
+                  variant="standard" // Removes the outlined box
+                  InputProps={{
+                    disableUnderline: true, // Removes the underline
+                    startAdornment: (
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "50%",
+                          backgroundColor: "#b3e5fc", // Standard muted color
+                          marginRight: 1,
+                        }}
+                      >
+                        <EmailIcon sx={{ color: "#0091ea", width:"30px"}} />
+                      </Box>
+                    ),
+                  }}
+                  sx={{ mt: 2 }}
+                  />
               </Grid>
 
               {/* Column 2 */}

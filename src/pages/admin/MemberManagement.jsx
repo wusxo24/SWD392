@@ -41,7 +41,7 @@ export default function MemberManagement() {
         setIsModalOpen(false);
         form.resetFields();
         setEditId(null);
-        toast.success("Doctor saved successfully");
+        toast.success("Member saved successfully");
       } catch (error) {
         console.error("Error saving doctor:", error);
         toast.error("Failed to save doctor");
@@ -87,7 +87,7 @@ export default function MemberManagement() {
         gender: member?.gender || "",
         phone: member?.phone || "",
         address: member?.address || "",
-        birthdate: member?.birthdate ? moment(member.birthdate) : null,
+        birthdate: member?.birthdate ? moment(member.birthdate).format("YYYY-MM-DD") : "",
         picture: member?.picture || "",
         status: member?.user_id?.status || "Inactive",
       });
@@ -290,9 +290,10 @@ export default function MemberManagement() {
           </Row>
           <Row gutter={16}>
           <Col span={8}>
-              <Form.Item name="birthdate" label="Birth Date">
-                <DatePicker style={{ width: "100%" }} />
-              </Form.Item>
+          <Form.Item name="birthdate" label="Birth Date">
+            <Input type="date" />
+          </Form.Item>
+
           </Col>
           <Col span={8}>
           <Form.Item name="picture" label="Member's Photo">

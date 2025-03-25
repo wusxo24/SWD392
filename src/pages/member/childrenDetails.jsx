@@ -137,20 +137,26 @@ export const ChildrenDetails = () => {
               </Grid>
 
               <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="Gender"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  sx={{
-                    borderRadius: "200px",
-                    boxShadow: 5,
-                    backgroundColor: "white",
-                    "& fieldset": { borderRadius: "200px" }, // Ensure the fieldset is also rounded
-                  }}
-                />
+              <TextField
+                select
+                fullWidth
+                label="Gender"
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                disabled={!isEditing}
+                SelectProps={{ native: true }}
+                sx={{
+                  borderRadius: "200px",
+                  boxShadow: 5,
+                  backgroundColor: "white",
+                  "& fieldset": { borderRadius: "200px" },
+                }}
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </TextField>
               </Grid>
               <Grid item xs={6}>
                 <TextField
@@ -177,20 +183,31 @@ export const ChildrenDetails = () => {
               </Grid>
 
               <Grid item xs={6}>
-                <TextField
+              <TextField
+                  select
                   fullWidth
                   label="Blood Type"
                   name="blood_type"
                   value={formData.blood_type}
                   onChange={handleChange}
                   disabled={!isEditing}
+                  SelectProps={{ native: true }}
                   sx={{
                     borderRadius: "200px",
                     boxShadow: 5,
                     backgroundColor: "white",
-                    "& fieldset": { borderRadius: "200px" }, // Ensure the fieldset is also rounded
+                    "& fieldset": { borderRadius: "200px" },
                   }}
-                />
+                >
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </TextField>
               </Grid>
               <Grid item xs={6}>
                 <TextField
@@ -215,7 +232,7 @@ export const ChildrenDetails = () => {
                   name="notes"
                   multiline
                   rows={3}
-                  value={formData.notes || "No additional notes"}
+                  value={formData.notes}
                   onChange={handleChange}
                   disabled={!isEditing}
                   sx={{
