@@ -3,6 +3,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { postTracking } from "@/services/tracking";
 import { toast } from "react-toastify";
 import { getDoctorResponse } from "@/services/medicalRequestService"; // Import the service
+import RatingFeedbackModal from "@/components/DoctorRatingModal";
 
 
 const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRequests }) => {
@@ -11,7 +12,21 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
   const [activeTab, setActiveTab] = useState("tracking"); 
   const [selectedMonth, setSelectedMonth] = useState("");
   const [doctorResponses, setDoctorResponses] = useState({});
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState(null);
+
   if (!isOpen) return null;
+
+  const handleRatingSuccess = () => {
+    setIsRatingModalOpen(false);
+    fetchDoctorResponse(selectedRequestId); // Refresh the data
+    toast.success("Rating submitted successfully!");
+  };
+
+  const ShowRatingFeedbackModal = (requestId) => {
+    setSelectedRequestId(requestId);
+    setIsRatingModalOpen(true);
+};
 
   const fetchDoctorResponse = async (medicalRequestId) => {
     try {
@@ -242,7 +257,7 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
                     ? "text-green-500"
                     : request.Status === "Rejected"
                     ? "text-red-500"
-                    : request.Status === "InProgress"
+                    : request.Status === "Rated"
                     ? "text-blue-500"
                     : "text-gray-500"
                 }`}>
@@ -258,14 +273,15 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
 
              {request?.Status === "Completed" && (
                 <>
+                <div className="mt-4">
                   <button
-                    className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-blue-700"
+                    className="mb-auto mr-auto ml-auto px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-blue-700 m-auto"
                     onClick={() => fetchDoctorResponse(request._id)}
                   >
                     Show Doctor's Response
                   </button>
                   {doctorResponses[request._id] && (
-                    <div className="mt-4 p-4 bg-white border border-gray-300 rounded-lg shadow-md">
+                    <div className="mb-auto mr-auto ml-auto p-4 bg-white border border-gray-300 rounded-lg shadow-md">
                       <h4 className="text-lg font-semibold text-gray-800">Doctor's Response:</h4>
                       <div className="mt-2 space-y-2">
                       <p><strong className="text-gray-700">Diagnosis:</strong> {doctorResponses[request._id].Diagnosis}</p>
@@ -279,7 +295,21 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
                         Close Response
                       </button>
                     </div>
-                  )} 
+                  )}
+                  <button
+                    className="m-2 px-4 py-2 bg-green-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-green-700"
+                    onClick={() => ShowRatingFeedbackModal(request._id)}
+                  >
+                    Rating/Feedback
+                  </button>
+
+                  <RatingFeedbackModal
+                      isOpen={isRatingModalOpen}
+                      onClose={() => setIsRatingModalOpen(false)}
+                      medicalRequestId={selectedRequestId}
+                      onSuccess={handleRatingSuccess}
+                  />
+                </div>
                 </>
               )}
             </div>
