@@ -78,3 +78,13 @@ export const getDoctorById = async (id) => {
         throw error;
     }
 };
+
+export const getDoctorRating = async () => {
+    try {
+        const response = await axios.get(`/api/doctor-ratings/`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching doctor by ID:", error);
+        throw error;
+    }
+};
