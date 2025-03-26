@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FaStar, FaSort, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaStar, FaSort, FaEye, FaEyeSlash, FaSearch } from "react-icons/fa";
 import toast from "react-hot-toast";
-
+import "react-toastify/dist/ReactToastify.css";
 import SidebarManager from "./SidebarManager";
 
 const RatingFeedback = () => {
@@ -15,6 +15,7 @@ const RatingFeedback = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [searchTerm, setSearchTerm] = useState(""); // 🔹 Thêm state cho tìm kiếm
 
   useEffect(() => {
     fetchFeedbacks();
@@ -69,6 +70,19 @@ const RatingFeedback = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
+  // 🔹 Tìm kiếm feedback theo tên bác sĩ
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredFeedbacks(feedbacks);
+    } else {
+      const filtered = feedbacks.filter((fb) =>
+        fb.DoctorId?.username.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredFeedbacks(filtered);
+      setCurrentPage(1); // Reset về trang đầu khi tìm kiếm
+    }
+  }, [searchTerm, feedbacks]);
+
   const totalPages = Math.ceil(filteredFeedbacks.length / itemsPerPage);
   const displayedFeedbacks = filteredFeedbacks.slice(
     (currentPage - 1) * itemsPerPage,
@@ -107,6 +121,17 @@ const RatingFeedback = () => {
           >
             Sort by CreatedDate <FaSort className="ml-2" />
           </Button>
+          {/* 🔍 Tìm kiếm theo tên bác sĩ */}
+          <div className="mb-6 flex items-center border rounded-lg p-3 bg-white shadow-md">
+            <FaSearch className="text-gray-400 mr-3" />
+            <input
+              type="text"
+              placeholder="Search feedback by doctor name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 outline-none text-gray-700 text-lg"
+            />
+          </div>
         </div>
 
         {/* Danh sách feedback */}
