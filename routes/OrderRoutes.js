@@ -109,5 +109,5 @@ router.get("/:orderCode", authMiddleware, orderController.getOrderByOrderCode);
  *         description: Order not found
  */
 router.delete("/:id", authMiddleware, authorize(["Admin"]), orderController.deleteOrder);
-
+router.post("/mobile-order", authMiddleware, orderController.createOrderForMobile);
 module.exports = router;
