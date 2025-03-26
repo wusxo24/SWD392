@@ -1,5 +1,6 @@
 import { FaHandHoldingMedical } from "react-icons/fa";
 import { FaUserDoctor } from "react-icons/fa6";
+import { HiMiniHeart } from "react-icons/hi2";
 import { useEffect, useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { logout, resetPassword } from "@/services/authService"; // Import functions
@@ -17,15 +18,22 @@ const Sidebar = () => {
   const [userName, setUserName] = useState(null);
   const [roleName, setRoleName] = useState(null);
   const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
-  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] =
+    useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
-    setUserId(localStorage.getItem("userId") || sessionStorage.getItem("userId"));
-    setUserName(localStorage.getItem("userName") || sessionStorage.getItem("userName"));
-    setRoleName(localStorage.getItem("roleName") || sessionStorage.getItem("roleName"));
+    setUserId(
+      localStorage.getItem("userId") || sessionStorage.getItem("userId")
+    );
+    setUserName(
+      localStorage.getItem("userName") || sessionStorage.getItem("userName")
+    );
+    setRoleName(
+      localStorage.getItem("roleName") || sessionStorage.getItem("roleName")
+    );
 
     // Close popup when clicking outside
     const handleClickOutside = (event) => {
@@ -54,7 +62,9 @@ const Sidebar = () => {
   };
 
   const handleResetPassword = async () => {
-    const token = localStorage.getItem("resetToken") || sessionStorage.getItem("resetToken");
+    const token =
+      localStorage.getItem("resetToken") ||
+      sessionStorage.getItem("resetToken");
 
     if (!token || !newPassword) {
       toast.error("Please enter a valid password.");
@@ -74,7 +84,7 @@ const Sidebar = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white border-r border-[#d1d5db]">
       {/* Logo */}
-      <ToastContainer/>
+      <ToastContainer />
       <img src={Logo} alt="Logo" className="h-[100px] w-[150px] ml-5" />
 
       {/* Divider Line */}
@@ -83,28 +93,46 @@ const Sidebar = () => {
       {/* Navigation Links */}
       <ul className="text-[#515151] mt-5 flex-1">
         {[
-          { to: "/medical-request-management", label: "Medical Request Management", icon: <FaHandHoldingMedical /> },
-          { to: "/doctor-profile", label: "Doctor Profile", icon: <FaUserDoctor /> },
+          {
+            to: "/medical-request-management",
+            label: "Medical Request Management",
+            icon: <FaHandHoldingMedical />,
+          },
+          {
+            to: "/doctor-profile",
+            label: "Doctor Profile",
+            icon: <FaUserDoctor />,
+          },
+          {
+            to: "/view-rating",
+            label: "View Ratings",
+            icon: <HiMiniHeart />,
+          },
         ].map(({ to, label, icon }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
               `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 rounded-lg cursor-pointer transition-all relative ${
-                isActive ? "bg-[#f2f3ff] text-[#000] font-medium" : "text-[#515151] hover:bg-gray-100"
+                isActive
+                  ? "bg-[#f2f3ff] text-[#000] font-medium"
+                  : "text-[#515151] hover:bg-gray-100"
               }`
             }
           >
             <div
               className={`absolute left-0 h-full w-[4px] rounded-r-lg transition-all ${
-                window.location.pathname === to ? "bg-[#51a2ff]" : "bg-transparent"
+                window.location.pathname === to
+                  ? "bg-[#51a2ff]"
+                  : "bg-transparent"
               }`}
             ></div>
 
             <div
               className="p-2 rounded-full transition-all flex items-center justify-center"
               style={{
-                background: window.location.pathname === to ? "#51a2ff" : "#E5E7EB",
+                background:
+                  window.location.pathname === to ? "#51a2ff" : "#E5E7EB",
                 width: "40px",
                 height: "40px",
               }}
@@ -125,13 +153,19 @@ const Sidebar = () => {
           </div>
 
           {/* Menu Button */}
-          <button onClick={() => setIsLogoutPopupOpen(!isLogoutPopupOpen)} className="text-gray-600 cursor-pointer">
+          <button
+            onClick={() => setIsLogoutPopupOpen(!isLogoutPopupOpen)}
+            className="text-gray-600 cursor-pointer"
+          >
             <MoreVertIcon />
           </button>
 
           {/* Logout Popup */}
           {isLogoutPopupOpen && (
-            <div ref={menuRef} className="absolute bottom-14 left-65 w-48 bg-white shadow-lg rounded-lg border border-gray-200">
+            <div
+              ref={menuRef}
+              className="absolute bottom-14 left-65 w-48 bg-white shadow-lg rounded-lg border border-gray-200"
+            >
               <button
                 onClick={() => setIsResetPasswordModalOpen(true)}
                 className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
@@ -155,7 +189,10 @@ const Sidebar = () => {
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Reset Password</h2>
-              <button onClick={() => setIsResetPasswordModalOpen(false)} className="text-gray-500 cursor-pointer">
+              <button
+                onClick={() => setIsResetPasswordModalOpen(false)}
+                className="text-gray-500 cursor-pointer"
+              >
                 <CloseIcon />
               </button>
             </div>
@@ -192,4 +229,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
