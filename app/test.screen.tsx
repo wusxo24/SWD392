@@ -1,122 +1,100 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, Button } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "twrnc";
-import { extractHeightByDay } from "@/utils/extractHeightByDay";
 import HeightGraph from "@/components/graph/Graph.component";
-
-// Sample API response
-const apiResponse = [
-    {
-        "_id": "67d4dc188e1db52e49ab04ac",
-        "MonthYear": "2024-04",
-        "RecordId": "67c3e147401c29858df96623",
-        "Trackings": {
-            "2024-04-30": {
-                "Height": 122,
-                "Weight": 28,
-                "BMI": 18.81,
-                "BMIResult": "Unknown"
-            }
-        },
-        "__v": 0
-    },
-    {
-        "_id": "67d4dcb88e1db52e49ab04ad",
-        "MonthYear": "2024-05",
-        "RecordId": "67c3e147401c29858df96623",
-        "Trackings": {
-            "2024-05-30": {
-                "Height": 122,
-                "Weight": 28,
-                "BMI": 18.81,
-                "BMIResult": "Unknown"
-            }
-        },
-        "__v": 0
-    },
-    {
-        "_id": "67d4dcd18e1db52e49ab04ae",
-        "MonthYear": "2024-06",
-        "RecordId": "67c3e147401c29858df96623",
-        "Trackings": {
-            "2024-06-30": {
-                "Height": 122,
-                "Weight": 28,
-                "BMI": 18.81,
-                "BMIResult": "Unknown"
-            }
-        },
-        "__v": 0
-    },
-    {
-        "_id": "67d4dd668e1db52e49ab04af",
-        "RecordId": "67c3e147401c29858df96623",
-        "MonthYear": "2024-07",
-        "Trackings": {
-            "2024-07-30": {
-                "Height": 122,
-                "Weight": 28,
-                "BMI": 18.81,
-                "BMIResult": "Unknown"
-            }
-        },
-        "__v": 0
-    },
-    {
-        "_id": "67d4dd738e1db52e49ab04b0",
-        "MonthYear": "2024-08",
-        "RecordId": "67c3e147401c29858df96623",
-        "Trackings": {
-            "2024-08-30": {
-                "Height": 122,
-                "Weight": 28,
-                "BMI": 18.81,
-                "BMIResult": "Unknown"
-            }
-        },
-        "__v": 0
-    },
-    {
-        "_id": "67dec6cb8c62662ac1425895",
-        "MonthYear": "2025-03",
-        "RecordId": "67c3e147401c29858df96623",
-        "Trackings": {
-            "2025-03-22": {
-                "Height": 200,
-                "Weight": 133,
-                "BMI": 33.25,
-                "BMIZScore": 6.75,
-                "BMIResult": "Obesity",
-                "HeadCircumference": 12,
-                "WaistCircumference": 33
-            }
-        },
-        "__v": 0
-    }
-];
 
 export default function TestScreen() {
   const [heightData, setHeightData] = useState([]);
 
   useEffect(() => {
-    const data = extractHeightByDay(apiResponse);
-    setHeightData(data);
+    fetchHeightData();
   }, []);
+
+  const fetchHeightData = async () => {
+    try {
+      const existingStats = await AsyncStorage.getItem("statistics");
+      const statsData = existingStats ? JSON.parse(existingStats) : {};
+      const childId = "67e32d42bc059d46968e026d";
+      const heightData = [];
+
+      if (statsData[childId]) {
+        for (const date in statsData[childId]) {
+          heightData.push({
+            date: date.split('-').reverse().join('-'), // Convert to dd-mm-yyyy format
+            height: statsData[childId][date].height,
+          });
+        }
+      }
+
+      setHeightData(heightData);
+    } catch (error) {
+      console.error("Failed to fetch height data", error);
+    }
+  };
+
+  const handleButtonPress = () => {
+    alert("Button Pressed!");
+  };
+
+  const clearAsyncStorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      alert("AsyncStorage cleared successfully!");
+    } catch (error) {
+      console.error("Failed to clear AsyncStorage", error);
+    }
+  };
+
+  const generateRandomData = async () => {
+    const statsData = {};
+    const childId = "67e32d42bc059d46968e026d";
+    statsData[childId] = {};
+
+    for (let i = 0; i < 60; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const formattedDate = date.toISOString().split('T')[0].split('-').reverse().join('-'); // Convert to dd-mm-yyyy format
+
+      const randomHeight = (Math.random() * (150 - 100) + 100).toFixed(2);
+      const randomWeight = (Math.random() * (50 - 20) + 20).toFixed(2);
+      const bmi = (randomWeight / ((randomHeight / 100) ** 2)).toFixed(2);
+      const bmiCategory = getBMICategory(bmi);
+
+      statsData[childId][formattedDate] = {
+        height: randomHeight,
+        weight: randomWeight,
+        bmi: bmi,
+        bmiCategory: bmiCategory,
+        updatedDate: new Date().toISOString(),
+      };
+    }
+
+    try {
+      await AsyncStorage.setItem("statistics", JSON.stringify(statsData));
+      alert("Random data generated and saved successfully!");
+      fetchHeightData(); // Refresh the height data after generating new data
+    } catch (error) {
+      console.error("Failed to save statistics", error);
+    }
+  };
+
+  const getBMICategory = (bmi) => {
+    if (bmi < 18.5) return "Underweight";
+    if (bmi >= 18.5 && bmi < 25) return "Normal";
+    if (bmi >= 25 && bmi < 30) return "Overweight";
+    if (bmi >= 30 && bmi < 40) return "Obese";
+    if (bmi >= 40) return "Severely Obese";
+    return "Unknown";
+  };
 
   return (
     <View style={tw`p-4`}>
       <Text style={tw`text-center text-lg font-bold`}>Test Screen</Text>
-      <HeightGraph data={heightData} />
-      <FlatList
-        data={heightData}
-        keyExtractor={(item) => item.date}
-        renderItem={({ item }) => (
-          <View style={tw`p-2 border-b border-gray-200`}>
-            <Text>Date: {item.date}</Text>
-            <Text>Height: {item.height}</Text>
-          </View>
-        )}
-      />
+      <HeightGraph primaryData={heightData} />
+      <Button title="Press Me" onPress={handleButtonPress} />
+      <Button title="Clear Storage" onPress={clearAsyncStorage} />
+      <Button title="Generate Random Data" onPress={generateRandomData} />
     </View>
   );
 }

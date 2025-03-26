@@ -31,6 +31,7 @@ const bloodTypeOptions = [
 ];
 
 const initialChildData = {
+  _id: "",
   fname: "",
   lname: "",
   birthdate: "",
@@ -124,7 +125,6 @@ const ChildInformationScreen = () => {
   const [showBloodTypePicker, setShowBloodTypePicker] = useState(false);
 
   useEffect(() => {
-    console.log("Mode from URL:", mode);
     if (mode) {
       setCurrentMode(mode as Mode);
     }
@@ -137,16 +137,12 @@ const ChildInformationScreen = () => {
 
   const fetchChildData = async (childId: string) => {
     try {
-      const childrenString = await AsyncStorage.getItem("children");
-      if (childrenString) {
-        const children = JSON.parse(childrenString);
-        const child = children.find((c: any) => c.id === childId);
-        if (child) {
-          setChildData({ ...child, birthdate: new Date(child.birthdate).toLocaleDateString("en-GB") });
-        }
+      const child = await childService.getChildById(childId);
+      if (child) {
+        setChildData({ ...child, birthdate: new Date(child.birthdate).toLocaleDateString("en-GB"), blood_type: child.bloodType });
       }
     } catch (error) {
-      console.error("Failed to fetch child data from AsyncStorage", error);
+      console.error("Failed to fetch child data from API", error);
     }
   };
 
@@ -174,35 +170,22 @@ const ChildInformationScreen = () => {
 
   const handleSave = async () => {
     try {
-      const childrenString = await AsyncStorage.getItem("children");
-      let children = childrenString ? JSON.parse(childrenString) : [];
       if (currentMode === Mode.Create) {
         // Add new child
         const newChild = {
           ...childData,
-          id: Date.now().toString(),
+          _id: Date.now().toString(),
           birthdate: new Date(childData.birthdate.split("/").reverse().join("-")).toISOString(),
         };
         console.log("New child data:", newChild);
-        children.push(newChild);
         await childService.createChild(newChild);
       } else if (currentMode === Mode.Update) {
         // Update existing child
-        children = children.map((child: any) =>
-          child.id === id
-            ? {
-                ...child,
-                ...childData,
-                birthdate: new Date(childData.birthdate.split("/").reverse().join("-")).toISOString(),
-              }
-            : child
-        );
-        await childService.updateChild(id as string, {
+        await childService.updateChild(childData._id, {
           ...childData,
           birthdate: new Date(childData.birthdate.split("/").reverse().join("-")).toISOString(),
         });
       }
-      await AsyncStorage.setItem("children", JSON.stringify(children));
       setCurrentMode(Mode.View);
       router.push("/home.screen");
     } catch (error) {

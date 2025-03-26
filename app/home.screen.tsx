@@ -140,7 +140,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
         <TouchableOpacity style={tw`flex-row w-5/11 bg-sky-500 p-2 rounded-lg`}>
           <Link
-            href="/child-information.screen?mode=VIEW"
+            href="/statistic.screen?mode=EDIT"
             style={tw`flex flex-row gap-2 items-center justify-center`}
           >
             <ProfileIcon />

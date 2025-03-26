@@ -3,7 +3,7 @@ import axiosInstance from "../utils/axiosInstance";
 import subscriptionService from "./subscription.service";
 
 interface OrderService {
-  createOrder(orderData: any): Promise<any>;
+  createOrder(orderData: {serviceId: string}): Promise<any>;
   getOrders(): Promise<any>;
   getMemberOrder(): Promise<Order[]>;
   getMemberOrdersCode(): Promise<any>;

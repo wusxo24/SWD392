@@ -1,15 +1,17 @@
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 import tw from "twrnc";
-
 import { Header } from "@/components/Header.component";
 import { router } from "expo-router";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
-import Icon from "react-native-vector-icons/FontAwesome";
+import orderService from "@/service/order.service";
 
 interface Plan {
+  _id: string;
   name: string;
   description: string;
   features: string[];
+  image: string;
   price: number;
   duration: number;
   plan_code: string;
@@ -22,7 +24,7 @@ const subscriptionColors: { [key: string]: string } = {
   "4": "bg-violet-600", // Diamond
 };
 
-const plans = [
+const plans: Plan[] = [
   {
     _id: "67b80c3cab3ae0219cebe25b",
     name: "Sprout Package 🌱",
@@ -84,7 +86,7 @@ const plans = [
   },
 ];
 
-const PlanCard = ({ plan, style }: { plan: Plan; style?: any }) => {
+const PlanCard = ({ plan, style, onGetStarted }: { plan: Plan; style?: any; onGetStarted: (planId: string) => void }) => {
   const bgColor = subscriptionColors[plan.plan_code] || "#000000";
 
   return (
@@ -105,7 +107,7 @@ const PlanCard = ({ plan, style }: { plan: Plan; style?: any }) => {
           ))}
         </View>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => onGetStarted(plan._id)}>
         <Text style={tw`text-center ${bgColor} text-white p-2 rounded-full text-lg font-semibold mx-8 mb-4`}>Get Started</Text>
       </TouchableOpacity>
     </View>
@@ -123,6 +125,16 @@ export default function SubscriptionPlanScreen() {
     setCurrentPlanIndex(
       (prevIndex) => (prevIndex - 1 + plans.length) % plans.length
     );
+  };
+
+  const handleGetStarted = async (planId: string) => {
+    try {
+      await orderService.createOrder({ serviceId: planId });
+      Alert.alert("Success", "Order created successfully!");
+    } catch (error) {
+      console.error("Failed to create order", error);
+      Alert.alert("Error", "Failed to create order. Please try again.");
+    }
   };
 
   return (
@@ -159,6 +171,7 @@ export default function SubscriptionPlanScreen() {
                   },
                 ],
               }}
+              onGetStarted={handleGetStarted}
             />
           );
         })}
