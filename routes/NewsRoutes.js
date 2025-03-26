@@ -69,7 +69,7 @@ router.get("/", newsController.getAllNews);
  *       404:
  *         description: News not found
  */
-router.get("/:newsId", newsController.getNewsById);
+router.get("/:newsId", authMiddleware, authorize(["Member"]), newsController.getNewsById);
 
 /**
  * @swagger

@@ -24,7 +24,8 @@ exports.getAllNews = async (req, res) => {
 
 // Get a single news article by ID (with Manager's name as author)
 exports.getNewsById = async (req, res) => {
-    const { newsId } = req.params;
+
+    const newsId  = req.params.newsId;
     try {
         const news = await NewsService.getNewsById(newsId);
         res.status(200).json(news);

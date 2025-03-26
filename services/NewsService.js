@@ -29,17 +29,13 @@ const getNewsById = async (newsId) => {
         throw new Error("News not found.");
     }
 
-    if (news.user_id.role !== "Manager") {
-        throw new Error("News can only be authored by Managers.");
-    }
-
     return {
         title: news.title,
         banner: news.banner,
         description: news.description,
         content: news.content,
         date: news.date,
-        author: news.user_id.username, // Display manager's name
+        author: news.user_id.username,
     };
 };
 
