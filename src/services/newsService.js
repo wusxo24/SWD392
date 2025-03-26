@@ -22,7 +22,8 @@ export const fetchNewsDetail = async (id) => {
 export const fetchRelatedNews = async () => {
   try {
     const res = await axios.get("/api/news");
-    return res.data.slice(0, 2); // Get 2 related articles
+    const shuffledNews = res.data.sort(() => 0.5 - Math.random());
+    return shuffledNews.slice(0, 3); // Get 2 related articles
   } catch (err) {
     console.error("Error fetching related news:", err);
     return [];
