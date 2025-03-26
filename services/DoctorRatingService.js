@@ -16,6 +16,12 @@ const rateDoctor = async (medicalRequestId, ratingData, userId) => {
         IsAnonymous
     });
     await newRating.save();
+
+    // ✅ Update the status of the medical request to "Rated"
+    medicalRequest.Status = "Rated";
+    console.log(medicalRequest.Status);
+    await medicalRequest.save(); // Save the updated status
+
     return newRating;
 };
 
