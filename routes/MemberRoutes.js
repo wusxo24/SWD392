@@ -4,7 +4,8 @@ const {
     getMemberById,
     updateMember,
     deleteMember,
-    updateMemberStatus
+    updateMemberStatus,
+    updateMemberForMember
 } = require("../controllers/MemberController");
 
 const router = express.Router();
@@ -86,6 +87,8 @@ router.get("/:id", authMiddleware, getMemberById);
  *         description: Member not found
  */
 router.put("/:id", authMiddleware, authorize(["Member", "Manager", "Admin"]), updateMember);
+
+router.put("/:id/member", authMiddleware, authorize(["Member", "Manager", "Admin"]), updateMemberForMember);
 
 /**
  * @swagger

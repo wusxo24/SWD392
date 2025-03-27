@@ -1,5 +1,5 @@
 const express = require("express");
-const { createDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, softDeleteDoctor, restoreDoctor, updateDoctorStatus } = require("../controllers/DoctorController");
+const { createDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, softDeleteDoctor, restoreDoctor, updateDoctorStatus,getAvailableDoctors } = require("../controllers/DoctorController");
 const { authMiddleware, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -115,7 +115,7 @@ router.put("/:id", authMiddleware, authorize(["Admin", "Doctor"]), updateDoctor)
 router.delete("/:id", authMiddleware, authorize(["Admin"]), deleteDoctor);
 
 
-router.get("/:id", authMiddleware, authorize(["Admin"]), getDoctorById);
+router.get("/:id", authMiddleware, authorize(["Admin", "Doctor"]), getDoctorById);
 
 // Soft delete doctor (update status to "Inactive")
 router.put("/:id/soft-delete", authMiddleware, authorize(["Admin"]), softDeleteDoctor);
@@ -124,5 +124,5 @@ router.put("/:id/soft-delete", authMiddleware, authorize(["Admin"]), softDeleteD
 router.put("/:id/restore", authMiddleware, authorize(["Admin"]), restoreDoctor);
 
 router.patch("/:id/status", authMiddleware, authorize(["Admin"]), updateDoctorStatus);
-router.get("/Available", authMiddleware, authorize(["Manager"]), getDoctors);
+router.get("/Approved/Available", authMiddleware, authorize(["Admin", "Manager"]),getAvailableDoctors);
 module.exports = router;
