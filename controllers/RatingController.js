@@ -6,9 +6,15 @@ const MemberInfo = require("../models/MemberInfo");
 const getAllRatings = async (req, res) => {
   try {
     const ratings = await DoctorRating.find()
-      .populate("DoctorId")
-      .populate("MemberId")
-      .sort({ CreatedDate: -1 }); // 🔹 Sắp xếp theo ngày mới nhất
+      .populate({
+        path: "DoctorId",
+        populate: { path: "doctorInfo", select: "picture" }, // Lấy picture từ DoctorInfo
+      })
+      .populate({
+        path: "MemberId",
+        populate: { path: "memberInfo", select: "picture" }, // Lấy picture từ MemberInfo
+      })
+      .sort({ CreatedDate: -1 });
 
     res.status(200).json(ratings);
   } catch (error) {
