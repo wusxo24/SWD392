@@ -5,7 +5,7 @@ const ChildrenSchema = new mongoose.Schema({
     lname: { type: String, required: true },
     memberID: { type: mongoose.Schema.Types.ObjectId, ref: "User",},
     birthdate: { type: Date, required: true },
-    gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
+    gender: { type: String, enum: ["Male", "Female"], required: true },
     picture: { type: String },
     blood_type: { type: String, enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"] },
     allergy: { type: String },

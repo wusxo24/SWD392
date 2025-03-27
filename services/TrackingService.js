@@ -135,7 +135,7 @@ const calculateBMIZScore = (bmi, ageInMonths, gender) => {
     let bmiReference = null;
     if (ageInMonths < 24) {
         bmiReference = bmiReference0_2;
-    } else if (ageInMonths < 60) {
+    } else if (ageInMonths < 61) {
         bmiReference = bmiReference2_5;
     } else {
         bmiReference = bmiReference5_19;
