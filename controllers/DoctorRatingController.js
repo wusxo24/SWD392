@@ -2,7 +2,7 @@ const DoctorRatingService = require("../services/DoctorRatingService");
 
 const rateDoctor = async (req, res) => {
     try {
-        const { medicalRequestId } = req.params;
+        const medicalRequestId = req.params.medicalRequestId;
         const newRating = await DoctorRatingService.rateDoctor(medicalRequestId, req.body, req.user.id);
         res.status(201).json({ message: "Rating created successfully", rating: newRating });
     } catch (error) {

@@ -5,7 +5,7 @@ const MedicalRequestSchema = new mongoose.Schema({
     CreatedDate: { type: Date, default: Date.now },
     Status: { 
         type: String, 
-        enum: ["Pending", "Approved", "Rejected", "Completed"], 
+        enum: ["Pending", "Approved", "Rejected", "Completed", "Rated"], 
         default: "Pending" 
     },
     ManagerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, 
