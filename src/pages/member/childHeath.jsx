@@ -6,7 +6,7 @@ import { getDoctorResponse } from "@/services/medicalRequestService"; // Import 
 import RatingFeedbackModal from "@/components/DoctorRatingModal";
 
 
-const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRequests }) => {
+const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRequests, childAgeInMonths }) => {
   const [editingDates, setEditingDates] = useState({});
   const [editedValues, setEditedValues] = useState({});
   const [activeTab, setActiveTab] = useState("tracking"); 
@@ -40,7 +40,13 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
   const formatValue = (value) =>
     value !== null && value !== undefined && value !== "" ? value : "N/A";
 
-  const bmiFields = ["BMI", "BMIZScore", "BMIResult"];
+  const bmiFields = ["BMI", "BMIZScore", "BMIResult", 
+    "LengthForAgeZScore",
+    "LengthForAgeResult",
+    "WeightForAgeZScore",
+    "WeightForAgeResult",
+    "WeightForLengthZScore",
+    "WeightForLengthResult",];
   const allFields = [
     "Height",
     "Weight",
@@ -55,7 +61,32 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
     "ChestCircumference",
     "ThighCircumference",
     "CalfCircumference",
+    "LengthForAgeZScore",
+    "LengthForAgeResult",
+    "WeightForAgeZScore",
+    "WeightForAgeResult",
+    "WeightForLengthZScore",
+    "WeightForLengthResult",
+  
   ];
+
+  // Function to determine which fields to show based on age
+const getFilteredBmiFields = (ageInMonths) => {
+  if (ageInMonths >= 36) {
+    // If 3 years or older, filter out certain fields
+    return bmiFields.filter(field => ![
+      "LengthForAgeZScore", 
+      "LengthForAgeResult",
+      "WeightForAgeZScore",
+      "WeightForAgeResult",
+      "WeightForLengthZScore",
+      "WeightForLengthResult"
+    ].includes(field));
+  }
+  return bmiFields; // Show all fields for younger children
+};
+
+const filteredBmiFields = getFilteredBmiFields(childAgeInMonths || 0); // Use this variable in rendering
 
   const handleEditClick = (date, details) => {
     setEditingDates((prev) => ({ ...prev, [date]: true }));
@@ -184,28 +215,32 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
                           <CalendarMonthIcon /> {date}
                         </h4>
                         <ul className="list-disc ml-5 text-gray-600">
-                          {allFields.map((key) => (
-                            <li key={key} className="flex items-center space-x-2">
-                              <span className="w-40 text-gray-600">{key.replace(/([A-Z])/g, " $1").trim()}:</span>
-                            {bmiFields.includes(key) ? (
-                              <span className="font-semibold text-gray-800">
-                                {formatValue(details[key])}
-                              </span>
-                            ) : editingDates[date] ? (
-                              <input
-                                type="number"
-                                value={editedValues[date]?.[key] || ""}
-                                onChange={(e) =>
-                                  handleInputChange(date, key, e.target.value)
-                                }
-                                className="border px-2 py-1 rounded w-24"
-                              />
-                            ) : (
-                              <span>{formatValue(details[key])}</span>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
+                          {allFields
+                            .filter((key) => filteredBmiFields.includes(key) || !bmiFields.includes(key)) // Hide BMI fields when child is 3+ years old
+                            .map((key) => (
+                              <li key={key} className="flex items-center space-x-2">
+                                <span className="w-50 text-gray-600 space-x-2">
+                                  {key.replace(/([A-Z])/g, " $1").trim()}:
+                                </span>
+                                {bmiFields.includes(key) ? (
+                                  // If it's a BMI field, show only value (do not allow editing)
+                                  <span className="font-semibold text-gray-800">
+                                    {formatValue(details[key])}
+                                  </span>
+                                ) : editingDates[date] ? (
+                                  // If it's not a BMI field, allow editing
+                                  <input
+                                    type="number"
+                                    value={editedValues[date]?.[key] || ""}
+                                    onChange={(e) => handleInputChange(date, key, e.target.value)}
+                                    className="border px-2 py-1 rounded w-24"
+                                  />
+                                ) : (
+                                  <span>{formatValue(details[key])}</span>
+                                )}
+                              </li>
+                            ))}
+                        </ul>
 
                       {editingDates[date] ? (
                         <div className="mt-2 flex space-x-2">

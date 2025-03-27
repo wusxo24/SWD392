@@ -160,7 +160,14 @@ const weightPercentiles = {
 };
 
 export const WeightChart = ({ gender, data }) => {
-    return <GrowthChart gender={gender} data={data} title="Weight Growth Chart" yLabel="Weight (kg)" />;
+    return (
+    <GrowthChart 
+    gender={gender} 
+    data={data} 
+    title="Weight Growth Chart" 
+    yLabel="Weight (kg)" 
+    />
+    )
 };
 
 export default WeightChart;

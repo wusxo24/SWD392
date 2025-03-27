@@ -52,7 +52,7 @@ const heightPercentilesData = {
   };
 
 
-  const HeightChart = ({ gender = "Female", data = [] }) => {
+  const GrowthChart = ({ gender = "Female", data = [] }) => {
     const chartRef = useRef(null);
     const chartInstanceRef = useRef(null);
     useEffect(() => {
@@ -153,6 +153,17 @@ const heightPercentilesData = {
         <canvas ref={chartRef}></canvas>
       </div>
     );
+  };
+
+  export const HeightChart = ({ gender, data }) => {
+    return (
+      <GrowthChart 
+      gender={gender} 
+      data={data} 
+      title="Height Growth Chart" 
+      yLabel="Height (cm)" 
+      />
+    )
   };
   
   export default HeightChart;

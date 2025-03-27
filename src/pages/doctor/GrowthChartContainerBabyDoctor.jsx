@@ -87,61 +87,99 @@ const GrowthChartContainerBabyDoctor = () => {
   }, [recordId, childData?.birthdate]);
 
   useEffect(() => {
-      if (trackingData.length > 0) {
-        const latestRecord = trackingData[trackingData.length - 1]; 
-        const trackingsEntries = Object.entries(latestRecord.Trackings); // Convert to array [date, data]
-        if (trackingsEntries.length === 0) return;
-        const latestTracking = trackingsEntries[trackingsEntries.length - 1]; // Get last [date, data] pair
-        const latestDate = latestTracking[0]; // Extract date
-        const latestEntry = latestTracking[1]; // Extract data object
-        if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
-          toast.warning(`⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category.`
-            ,{ autoClose: 10000, // 10 seconds (default is 5000ms or 5s)
-              closeOnClick: true, // Allows closing on click
-              pauseOnHover: true, // Keeps it visible when hovering
-              draggable: true // Allows dragging the toast
-            });
-        }
-      }
-    }, [trackingData]);
+     if (trackingData.length > 0) {
+       const latestRecord = trackingData[trackingData.length - 1];
+       const trackingsEntries = Object.entries(latestRecord.Trackings);
+       if (trackingsEntries.length === 0) return;
+   
+       const latestTracking = trackingsEntries[trackingsEntries.length - 1];
+       const latestDate = latestTracking[0];
+       const latestEntry = latestTracking[1];
+   
+       // ✅ Ensure latestEntry is always defined before using it
+       if (!latestEntry) return;
+   
+       if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
+         toast.warning(
+           `⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+           { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
+         );
+       }
+   
+       if (latestEntry.WeightForLengthResult && latestEntry.WeightForLengthResult !== "Normal") {
+         toast.warning(
+           `⚠️ Warning (${latestDate}): Child's weight-for-length is in the '${latestEntry.WeightForLengthResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+           { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
+         );
+       }
+   
+       if (latestEntry.WeightForAgeResult && latestEntry.WeightForAgeResult !== "Normal Weight") {
+         toast.warning(
+           `⚠️ Warning (${latestDate}): Child's weight-for-age is in the '${latestEntry.WeightForAgeResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+           { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
+         );
+       }
+   
+       if (latestEntry.HeadCircumferenceResult && latestEntry.HeadCircumferenceResult !== "Normal Head Circumference") {
+         toast.warning(
+           `⚠️ Warning (${latestDate}): Child's head circumference is in the '${latestEntry.HeadCircumferenceResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+           { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
+         );
+       }
+   
+       if (latestEntry.LengthForAgeResult && latestEntry.LengthForAgeResult !== "Normal") {
+         toast.warning(
+           `⚠️ Warning (${latestDate}): Child's length-for-age is in the '${latestEntry.LengthForAgeResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+           { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
+         );
+       }
+     }
+   }, [trackingData]);
 
 
-  const processTrackingData = (trackingData, yearOfBirth) => {
-    if (!yearOfBirth) {
-      console.error("Error: yearOfBirth is missing");
-      return [];
-    }
-
-    const birthYear = new Date(yearOfBirth).getFullYear();
-
-    return trackingData.flatMap((entry) => {
-      if (!entry.MonthYear || !entry.MonthYear.includes("-")) {
-        console.warn("Invalid MonthYear format:", entry.MonthYear);
+    const processTrackingData = (trackingData, yearOfBirth) => {
+      if (!yearOfBirth) {
+        console.error("Error: yearOfBirth is missing");
         return [];
       }
-
-      const year = parseInt(entry.MonthYear.split("-")[0]);
-      if (isNaN(year)) {
-        console.warn("Invalid year extracted:", entry.MonthYear);
-        return [];
-      }
-
-      const age = year - birthYear;
-
-      // 🔹 Iterate over ALL tracking entries in this MonthYear
-      return Object.entries(entry.Trackings).map(
-        ([trackingDate, trackingValues]) => {
-          return {
-            age,
-            BMI: trackingValues.BMI || null,
-            Height: trackingValues.Height || null,
-            Weight: trackingValues.Weight || null,
-            trackingDate, // 🔍 Include for debugging
-          };
+  
+      const birthYear = new Date(yearOfBirth).getFullYear();
+  
+      return trackingData.flatMap((entry) => {
+        if (!entry.MonthYear || !entry.MonthYear.includes("-")) {
+          console.warn("Invalid MonthYear format:", entry.MonthYear);
+          return [];
         }
-      );
-    });
-  };
+  
+        const year = parseInt(entry.MonthYear.split("-")[0]);
+        if (isNaN(year)) {
+          console.warn("Invalid year extracted:", entry.MonthYear);
+          return [];
+        }
+  
+        const age = year - birthYear;
+  
+        // 🔹 Iterate over ALL tracking entries in this MonthYear
+        return Object.entries(entry.Trackings).map(
+          ([trackingDate, trackingValues]) => {
+            return {
+              age,
+              BMI: trackingValues.BMI || null,
+              Height: trackingValues.Height || null,
+              Weight: trackingValues.Weight || null,
+              HeadCircumference: trackingValues.HeadCircumference || null,
+              ChestCircumference: trackingValues.ChestCircumference || null,
+              WaistCircumference: trackingValues.WaistCircumference || null,
+              HipCircumference: trackingValues.HipCircumference || null,
+              BicepsCircumference: trackingValues.BicepsCircumference || null,
+              ThighCircumference: trackingValues.ThighCircumference || null,
+              CalfCircumference: trackingValues.CalfCircumference || null,
+              trackingDate, // 🔍 Include for debugging
+            };
+          }
+        );
+      });
+    };
 
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
@@ -221,14 +259,14 @@ const GrowthChartContainerBabyDoctor = () => {
           {tabIndex === 1 && (
             <LengthForAgeChart
               gender={childData.gender}
-              data={ageData.map(({ age, Length }) => ({ x: age, y: Length }))}
+              data={ageData.map(({ age, Height }) => ({ x: age, y: Height }))}
             />
           )}
           {tabIndex === 2 && (
             <WeightForLengthChart
               gender={childData.gender}
-              data={ageData.map(({ Length, Weight }) => ({
-                x: Length,
+              data={ageData.map(({ Height, Weight }) => ({
+                x: Height,
                 y: Weight,
               }))}
             />
@@ -245,8 +283,8 @@ const GrowthChartContainerBabyDoctor = () => {
           {tabIndex === 4 && (
             <WeightForStatureChart
               gender={childData.gender}
-              data={ageData.map(({ Stature, Weight }) => ({
-                x: Stature,
+              data={ageData.map(({ Height, Weight }) => ({
+                x: Height,
                 y: Weight,
               }))}
             />

@@ -92,7 +92,6 @@ export const ChildrenProfile = () => {
               <Select value={childData.gender} onChange={(e) => setChildData({ ...childData, gender: e.target.value })}>
                 <MenuItem value="Male">Male</MenuItem>
                 <MenuItem value="Female">Female</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
               </Select>
             </FormControl>
             <TextField margin="dense" label="Profile Picture URL" fullWidth value={childData.picture} onChange={(e) => setChildData({ ...childData, picture: e.target.value })} />
