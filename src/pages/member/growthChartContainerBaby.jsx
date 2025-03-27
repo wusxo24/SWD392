@@ -48,10 +48,10 @@ const GrowthChartContainer = () => {
   const [trackingData, setTrackingData] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ageData, setAgeData] = useState([]);
-  const [medicalRequests, setMedicalRequests] = useState([]);
   const [isChildHealthOpen, setIsChildHealthOpen] = useState(false);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [medicalRequests, setMedicalRequests] = useState([]);
   const birthDate = new Date(childData?.birthdate);
   const today = new Date();
   const diffInMilliseconds = today - birthDate;

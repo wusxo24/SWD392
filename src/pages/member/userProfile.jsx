@@ -21,8 +21,6 @@ export const UserProfile = () => {
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
-  const [image, setImage] = useState("");
-  const [file, setFile] = useState(null);
 
   useEffect(() => {
     if (userId) {
@@ -84,7 +82,7 @@ export const UserProfile = () => {
           {/* Profile Header */}
           <div className="flex gap-4 items-center mb-4">
           <Avatar
-            src={formData.picture || image}  // Now uses a direct URL
+            src={formData.picture}  // Now uses a direct URL
             alt="Avatar"
             sx={{ width: 80, height: 80 }}
           />
@@ -215,7 +213,7 @@ export const UserProfile = () => {
                   label="Birthdate"
                   type="date"
                   name="birthdate"
-                  value={formData.birthdate || ""}
+                  value={formData.birthdate ? formData.birthdate.split("T")[0] : "" || ""}
                   onChange={handleInputChange}
                   fullWidth
                   disabled={!isEditing}
