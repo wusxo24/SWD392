@@ -100,6 +100,46 @@ const updateMemberAndUser = async (memberId, memberData) => {
     }
 };
 
+const updateMemberAndUserForMember = async (memberId, memberData) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const { username, email, role, status, _id, ...memberFields } = memberData;  // ✅ Exclude `_id`
+
+        // Update MemberInfo by `user_id`
+        const member = await Member.findOneAndUpdate(
+            { user_id: memberId },  // ✅ Find by user_id
+            { ...memberFields },
+            { new: true, runValidators: true, session }
+        );
+
+        if (!member) {
+            throw new Error(`Member not found for user_id: ${memberId}`);
+        }
+
+        // Update User by `_id`
+        const user = await User.findOneAndUpdate(
+            { _id: memberId }, 
+            { email, role, username, status },  // ✅ Only update allowed fields
+            { new: true, runValidators: true, session }
+        );
+
+        if (!user) {
+            throw new Error(`User not found with ID: ${memberId}`);
+        }
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return { member, user };
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw new Error(`Error updating member and user: ${error.message}`);
+    }
+};
+
 
 const deleteMember = async (id) => {
     const member = await Member.findById(id);
@@ -144,4 +184,4 @@ const updateMemberStatus = async (memberId, status) => {
     }
 };
 
-module.exports = { getAllMembers, getMemberById, updateMember, deleteMember, updateMemberStatus, updateMemberAndUser };
+module.exports = { getAllMembers, getMemberById, updateMember, deleteMember, updateMemberStatus, updateMemberAndUser, updateMemberAndUserForMember };

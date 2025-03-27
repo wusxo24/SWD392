@@ -74,7 +74,7 @@ const getMedicalRequestByRecordId = async (recordId) => {
 };
 
 const getMedicalRequestByDoctorId = async (doctorId) => {
-    const medicalRequest = await MedicalRequest.find({ DoctorId: doctorId })
+    const medicalRequest = await MedicalRequest.find({ DoctorId: doctorId , Status: "Approved" })
         .populate({
             path: "RecordId",
             select: "OrderId ChildId CreatedDate ModifiedDate Status ExpiredDate trackingInfo",
@@ -153,6 +153,14 @@ const getApprovedRequestsByDoctorId = async (doctorId) =>{
     return await MedicalRequest.find({ DoctorId: new mongoose.Types.ObjectId(doctorId), Status: "Approved" });
   }
 
+  const getMedicalRequestById = async (medicalRequestId) => {
+    return await MedicalRequest.findById(medicalRequestId);
+  };
+  
+  const getDoctorResponseByMedicalRequestId = async (medicalRequestId) => {
+    return await DoctorResponse.findOne({ MedicalRequestId: medicalRequestId });
+  };
+
 module.exports = {
     createMedicalRequest,
     rejectMedicalRequest,
@@ -161,5 +169,7 @@ module.exports = {
     getMedicalRequestByDoctorId,
     doctorStartWorkingOnMedicalRequest,
     getAllMedicalRequests,
-    getApprovedRequestsByDoctorId
+    getApprovedRequestsByDoctorId,
+    getMedicalRequestById,
+    getDoctorResponseByMedicalRequestId
 };

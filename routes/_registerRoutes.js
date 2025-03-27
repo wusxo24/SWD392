@@ -17,6 +17,7 @@ const doctorResponseRoutes = require("./DoctorResponseRoutes");
 const doctorRatingRoutes = require("./DoctorRatingRoutes");
 const serviceRatingRoutes = require("./ServiceFeedbackRoutes");
 const paymentRoutes = require("./PaymentRoutes");
+const ratingRoutes = require("./RatingRoutes");
 const router = express.Router();
 
 router.use("/auth", authRoute);
@@ -37,5 +38,6 @@ router.use("/doctor-responses", doctorResponseRoutes);
 router.use("/doctor-ratings", doctorRatingRoutes);
 router.use("/service-ratings", serviceRatingRoutes);
 router.use("/payments", paymentRoutes);
+router.use("/ratings", ratingRoutes);
 
 module.exports = router;
