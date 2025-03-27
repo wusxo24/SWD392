@@ -20,9 +20,13 @@ const TrackingSchema = new mongoose.Schema({
             ThighCircumference: Number,
             CalfCircumference: Number,
             HeadCircumferenceZScore: Number,
+            HeadCircumferenceResult: String,
             LengthForAgeZScore: Number,
+            LengthForAgeResult: String,
             WeightForAgeZScore: Number,
+            WeightForAgeResult: String,
             WeightForLengthZScore: Number,
+            WeightForLengthResult: String
         }, { _id: false })
     }
 });

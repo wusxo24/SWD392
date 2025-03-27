@@ -78,6 +78,21 @@ const updateTracking = async (recordId, date, growthStats) => {
     }
     console.log("Weight-for-Length Z-score:", growthStats.WeightForLengthZScore);
 
+    if (growthStats.LengthForAgeZScore !== undefined) {
+        growthStats.LengthForAgeResult = getLengthForAgeResult(growthStats.LengthForAgeZScore);
+    }
+    
+    if (growthStats.WeightForAgeZScore !== undefined) {
+        growthStats.WeightForAgeResult = getWeightForAgeResult(growthStats.WeightForAgeZScore);
+    }
+    
+    if (growthStats.WeightForLengthZScore !== undefined) {
+        growthStats.WeightForLengthResult = getWeightForLengthResult(growthStats.WeightForLengthZScore);
+    }
+    
+    if (growthStats.HeadCircumferenceZScore !== undefined) {
+        growthStats.HeadCircumferenceResult = getHeadCircumferenceResult(growthStats.HeadCircumferenceZScore);
+    }
     let tracking = await Tracking.findOneAndUpdate(
         { RecordId: recordId, MonthYear: monthYear },
         { $set: { [`Trackings.${date}`]: growthStats } },
@@ -154,7 +169,13 @@ const calculateLengthForAgeZScore = (height, ageInMonths, gender) => {
     const { L, M, S } = data;
     return parseFloat(((Math.pow(height / M, L) - 1) / (L * S)).toFixed(2));
 };
-
+const getLengthForAgeResult = (zScore) => {
+    if (zScore === null) return "Unknown";
+    if (zScore < -3) return "Severe Stunting";
+    if (zScore < -2) return "Moderate Stunting";
+    if (zScore >= -2) return "Normal";
+    // Some systems also include "Tall" for zScore > 2 or zScore > 3
+  };
 const calculateHeadCircumferenceForAgeZScore = (headCircumference, ageInMonths, gender) => {
     const referenceData = gender === "boys" ? headCircBoys : headCircGirls;
     const lmsEntry = referenceData.find(entry => entry.Month === ageInMonths);
@@ -168,6 +189,14 @@ const calculateHeadCircumferenceForAgeZScore = (headCircumference, ageInMonths, 
     const zScore = ((Math.pow(headCircumference / M, L) - 1) / (L * S)).toFixed(2);
     return parseFloat(zScore);
 }
+const getHeadCircumferenceResult = (zScore) => {
+    if (zScore === null) return "Unknown";
+    if (zScore < -3) return "Severely Small Head Circumference";
+    if (zScore < -2) return "Moderately Small Head Circumference";
+    if (zScore >= -2 && zScore <= 2) return "Normal Head Circumference";
+    if (zScore > 2) return "Large Head Circumference";
+    if (zScore > 3) return "Severely Large Head Circumference";
+  };
 
 const calculateWeightForAgeZScore = (weight, ageInMonths, gender) => {
     const referenceData = gender === "boys" ? weightForAgeBoys : weightForAgeGirls;
@@ -181,7 +210,13 @@ const calculateWeightForAgeZScore = (weight, ageInMonths, gender) => {
     const { L, M, S } = data;
     return parseFloat(((Math.pow(weight / M, L) - 1) / (L * S)).toFixed(2));
 };
-
+const getWeightForAgeResult = (zScore) => {
+    if (zScore === null) return "Unknown";
+    if (zScore < -3) return "Severe Underweight";
+    if (zScore < -2) return "Moderate Underweight";
+    if (zScore < 2) return "Normal Weight";
+    if (zScore >= 2) return "Above Normal Weight";
+  };
 const calculateWeightForLengthZScore = (weight, length, gender) => {
     const referenceData = gender === "boys" ? boyWeightForLength : girlWeightForLength;
     const closestEntry = referenceData.reduce((prev, curr) => 
@@ -197,7 +232,15 @@ const calculateWeightForLengthZScore = (weight, length, gender) => {
     const zScore = ((Math.pow(weight / M, L) - 1) / (L * S)).toFixed(2);
     return parseFloat(zScore);
 };
-
+const getWeightForLengthResult = (zScore) => {
+    if (zScore === null) return "Unknown";
+    if (zScore < -3) return "Severe Wasting";
+    if (zScore < -2) return "Moderate Wasting";
+    if (zScore < 1) return "Normal";
+    if (zScore < 2) return "Risk of Overweight";
+    if (zScore < 3) return "Overweight";
+    return "Obesity";
+  };
 
 
 
