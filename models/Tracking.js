@@ -18,7 +18,11 @@ const TrackingSchema = new mongoose.Schema({
             TricepsCircumference: Number,
             ChestCircumference: Number,
             ThighCircumference: Number,
-            CalfCircumference: Number
+            CalfCircumference: Number,
+            HeadCircumferenceZScore: Number,
+            LengthForAgeZScore: Number,
+            WeightForAgeZScore: Number,
+            WeightForLengthZScore: Number,
         }, { _id: false })
     }
 });

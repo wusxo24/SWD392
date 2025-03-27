@@ -49,11 +49,21 @@ const getOrderByOrderCode = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
+const createOrderForMobile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        console.log(userId);
+        const newOrder = await OrderService.createOrderForMobile(req.body, userId);
+        res.status(201).json({ message: "Order created successfully", order: newOrder });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 module.exports = {
     createOrder,
     getOrdersByMemberId,
     getAllOrders,
     getOrderByOrderCode,
-    deleteOrder
+    deleteOrder,
+    createOrderForMobile
 };
