@@ -11,6 +11,7 @@ import {
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidebarDoctor from "./SidebarDoctor";
+import { getRatingsByDoctorId } from "@/services/ratingService"; // Import service
 
 const RatingandFeedback = () => {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -18,12 +19,12 @@ const RatingandFeedback = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [averageRating, setAverageRating] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); // 🔹 State tìm kiếm
-  const feedbacksPerPage = 6; // 🔹 Số feedback hiển thị mỗi trang
+  const [searchQuery, setSearchQuery] = useState(""); 
+
+  const feedbacksPerPage = 6;
 
   const doctorId =
     localStorage.getItem("userId") || sessionStorage.getItem("userId");
-  console.log("Doctor ID:", doctorId);
 
   useEffect(() => {
     if (!doctorId) {
@@ -35,15 +36,7 @@ const RatingandFeedback = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/api/ratings");
-        if (!response.ok) throw new Error("Failed to fetch ratings");
-
-        const data = await response.json();
-        console.log("Fetched Ratings:", data);
-
-        const doctorFeedbacks = data.filter(
-          (fb) => fb.DoctorId?.id === doctorId
-        );
+        const doctorFeedbacks = await getRatingsByDoctorId(doctorId);
         setFeedbacks(doctorFeedbacks);
 
         if (doctorFeedbacks.length > 0) {
@@ -53,7 +46,6 @@ const RatingandFeedback = () => {
           setAverageRating(avg.toFixed(1));
         }
       } catch (error) {
-        console.error("Fetch error:", error);
         toast.error("Failed to load feedbacks");
       }
       setLoading(false);
@@ -71,15 +63,13 @@ const RatingandFeedback = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
-  // 🔎 Bộ lọc tìm kiếm
   const filteredFeedbacks = feedbacks.filter((fb) =>
     fb.MemberId?.username?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // 📌 Tính toán dữ liệu cho phân trang
   const indexOfLastFeedback = currentPage * feedbacksPerPage;
   const indexOfFirstFeedback = indexOfLastFeedback - feedbacksPerPage;
-  const currentFeedbacks = feedbacks.slice(
+  const currentFeedbacks = filteredFeedbacks.slice(
     indexOfFirstFeedback,
     indexOfLastFeedback
   );
@@ -94,7 +84,6 @@ const RatingandFeedback = () => {
           ⭐ My Ratings & Feedback
         </h2>
 
-        {/* 📊 Thông Tin Tổng Quan */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="bg-white p-3 shadow-md rounded-lg text-center">
             <p className="text-lg font-semibold">Average Rating</p>
@@ -113,7 +102,6 @@ const RatingandFeedback = () => {
             </button>
           </div>
 
-          {/* 🔍 Ô Tìm Kiếm */}
           <div className="bg-white p-3 shadow-md rounded-lg flex items-center">
             <FaSearch className="text-gray-500 mr-2" />
             <input
@@ -132,7 +120,6 @@ const RatingandFeedback = () => {
           <p className="text-center text-gray-500">No feedbacks available</p>
         ) : (
           <div>
-            {/* 📝 Danh Sách Feedbacks */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {currentFeedbacks.map((fb) => (
                 <Card
@@ -141,7 +128,6 @@ const RatingandFeedback = () => {
                 >
                   <CardContent>
                     <div className="flex items-center mb-4">
-                      {/* 📷 Avatar Member */}
                       {fb.MemberId?.picture ? (
                         <img
                           src={fb.MemberId.picture}
@@ -160,7 +146,6 @@ const RatingandFeedback = () => {
                         </p>
                       </div>
                     </div>
-                    {/* ⭐ Rating */}
                     <div className="flex justify-between items-center">
                       <p
                         className={`text-lg font-bold flex items-center ${
@@ -174,14 +159,12 @@ const RatingandFeedback = () => {
                         {fb.Rating} <FaStar className="ml-1" />
                       </p>
                     </div>
-                    {/* 💬 Nội Dung Feedback */}
                     <p className="text-gray-700 mt-3 italic">{fb.Feedback}</p>
                   </CardContent>
                 </Card>
               ))}
             </div>
 
-            {/* ⏩ Phân Trang */}
             <div className="flex justify-center items-center mt-6 space-x-4">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

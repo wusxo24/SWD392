@@ -24,39 +24,29 @@ const RatingFeedback = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const [searchTerm, setSearchTerm] = useState(""); // 🔹 Thêm state cho tìm kiếm
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchFeedbacks();
   }, []);
 
   const fetchFeedbacks = async () => {
-    //Lấy danh sách feedback từ API
     try {
-      const response = await fetch("/api/ratings");
-      const data = await response.json();
+      const data = await getDoctorRating();
       setFeedbacks(data);
       setFilteredFeedbacks(data);
-      setLoading(false);
-    } catch {
+    } catch (error) {
       toast.error("Failed to load feedbacks");
+    } finally {
       setLoading(false);
     }
   };
 
   const toggleExpand = (id) => {
-    // Hiển thị hoặc ẩn thông tin chi tiết về member và doctor
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // const handleFilterRatings = (Ratings) => {
-  //   //Lọc feedback theo số sao.
-  //   setFilterRatings(Ratings);
-  //   setCurrentPage(1);
-  // };
-
   useEffect(() => {
-    //Lọc danh sách theo số sao
     let filtered = feedbacks;
     if (filterRatings !== null) {
       filtered = feedbacks.filter((fb) => fb.Rating === filterRatings);
@@ -64,8 +54,19 @@ const RatingFeedback = () => {
     setFilteredFeedbacks(filtered);
   }, [filterRatings, feedbacks]);
 
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredFeedbacks(feedbacks);
+    } else {
+      const filtered = feedbacks.filter((fb) =>
+        fb.DoctorId?.username.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredFeedbacks(filtered);
+      setCurrentPage(1);
+    }
+  }, [searchTerm, feedbacks]);
+
   const sortFeedbacks = (type) => {
-    // Sắp xếp feedback theo số sao hoặc ngày đánh giá.
     const sorted = [...filteredFeedbacks].sort((a, b) => {
       if (type === "Rating") {
         return sortOrder === "asc" ? a.Rating - b.Rating : b.Rating - a.Rating;
@@ -78,19 +79,6 @@ const RatingFeedback = () => {
     setFilteredFeedbacks(sorted);
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
-
-  // 🔹 Tìm kiếm feedback theo tên bác sĩ
-  useEffect(() => {
-    if (!searchTerm) {
-      setFilteredFeedbacks(feedbacks);
-    } else {
-      const filtered = feedbacks.filter((fb) =>
-        fb.DoctorId?.username.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredFeedbacks(filtered);
-      setCurrentPage(1); // Reset về trang đầu khi tìm kiếm
-    }
-  }, [searchTerm, feedbacks]);
 
   const totalPages = Math.ceil(filteredFeedbacks.length / itemsPerPage);
   const displayedFeedbacks = filteredFeedbacks.slice(
@@ -106,7 +94,7 @@ const RatingFeedback = () => {
           ⭐ Doctor Ratings & Feedback
         </h2>
 
-        {/* Thanh tìm kiếm và bộ lọc */}
+        {/* Search & Filter */}
         <div className="flex flex-wrap items-center justify-between mb-6 px-4">
           <div className="flex gap-3">
             {[5, 4, 3, 2, 1].map((Rating) => (
@@ -146,7 +134,7 @@ const RatingFeedback = () => {
           </div>
         </div>
 
-        {/* Danh sách feedback */}
+        {/* Feedback List */}
         {loading ? (
           <p className="text-center text-gray-500">Loading feedbacks...</p>
         ) : (
@@ -188,7 +176,7 @@ const RatingFeedback = () => {
                   Feedback: {fb.Feedback}
                 </p>
 
-                {/* Nút mở rộng */}
+                {/* Expand Button */}
                 <button
                   onClick={() => toggleExpand(fb._id)}
                   className="text-blue-500 hover:underline flex items-center text-sm"
@@ -203,42 +191,18 @@ const RatingFeedback = () => {
                     </>
                   )}
                 </button>
-
-                {/* Chi tiết mở rộng */}
-                {expanded[fb._id] && (
-                  <div className="mt-4 border-t pt-3 text-gray-700 bg-gray-50 p-3 rounded-lg shadow-inner">
-                    <p>
-                      <strong>👤 Member:</strong>{" "}
-                      {fb.MemberId?.username || "Unknown"}
-                    </p>
-                    <p>
-                      <strong>🩺 Doctor:</strong>{" "}
-                      {fb.DoctorId?.username || "Unknown"}
-                    </p>
-                  </div>
-                )}
               </CardContent>
             </Card>
           ))
         )}
 
-        {/* Phân trang */}
+        {/* Pagination */}
         <div className="flex justify-center items-center mt-6 gap-4">
-          <Button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
-            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 disabled:opacity-50"
-          >
+          <Button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
             Previous
           </Button>
-          <span className="text-lg font-semibold text-gray-700">
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(currentPage + 1)}
-            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 disabled:opacity-50"
-          >
+          <span>Page {currentPage} of {totalPages}</span>
+          <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>
             Next
           </Button>
         </div>
