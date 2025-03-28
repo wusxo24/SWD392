@@ -11,7 +11,9 @@ import {
 } from "react-icons/fa";
 import toast from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
+
 import SidebarManager from "./SidebarManager";
+import { getDoctorRating } from "@/services/doctorService";
 
 const RatingFeedback = () => {
   const [feedbacks, setFeedbacks] = useState([]);
