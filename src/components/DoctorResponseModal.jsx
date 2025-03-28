@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "../utils/axiosInstance"; 
 import { toast } from "react-hot-toast";
 
-const DoctorResponseModal = ({ isOpen, onClose, requestId }) => {
+const DoctorResponseModal = ({ isOpen, onClose, requestId, onSuccess  }) => {
   const [diagnosis, setDiagnosis] = useState("");
   const [recommendation, setRecommendation] = useState("");
   const [additionalNotes, setAdditionalNotes] = useState("");
@@ -30,8 +30,8 @@ const DoctorResponseModal = ({ isOpen, onClose, requestId }) => {
         AdditionalNotes: additionalNotes,
       });
       if (response.status === 200 || response.status === 201) {
-        toast.success("Response submitted successfully!");
         await axios.put(`/api/doctor-responses/${response.data._id}/complete`);
+        onSuccess(); // ✅ Notify parent component
       }
       onClose();
     } catch (error) {

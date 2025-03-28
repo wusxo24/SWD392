@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "react-hot-toast";
+import { toast, ToastContainer } from "react-toastify";
 import { getApprovedRequestsByDoctorId } from "@/services/medicalRequestService";
 import SidebarDoctor from "./SidebarDoctor";
 import { FaUser, FaClipboardList, FaChild, FaChevronDown, FaChevronUp, FaSort ,FaChartLine  } from "react-icons/fa";
@@ -23,12 +23,20 @@ export default function ViewRequest() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const [children, setChildren] = useState([]);
+  const [successMessage, setSuccessMessage] = useState(""); // ✅ Track toast messages
   const navigate = useNavigate();
 
   const handleOpenModal = (requestId) => {
     setSelectedRequestId(requestId); // ✅ Store the selected request ID
     setIsModalOpen(true);
   };
+
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage); // ✅ Show toast when successMessage updates
+      setSuccessMessage(""); // ✅ Reset message after showing
+    }
+  }, [successMessage]);
 
   useEffect(() => {
     fetchChildren();
@@ -139,6 +147,7 @@ export default function ViewRequest() {
     <div className="flex bg-gray-50 light:bg-gray-900 min-h-screen">
       <SidebarDoctor />
       <div className="container mx-auto p-8">
+        <ToastContainer position="top-right"/>
         <h1 className="text-4xl font-bold text-gray-800 light:text-gray-200 mb-8">
           Approved Medical Requests
           </h1>
@@ -355,7 +364,8 @@ export default function ViewRequest() {
                 setIsModalOpen(false);
                 fetchRequests();
               }}
-              requestId={selectedRequestId} 
+              requestId={selectedRequestId}
+              onSuccess={() => setSuccessMessage("Response submitted successfully!")} // ✅ Pass success handler
             />
           )}
           <div className="flex justify-center mt-6">
