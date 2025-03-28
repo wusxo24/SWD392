@@ -26,8 +26,6 @@ import WeightForAgeChart from "@/pages/member/WeightForAgeChart";
 import LengthForAgeChart from "@/pages/member/LengthForAgeChart";
 import WeightForLengthChart from "@/pages/member/WeightForLengthChart";
 import HeadCircumferenceChart from "@/pages/member/HeadCircumferenceChart.jsx";
-import WeightForStatureChart from "@/pages/member/WeightForStatureChart";
-import { MedicalRequest } from "@/services/medicalRequestService";
 import { Tracking, getChildByRecordId } from "@/services/tracking";
 import { useParams } from "react-router-dom";
 
@@ -137,49 +135,48 @@ const GrowthChartContainerBabyDoctor = () => {
    }, [trackingData]);
 
 
-    const processTrackingData = (trackingData, yearOfBirth) => {
-      if (!yearOfBirth) {
-        console.error("Error: yearOfBirth is missing");
+   const processTrackingData = (trackingData, yearOfBirth) => {
+    if (!yearOfBirth) {
+      console.error("Error: yearOfBirth is missing");
+      return [];
+    }
+  
+    const birthDate = new Date(yearOfBirth);
+  
+    return trackingData.flatMap((entry) => {
+      if (!entry.MonthYear || !entry.MonthYear.includes("-")) {
+        console.warn("Invalid MonthYear format:", entry.MonthYear);
         return [];
       }
   
-      const birthYear = new Date(yearOfBirth).getFullYear();
+      const [year, month] = entry.MonthYear.split("-").map(Number);
+      if (isNaN(year) || isNaN(month)) {
+        console.warn("Invalid year or month extracted:", entry.MonthYear);
+        return [];
+      }
   
-      return trackingData.flatMap((entry) => {
-        if (!entry.MonthYear || !entry.MonthYear.includes("-")) {
-          console.warn("Invalid MonthYear format:", entry.MonthYear);
-          return [];
-        }
+      const trackingDate = new Date(year, month);
+      const diffInMilliseconds = trackingDate - birthDate;
+      const ageInMonths = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24 * 30.44)); // Average month length
   
-        const year = parseInt(entry.MonthYear.split("-")[0]);
-        if (isNaN(year)) {
-          console.warn("Invalid year extracted:", entry.MonthYear);
-          return [];
-        }
-  
-        const age = year - birthYear;
-  
-        // 🔹 Iterate over ALL tracking entries in this MonthYear
-        return Object.entries(entry.Trackings).map(
-          ([trackingDate, trackingValues]) => {
-            return {
-              age,
-              BMI: trackingValues.BMI || null,
-              Height: trackingValues.Height || null,
-              Weight: trackingValues.Weight || null,
-              HeadCircumference: trackingValues.HeadCircumference || null,
-              ChestCircumference: trackingValues.ChestCircumference || null,
-              WaistCircumference: trackingValues.WaistCircumference || null,
-              HipCircumference: trackingValues.HipCircumference || null,
-              BicepsCircumference: trackingValues.BicepsCircumference || null,
-              ThighCircumference: trackingValues.ThighCircumference || null,
-              CalfCircumference: trackingValues.CalfCircumference || null,
-              trackingDate, // 🔍 Include for debugging
-            };
-          }
-        );
+      return Object.entries(entry.Trackings).map(([trackingDate, trackingValues]) => {
+        return {
+          age: ageInMonths,
+          BMI: trackingValues.BMI || null,
+          Height: trackingValues.Height || null,
+          Weight: trackingValues.Weight || null,
+          HeadCircumference: trackingValues.HeadCircumference || null,
+          ChestCircumference: trackingValues.ChestCircumference || null,
+          WaistCircumference: trackingValues.WaistCircumference || null,
+          HipCircumference: trackingValues.HipCircumference || null,
+          BicepsCircumference: trackingValues.BicepsCircumference || null,
+          ThighCircumference: trackingValues.ThighCircumference || null,
+          CalfCircumference: trackingValues.CalfCircumference || null,
+          trackingDate, // 🔍 Include for debugging
+        };
       });
-    };
+    });
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
@@ -246,7 +243,6 @@ const GrowthChartContainerBabyDoctor = () => {
           <Tab label="Length for Age" />
           <Tab label="Weight for Length" />
           <Tab label="Head Circumference" />
-          <Tab label="Weight for Stature" />
         </Tabs>
 
         <CardContent>
@@ -277,15 +273,6 @@ const GrowthChartContainerBabyDoctor = () => {
               data={ageData.map(({ age, HeadCircumference }) => ({
                 x: age,
                 y: HeadCircumference,
-              }))}
-            />
-          )}
-          {tabIndex === 4 && (
-            <WeightForStatureChart
-              gender={childData.gender}
-              data={ageData.map(({ Height, Weight }) => ({
-                x: Height,
-                y: Weight,
               }))}
             />
           )}

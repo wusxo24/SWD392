@@ -25,6 +25,7 @@ import {
 import HeightChart from "@/pages/member/heightChart";
 import WeightChart from "@/pages/member/weightChart";
 import { ChildGrowth } from "@/pages/member/childGrowth";
+import WeightForStatureChart from "@/pages/member/WeightForStatureChart";
 import { Tracking, getChildByRecordId } from "@/services/tracking";
 import { useParams } from "react-router-dom";
 const GrowthChartContainerDoctor = () => {
@@ -200,6 +201,7 @@ const GrowthChartContainerDoctor = () => {
           <Tab label="Height Chart" />
           <Tab label="Weight Chart" />
           <Tab label="BMI Chart" />
+          <Tab label="Weight for Stature" />
         </Tabs>
 
         <CardContent>
@@ -219,6 +221,12 @@ const GrowthChartContainerDoctor = () => {
             <ChildGrowth
               gender={childData.gender}
               data={ageData.map(({ age, BMI }) => ({ x: age, y: BMI }))}
+            />
+          )}
+          {tabIndex === 3 && (
+              <WeightForStatureChart
+                gender={childData.gender}
+                data={ageData.map(({ Height, Weight }) => ({x: Height, y: Weight}))}
             />
           )}
         </CardContent>

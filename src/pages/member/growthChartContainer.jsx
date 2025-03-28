@@ -25,7 +25,7 @@ import {
 import HeightChart from "./heightChart";
 import WeightChart from "./weightChart";
 import { ChildGrowth } from "./childGrowth";
-
+import WeightForStatureChart from "./WeightForStatureChart";
 import { getMedicalRequest, MedicalRequest } from "@/services/medicalRequestService";
 import { Tracking, getChildByRecordId, postTracking } from "@/services/tracking";
 import { useParams } from "react-router-dom";
@@ -419,6 +419,7 @@ const handleSubmitRequest = async () => {
           <Tab label="Height Chart" />
           <Tab label="Weight Chart" />
           <Tab label="BMI Chart" />
+          <Tab label="Weight for Stature" />
         </Tabs>
 
         <CardContent>
@@ -439,6 +440,12 @@ const handleSubmitRequest = async () => {
               gender={childData.gender}
               data={ageData.map(({ age, BMI }) => ({ x: age, y: BMI }))}
             />
+          )}
+          {tabIndex === 3 && (
+            <WeightForStatureChart
+              gender={childData.gender}
+              data={ageData.map(({ Height, Weight }) => ({x: Height, y: Weight}))}
+              />
           )}
         </CardContent>
       </Card>
