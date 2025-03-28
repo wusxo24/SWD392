@@ -75,17 +75,18 @@ const GrowthChartContainer = () => {
     fetchChildData();
   }, [recordId]);
 
-  useEffect(() => {
-    const fetchMedicalRequests = async () => {
-      try {
-        const data = await getMedicalRequest(recordId);
-        if (data) {
-          setMedicalRequests(data);
-        }
-      } catch (error) {
-        console.error("Error fetching medical requests:", error);
+  const fetchMedicalRequests = async () => {
+    try {
+      const data = await getMedicalRequest(recordId);
+      if (data) {
+        setMedicalRequests(data);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching medical requests:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchMedicalRequests();
   }, [recordId]);
 
@@ -558,12 +559,13 @@ const GrowthChartContainer = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <ChildHealth
-        isOpen={isChildHealthOpen}
+      <ChildHealth 
+        isOpen={isChildHealthOpen} 
         onClose={() => setIsChildHealthOpen(false)}
         trackingData={trackingData}
-        setTrackingData={setTrackingData} // ✅ Pass setTrackingData
+        setTrackingData={setTrackingData}  
         medicalRequests={medicalRequests}
+        fetchMedicalRequests={fetchMedicalRequests}  // 🔹 Pass the function
         childAgeInMonths={ageMonths} // Pass ageMonths
       />
       {/* Modal Component */}

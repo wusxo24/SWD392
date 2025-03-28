@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { postTracking } from "@/services/tracking";
 import { toast } from "react-toastify";
 import { getDoctorResponse } from "@/services/medicalRequestService"; // Import the service
 import RatingFeedbackModal from "@/components/DoctorRatingModal";
+import { getDoctorRatingByMedicalRequest } from "@/services/doctorService"; // Import function
 
 
-const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRequests, childAgeInMonths }) => {
+const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRequests, childAgeInMonths, fetchMedicalRequests}) => {
   const [editingDates, setEditingDates] = useState({});
   const [editedValues, setEditedValues] = useState({});
   const [activeTab, setActiveTab] = useState("tracking"); 
@@ -14,12 +15,29 @@ const ChildHealth = ({ isOpen, onClose, trackingData, setTrackingData, medicalRe
   const [doctorResponses, setDoctorResponses] = useState({});
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
+  const [doctorRatings, setDoctorRatings] = useState({});
 
   if (!isOpen) return null;
+
+  const fetchDoctorRating = async (requestId) => {
+    try {
+      const ratingData = await getDoctorRatingByMedicalRequest(requestId);
+      if (ratingData) {
+        setDoctorRatings((prev) => ({
+          ...prev,
+          [requestId]: ratingData, // Store only if rating exists
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to fetch rating for request ID:", requestId, error);
+    }
+  };
 
   const handleRatingSuccess = () => {
     setIsRatingModalOpen(false);
     fetchDoctorResponse(selectedRequestId); // Refresh the data
+    fetchDoctorRating(selectedRequestId);
+    fetchMedicalRequests(); // 🔄 Reload medical requests for ChildHealth
     toast.success("Rating submitted successfully!");
   };
 
@@ -276,41 +294,43 @@ const filteredBmiFields = getFilteredBmiFields(childAgeInMonths || 0); // Use th
         )}
 
 
-          {activeTab === "medical" && (
-            <>
-        {medicalRequestsArray.length > 0 ? (
-          medicalRequestsArray
-          .filter(request => request)
-          .map((request, index) => (
-            <div key={index} className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50">
-              <h3 className="text-lg font-semibold">
-                Status:{" "}
-                <span className={`text-lg font-semibold ${
-                  request.Status === "Pending"
-                    ? "text-yellow-500"
-                    : request.Status === "Completed"
-                    ? "text-green-500"
-                    : request.Status === "Rejected"
-                    ? "text-red-500"
-                    : request.Status === "Rated"
-                    ? "text-blue-500"
-                    : "text-gray-500"
-                }`}>
-                   {request?.Status ?? "Unknown"}
-                </span>
-              </h3>
-              <p className="text-gray-700">
-                <strong>Request Reason:</strong> {request.Reason}
-              </p>
-              <p className="text-gray-700">
-                <strong>Notes:</strong> {request.Notes}
-              </p>
+{activeTab === "medical" && (
+  <>
+    {medicalRequestsArray.length > 0 ? (
+      medicalRequestsArray
+        .filter(request => request)
+        .map((request, index) => (
+          <div key={index} className="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50">
+            <h3 className="text-lg font-semibold">
+              Status:{" "}
+              <span className={`text-lg font-semibold ${
+                request.Status === "Pending"
+                  ? "text-yellow-500"
+                  : request.Status === "Completed"
+                  ? "text-green-500"
+                  : request.Status === "Rejected"
+                  ? "text-red-500"
+                  : request.Status === "Rated"
+                  ? "text-blue-500"
+                  : "text-gray-500"
+              }`}>
+                {request?.Status ?? "Unknown"}
+              </span>
+            </h3>
+            <p className="text-gray-700">
+              <strong>Request Reason:</strong> {request.Reason}
+            </p>
+            <p className="text-gray-700">
+              <strong>Notes:</strong> {request.Notes}
+            </p>
 
-             {request?.Status === "Completed" && (
-                <>
+            {/* Completed & Rated Status Handling */}
+            {(request?.Status === "Completed" || request?.Status === "Rated") && (
+              <>
                 <div className="mt-4">
+                  {/* Show Doctor's Response */}
                   <button
-                    className="mb-auto mr-auto ml-auto px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-blue-700 m-auto"
+                    className="mb-auto mr-auto ml-auto px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-blue-700"
                     onClick={() => fetchDoctorResponse(request._id)}
                   >
                     Show Doctor's Response
@@ -319,9 +339,9 @@ const filteredBmiFields = getFilteredBmiFields(childAgeInMonths || 0); // Use th
                     <div className="mb-auto mr-auto ml-auto p-4 bg-white border border-gray-300 rounded-lg shadow-md">
                       <h4 className="text-lg font-semibold text-gray-800">Doctor's Response:</h4>
                       <div className="mt-2 space-y-2">
-                      <p><strong className="text-gray-700">Diagnosis:</strong> {doctorResponses[request._id].Diagnosis}</p>
-                      <p><strong className="text-gray-700">Recommendations:</strong> {doctorResponses[request._id].Recommendations}</p>
-                      <p><strong className="text-gray-700">Additional Notes:</strong> {doctorResponses[request._id].AdditionalNotes}</p>
+                        <p><strong className="text-gray-700">Diagnosis:</strong> {doctorResponses[request._id].Diagnosis}</p>
+                        <p><strong className="text-gray-700">Recommendations:</strong> {doctorResponses[request._id].Recommendations}</p>
+                        <p><strong className="text-gray-700">Additional Notes:</strong> {doctorResponses[request._id].AdditionalNotes}</p>
                       </div>
                       <button
                         className="mt-4 px-4 py-2 bg-red-500 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-red-600"
@@ -331,29 +351,67 @@ const filteredBmiFields = getFilteredBmiFields(childAgeInMonths || 0); // Use th
                       </button>
                     </div>
                   )}
-                  <button
-                    className="m-2 px-4 py-2 bg-green-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-green-700"
-                    onClick={() => ShowRatingFeedbackModal(request._id)}
-                  >
-                    Rating/Feedback
-                  </button>
+
+                  {/* Show Rating Button for Completed Requests */}
+                  {request?.Status === "Completed" && (
+                    <button
+                      className="m-2 px-4 py-2 bg-green-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-green-700"
+                      onClick={() => ShowRatingFeedbackModal(request._id)}
+                    >
+                      Rating/Feedback
+                    </button>
+                  )}
+
+                  {/* Show Rating Button for Rated Requests */}
+                    {request?.Status === "Rated" && (
+                      <>
+                        <button
+                          className="m-2 px-4 py-2 bg-yellow-600 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-yellow-700"
+                          onClick={() => fetchDoctorRating(request._id)}
+                        >
+                          Show Rating
+                        </button>
+
+                        {/* Show Rating if already fetched */}
+                        {doctorRatings[request._id] && (
+                          <div className="mt-4 p-4 bg-white border border-gray-300 rounded-lg shadow-md">
+                            <p className="text-gray-700">
+                              <strong>Rating:</strong>{" "}
+                              <span className="text-yellow-500 text-lg font-semibold">
+                                {doctorRatings[request._id]?.Rating} ⭐
+                              </span>
+                            </p>
+                            <p className="text-gray-700">
+                              <strong>Feedback:</strong> {doctorRatings[request._id]?.Feedback}
+                            </p>
+                            <button
+                              className="mt-4 px-4 py-2 bg-red-500 text-white font-medium rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-red-600"
+                              onClick={() => setDoctorRatings((prev) => ({ ...prev, [request._id]: null }))}
+                            >
+                              Close Rating
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
 
                   <RatingFeedbackModal
-                      isOpen={isRatingModalOpen}
-                      onClose={() => setIsRatingModalOpen(false)}
-                      medicalRequestId={selectedRequestId}
-                      onSuccess={handleRatingSuccess}
+                    isOpen={isRatingModalOpen}
+                    onClose={() => setIsRatingModalOpen(false)}
+                    medicalRequestId={selectedRequestId}
+                    onSuccess={handleRatingSuccess}
                   />
                 </div>
-                </>
-              )}
-            </div>
-          ))
-        ) : (
-          <p>No medical requests found.</p>
-        )}
-          </>
-        )}
+              </>
+            )}
+          </div>
+        ))
+    ) : (
+      <p>No medical requests found.</p>
+    )}
+  </>
+)}
+
       </div>
     </div>
   );

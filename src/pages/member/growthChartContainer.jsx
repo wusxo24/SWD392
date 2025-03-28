@@ -69,18 +69,19 @@ const GrowthChartContainer = () => {
     fetchChildData();
   }, []);
 
-  useEffect(() => {
-    const fetchMedicalRequests = async () => {
-      try {
-        const data = await getMedicalRequest(recordId);
-        if (data) {
-          setMedicalRequests(data);
-          
-        }
-      } catch (error) {
-        console.error("Error fetching medical requests:", error);
+  const fetchMedicalRequests = async () => {
+    try {
+      const data = await getMedicalRequest(recordId);
+      if (data) {
+        setMedicalRequests(data);
+        
       }
-    };
+    } catch (error) {
+      console.error("Error fetching medical requests:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchMedicalRequests();
   }, [recordId]);
 
@@ -493,6 +494,7 @@ const handleSubmitRequest = async () => {
         trackingData={trackingData}
         setTrackingData={setTrackingData}  
         medicalRequests={medicalRequests}
+        fetchMedicalRequests={fetchMedicalRequests}  // 🔹 Pass the function
         childAgeInMonths={ageMonths} // Pass ageMonths
       />
       {/* Modal Component */}
