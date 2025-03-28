@@ -155,7 +155,6 @@ export const ChildrenDetails = () => {
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </TextField>
               </Grid>
               <Grid item xs={6}>

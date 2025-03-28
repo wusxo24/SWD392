@@ -238,7 +238,7 @@ const MemberRequest = () => {
         )}
       </div>
 
-      {/* Doctor Selection Modal */}
+     {/* Doctor Selection Modal */}
       <Dialog open={openDoctorModal} onClose={handleModalClose}>
         <DialogTitle>Select a Doctor</DialogTitle>
         <DialogContent>
@@ -248,32 +248,47 @@ const MemberRequest = () => {
             </div>
           ) : (
             <List>
+              {/* Header Row */}
+              <ListItem
+                className="font-bold"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 2fr 2fr 2fr 2fr", // 5 columns
+                  alignItems: "center",
+                  fontWeight: "bold",
+                  backgroundColor: "#f5f5f5",
+                }}
+              >
+                <ListItemText primary="Avatar" />
+                <ListItemText primary="Name" />
+                <ListItemText primary="Experience" />
+                <ListItemText primary="Certificate" />
+                <ListItemText primary="Received requests" />
+              </ListItem>
+
+              {/* Doctor List */}
               {doctors.map((doctor) => (
                 <ListItem
-                  button="true" 
+                  button="true"
                   key={doctor._id}
                   onClick={() => handleDoctorSelection(doctor.user_id)}
                   selected={selectedDoctor === doctor._id}
                   className="cursor-pointer min-w-[500px] items-start"
-                  style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 2fr 2fr', alignItems: 'center' }}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 2fr 2fr 2fr 2fr", // Now matches header
+                    alignItems: "center",
+                  }}
                 >
-                  <Avatar 
-                    src={doctor.picture || "/default-avatar.jpg"} 
+                  <Avatar
+                    src={doctor.picture || "/default-avatar.jpg"}
                     className="mr-2"
-                    style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                    style={{ width: "40px", height: "40px", objectFit: "cover" }}
                   />
-                  <ListItemText 
-                    primary={doctor.username} 
-                    style={{ margin: 0 }}
-                  />
-                  <ListItemText 
-                    primary={doctor.experience} 
-                    style={{ margin: 0 }}
-                  />
-                  <ListItemText 
-                    primary={doctor.certificate} 
-                    style={{ margin: 0 }}
-                  />
+                  <ListItemText primary={doctor.username} style={{ margin: 0 }} />
+                  <ListItemText primary={doctor.experience} style={{ margin: 0 }} />
+                  <ListItemText primary={doctor.certificate} style={{ margin: 0 }} />
+                  <ListItemText primary={doctor.approvedCount} style={{ margin: 0 }} />
                 </ListItem>
               ))}
             </List>

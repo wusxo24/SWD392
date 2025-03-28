@@ -54,7 +54,7 @@ const weightForStatuteBabyData = {
     }
     };
 
-const WeightForStatureChart = ({ gender = "Female", data = [] }) => {
+const GrowthChart = ({ gender = "Female", data = [] }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
 
@@ -74,27 +74,30 @@ const WeightForStatureChart = ({ gender = "Female", data = [] }) => {
           return acc;
         }, {});
 
-      const colors = ["#FFAAAA", "#32CD32", "#FF4500", "#FFD700", "#6495ED"];
+        const colors = [
+          "#FFAAAA", "#32CD32", "#FF4500", "#FFD700", "#6495ED",
+          "#800080", "#00CED1", "#8B4513", "#DC143C", "#4682B4"
+        ];        
 
       chartInstanceRef.current = new Chart(ctx, {
         type: "line",
         data: {
-          labels: statureValues,
+          labels: statureValues, // Ensure stature values are correctly set
           datasets: [
             ...Object.entries(percentiles).map(([percentile, values], index) => ({
               label: `${percentile} Percentile`,
-              data: values.map((y, i) => ({ x: statureValues[i], y })),
+              data: values.map((y, i) => ({ x: statureValues[i], y })), // Ensure x-values match
               borderColor: colors[index % colors.length],
               borderWidth: 2,
               fill: false,
               tension: 0.4,
               pointRadius: 0,
               pointHoverRadius: 0,
-              pointHitRadius: 15, // Expands the invisible hitbox area
+              pointHitRadius: 15, // Improves hitbox interaction
             })),
             {
               label: "User Data",
-              data: data,
+              data: data, // Ensure this is properly formatted
               borderColor: "black",
               backgroundColor: "orange",
               pointRadius: 6,
@@ -126,12 +129,10 @@ const WeightForStatureChart = ({ gender = "Female", data = [] }) => {
                   return `Stature: ${context.raw.x.toFixed(1)} cm, Weight: ${context.raw.y} kg`;
                 },
               },
-              enabled: true, 
-              animation: {
-              duration: 1000, 
-              },
+              enabled: true,
+              animation: { duration: 1000 },
               caretSize: 10,
-              displayColors: true, 
+              displayColors: true,
             },
           },
         },
@@ -143,12 +144,23 @@ const WeightForStatureChart = ({ gender = "Female", data = [] }) => {
         chartInstanceRef.current.destroy();
       }
     };
-  }, [gender, data]);
+  });
 
   return (
     <div style={{ width: "926px", height: "1098px" }}>
       <canvas ref={chartRef}></canvas>
     </div>
+  );
+};
+
+export const  WeightForStatureChart = ({ gender, data }) => {
+  return (
+    <GrowthChart
+      gender={gender}
+      data={data}
+      title="Weight-for-Stature Growth Chart"
+      yLabel="Weight (kg)"
+    />
   );
 };
 

@@ -112,20 +112,48 @@ const GrowthChartContainer = () => {
   useEffect(() => {
     if (trackingData.length > 0) {
       const latestRecord = trackingData[trackingData.length - 1];
-      const trackingsEntries = Object.entries(latestRecord.Trackings); // Convert to array [date, data]
+      const trackingsEntries = Object.entries(latestRecord.Trackings);
       if (trackingsEntries.length === 0) return;
-      const latestTracking = trackingsEntries[trackingsEntries.length - 1]; // Get last [date, data] pair
-      const latestDate = latestTracking[0]; // Extract date
-      const latestEntry = latestTracking[1]; // Extract data object
+  
+      const latestTracking = trackingsEntries[trackingsEntries.length - 1];
+      const latestDate = latestTracking[0];
+      const latestEntry = latestTracking[1];
+  
+      // ✅ Ensure latestEntry is always defined before using it
+      if (!latestEntry) return;
+  
       if (latestEntry.BMIResult && latestEntry.BMIResult !== "Normal Weight") {
         toast.warning(
           `⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
-          {
-            autoClose: 10000, // 10 seconds (default is 5000ms or 5s)
-            closeOnClick: true, // Allows closing on click
-            pauseOnHover: true, // Keeps it visible when hovering
-            draggable: true, // Allows dragging the toast
-          }
+          { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
+        );
+      }
+  
+      if (latestEntry.WeightForLengthResult && latestEntry.WeightForLengthResult !== "Normal") {
+        toast.warning(
+          `⚠️ Warning (${latestDate}): Child's weight-for-length is in the '${latestEntry.WeightForLengthResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+          { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
+        );
+      }
+  
+      if (latestEntry.WeightForAgeResult && latestEntry.WeightForAgeResult !== "Normal Weight") {
+        toast.warning(
+          `⚠️ Warning (${latestDate}): Child's weight-for-age is in the '${latestEntry.WeightForAgeResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+          { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
+        );
+      }
+  
+      if (latestEntry.HeadCircumferenceResult && latestEntry.HeadCircumferenceResult !== "Normal Head Circumference") {
+        toast.warning(
+          `⚠️ Warning (${latestDate}): Child's head circumference is in the '${latestEntry.HeadCircumferenceResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+          { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
+        );
+      }
+  
+      if (latestEntry.LengthForAgeResult && latestEntry.LengthForAgeResult !== "Normal") {
+        toast.warning(
+          `⚠️ Warning (${latestDate}): Child's length-for-age is in the '${latestEntry.LengthForAgeResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+          { autoClose: 10000, closeOnClick: true, pauseOnHover: true, draggable: true }
         );
       }
     }
@@ -137,44 +165,57 @@ const GrowthChartContainer = () => {
 
   const handleUpdateGrowth = async () => {
     try {
-      const currentDate = new Date().toISOString().split("T")[0]; // Use the current date
-
-      await postTracking(recordId, currentDate, trackingData);
-      toast.success("Growth data updated successfully.");
-      const updatedData = await Tracking(recordId);
-      if (updatedData) {
-        setTrackingData(updatedData);
-
-        // 🔹 Extract latest BMI entry after update
+        const currentDate = new Date().toISOString().split("T")[0]; // Use the current date
+        await postTracking(recordId, currentDate, trackingData);
+        toast.success("Growth data updated successfully.");
+        
+        const updatedData = await Tracking(recordId);
+        if (!updatedData || updatedData.length === 0) return; // Ensure data exists
+        
         const latestRecord = updatedData[updatedData.length - 1];
+        if (!latestRecord?.Trackings) return; // Ensure Trackings exists
+        
         const trackingsEntries = Object.entries(latestRecord.Trackings);
-        if (trackingsEntries.length === 0) return;
+        if (trackingsEntries.length === 0) return; // Ensure there are tracking entries
 
         const latestTracking = trackingsEntries[trackingsEntries.length - 1];
+        if (!latestTracking) return;
+
         const latestDate = latestTracking[0];
         const latestEntry = latestTracking[1];
 
-        // 🔥 Show warning if BMI is not normal
-        if (
-          latestEntry.BMIResult &&
-          latestEntry.BMIResult !== "Normal Weight"
-        ) {
-          toast.warning(
-            `⚠️ Warning (${latestDate}): Child's BMI is in the '${latestEntry.BMIResult}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
-            {
-              autoClose: 10000, // 10 seconds
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
+        if (!latestEntry) return; // Ensure latestEntry exists before proceeding
+
+        // 🚨 Check different growth indicators
+        const warnings = [
+            { key: "BMIResult", normalValue: "Normal Weight", message: "Child's BMI is in the" },
+            { key: "WeightForLengthResult", normalValue: "Normal", message: "Child's weight-for-length is in the" },
+            { key: "WeightForAgeResult", normalValue: "Normal Weight", message: "Child's weight-for-age is in the" },
+            { key: "HeadCircumferenceResult", normalValue: "Normal Head Circumference", message: "Child's head circumference is in the" },
+            { key: "LengthForAgeResult", normalValue: "Normal", message: "Child's length-for-age is in the" },
+        ];
+
+        warnings.forEach(({ key, normalValue, message }) => {
+            if (latestEntry[key] && latestEntry[key] !== normalValue) {
+                toast.warning(
+                    `⚠️ Warning (${latestDate}): ${message} '${latestEntry[key]}' category. Use our "SEND TO DOCTOR" function to get help from a professional doctor.`,
+                    {
+                        autoClose: 10000,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true
+                    }
+                );
             }
-          );
-        }
-      }
+        });
+
+        setTrackingData(updatedData); // Update state after validation
     } catch (error) {
-      console.error("Error updating tracking data:", error);
-      toast.error("Failed to update growth data.");
+        console.error("Error updating tracking data:", error);
+        toast.error("Failed to update growth data.");
     }
-  };
+};
+
 
   const handleModalOpen = () => {
     setOpenModal(true);
@@ -242,6 +283,13 @@ const GrowthChartContainer = () => {
             BMI: trackingValues.BMI || null,
             Height: trackingValues.Height || null,
             Weight: trackingValues.Weight || null,
+            HeadCircumference: trackingValues.HeadCircumference || null,
+            ChestCircumference: trackingValues.ChestCircumference || null,
+            WaistCircumference: trackingValues.WaistCircumference || null,
+            HipCircumference: trackingValues.HipCircumference || null,
+            BicepsCircumference: trackingValues.BicepsCircumference || null,
+            ThighCircumference: trackingValues.ThighCircumference || null,
+            CalfCircumference: trackingValues.CalfCircumference || null,
             trackingDate, // 🔍 Include for debugging
           };
         }
@@ -452,14 +500,14 @@ const GrowthChartContainer = () => {
           {tabIndex === 1 && (
             <LengthForAgeChart
               gender={childData.gender}
-              data={ageData.map(({ age, Length }) => ({ x: age, y: Length }))}
+              data={ageData.map(({ age, Height }) => ({ x: age, y: Height }))}
             />
           )}
           {tabIndex === 2 && (
             <WeightForLengthChart
               gender={childData.gender}
-              data={ageData.map(({ Length, Weight }) => ({
-                x: Length,
+              data={ageData.map(({ Height, Weight }) => ({
+                x: Height,
                 y: Weight,
               }))}
             />
@@ -476,8 +524,8 @@ const GrowthChartContainer = () => {
           {tabIndex === 4 && (
             <WeightForStatureChart
               gender={childData.gender}
-              data={ageData.map(({ Stature, Weight }) => ({
-                x: Stature,
+              data={ageData.map(({ Height, Weight }) => ({
+                x: Height,
                 y: Weight,
               }))}
             />
@@ -527,6 +575,7 @@ const GrowthChartContainer = () => {
         trackingData={trackingData}
         setTrackingData={setTrackingData} // ✅ Pass setTrackingData
         medicalRequests={medicalRequests}
+        childAgeInMonths={ageMonths} // Pass ageMonths
       />
       {/* Modal Component */}
       <Modal

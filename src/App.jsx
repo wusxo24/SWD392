@@ -28,6 +28,7 @@ import MemberRequest from "./pages/manager/MemberRequest";
 import RatingFeedback from "./pages/manager/RatingFeedback";
 import DoctorProfile from "./pages/doctor/DoctorProfile";
 import MedicalRequestManagement from "./pages/doctor/MedicalRequestManagement";
+import RatingandFeedback from "./pages/doctor/RatingandFeedback";
 import { ServicesHistory } from "./pages/member/servicesHistory";
 import { SuccessPaid } from "./pages/member/successPaid";
 import { FaildedPaid } from "./pages/member/failedPaid";
@@ -136,7 +137,11 @@ function App() {
         {/* Doctor Pages */}
         <Route element={<ProtectedRoute allowedRoles={["Doctor"]} />}>
           <Route path="/doctor-profile" element={<DoctorProfile />} />
-          <Route path="/medical-request-management" element={<MedicalRequestManagement />} />
+          <Route
+            path="/medical-request-management"
+            element={<MedicalRequestManagement />}
+          />
+          <Route path="/view-rating" element={<RatingandFeedback />} />
           <Route
             path="/childGrowthDoctor/:recordId"
             element={<GrowthChartContainerDoctor />}

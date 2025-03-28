@@ -73,18 +73,28 @@
             chartInstanceRef.current = new Chart(ctx, {
               type: "line",
               data: {
-                labels: lengthValues,
-                datasets: percentiles.map(([percentile, values], index) => ({
-                  label: `${percentile} Percentile`,
-                  data: values.map((y, i) => ({ x: lengthValues[i], y })),
-                  borderColor: colors[index % colors.length],
-                  borderWidth: 2,
-                  fill: false,
-                  tension: 0.4,
-                  pointRadius: 0,
-                  pointHoverRadius: 0,
-                  pointHitRadius: 15, // Expands the invisible hitbox area
-                }))
+                labels: lengthValues, // Ensure proper labels
+                datasets: [
+                  ...percentiles.map(([percentile, values], index) => ({
+                    label: `${percentile} Percentile`,
+                    data: values.map((y, i) => ({ x: lengthValues[i], y })), // Ensure correct data mapping
+                    borderColor: colors[index % colors.length],
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 0,
+                    pointHitRadius: 15, // Expands the invisible hitbox area
+                  })),
+                  {
+                    label: "User Data",
+                    data: data, // Ensure this is correctly defined
+                    borderColor: "black",
+                    backgroundColor: "orange",
+                    pointRadius: 6,
+                    type: "scatter",
+                  },
+                ],
               },
               options: {
                 responsive: true,
@@ -112,9 +122,7 @@
                       },
                     },
                     enabled: true, 
-                    animation: {
-                    duration: 1000, 
-                    },
+                    animation: { duration: 1000 },
                     caretSize: 10,
                     displayColors: true, 
                   },
@@ -138,7 +146,14 @@
       };
       
       export const WeightForLengthChart = ({ gender, data }) => {
-        return <GrowthChart gender={gender} data={data} title="Weight-for-Length Growth Chart" yLabel="Weight (kg)" />;
+        return (
+        <GrowthChart 
+        gender={gender} 
+        data={data} 
+        title="Weight-for-Length Growth Chart" 
+        yLabel="Weight (kg)" 
+        />
+        )
       };
       
       export default WeightForLengthChart;

@@ -486,6 +486,7 @@ const handleSubmitRequest = async () => {
         trackingData={trackingData}
         setTrackingData={setTrackingData}  
         medicalRequests={medicalRequests}
+        childAgeInMonths={ageMonths} // Pass ageMonths
       />
       {/* Modal Component */}
       <Modal
