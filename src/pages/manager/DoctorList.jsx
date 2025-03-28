@@ -1,31 +1,27 @@
 import { useState, useEffect } from "react";
 import SidebarManager from "./SidebarManager";
-import { fetchDoctors } from "@/services/doctorService"; // Import the fetchDoctors function
+import { fetchDoctors } from "@/services/doctorService"; 
 import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, TextField, Typography, Pagination } from "@mui/material";
 import { LoadingScreen } from "@/components/loadingScreen";
-import { Bold } from "lucide-react";
 
 const DoctorList = () => {
-  const [doctors, setDoctors] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
-  const [currentPage, setCurrentPage] = useState(1); // Start at page 1 for MUI Pagination
+  const [doctors, setDoctors] = useState([]);  
+  const [filteredDoctors, setFilteredDoctors] = useState([]); // Filtered list for display
+  const [searchTerm, setSearchTerm] = useState("");  
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const itemsPerPage = 10; // Number of doctors per page
+  const itemsPerPage = 10; 
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchDoctorData = async () => {
       try {
         const params = {
           page: currentPage,
           limit: itemsPerPage,
-          search: searchTerm,
-          sortKey: sortConfig.key,
-          sortDirection: sortConfig.direction,
         };
         setLoading(true);
-        // Call the fetchDoctors function
-        const response = await fetchDoctors(params); // Pass params to the function
+        const response = await fetchDoctors(params);
         console.log("Doctors data:", response);
         setDoctors(response);
         setTotalPages(response.totalPages);
@@ -37,42 +33,43 @@ const DoctorList = () => {
     };
 
     fetchDoctorData();
-  }, [currentPage, searchTerm, sortConfig]);
+  }, [currentPage]); // Fetching data should not depend on searchTerm
+
+  // **Frontend search filtering**
+  useEffect(() => {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    const filtered = doctors.filter((doctor) =>
+      doctor.user_id?.username?.toLowerCase().includes(lowerCaseSearchTerm) ||
+      doctor.user_id?.email?.toLowerCase().includes(lowerCaseSearchTerm) ||
+      doctor.clinic_name?.toLowerCase().includes(lowerCaseSearchTerm)
+    );
+    setFilteredDoctors(filtered);
+  }, [searchTerm, doctors]);
 
   const handlePageChange = (event, value) => {
-    setCurrentPage(value); // Set the page number based on the MUI Pagination component
-  };
-
-  const handleSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const renderSortArrow = (key) => {
-    if (sortConfig.key === key) {
-      return sortConfig.direction === "asc" ? "▲" : "▼";
-    }
-    return null;
+    setCurrentPage(value);
   };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(); // Formats the date as MM/DD/YYYY or as per locale
+    return date.toLocaleDateString(); 
   };
-  
+
   return (
     <div className="flex">
       <SidebarManager />
       <div className="flex-1 p-6">
-      
-          <>
         {/* Search bar */}
         <div className="flex justify-between items-center mb-4">
           <Typography variant="h4" color="textPrimary">Doctor List</Typography>
-        
+          <TextField
+            label="Search Doctor By Name"
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{ width: 300 }}
+            size="small"
+          />
         </div>
 
         {/* Doctor list table */}
@@ -93,26 +90,24 @@ const DoctorList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-            {loading ? (  
-                <tr>
-                <td colSpan="12" className="text-center py-4">
-                  <div className="flex justify-center items-center">
+              {loading ? (  
+                <TableRow>
+                  <TableCell colSpan="10" className="text-center py-4">
                     <LoadingScreen />
-                  </div>
-                </td>
-              </tr>
-            ) : Array.isArray(doctors) && doctors.length > 0 ? (
-                doctors.map((doctor) => (
+                  </TableCell>
+                </TableRow>
+              ) : filteredDoctors.length > 0 ? (
+                filteredDoctors.map((doctor) => (
                   <TableRow key={doctor._id}>
-                    <TableCell>{doctor.user_id?.username}</TableCell> {/* Accessing nested username */}
+                    <TableCell>{doctor.user_id?.username}</TableCell>
                     <TableCell>{doctor.gender}</TableCell>
-                    <TableCell>{doctor.user_id?.email}</TableCell> {/* Accessing nested email */}
-                    <TableCell>{doctor.experience}</TableCell>
+                    <TableCell>{doctor.user_id?.email}</TableCell>
+                    <TableCell>{doctor.experience} Years</TableCell>
                     <TableCell>{doctor.certificate}</TableCell>
-                    <TableCell>{formatDate(doctor.date)}</TableCell> {/* Example of a date field */}
+                    <TableCell>{formatDate(doctor.date)}</TableCell>
                     <TableCell>{doctor.clinic_name}</TableCell>
                     <TableCell>{doctor.ratings.length > 0 ? doctor.ratings.length : "No ratings"}</TableCell>
-                    <TableCell>{doctor.license_id?.license_name}</TableCell> {/* Accessing nested license_name */}
+                    <TableCell>{doctor.license_id?.license_name}</TableCell>
                     <TableCell>
                       <img
                         src={doctor.picture}
@@ -129,7 +124,6 @@ const DoctorList = () => {
                   </TableCell>
                 </TableRow>
               )}
-            
             </TableBody>
           </Table>
         </TableContainer>
@@ -145,7 +139,6 @@ const DoctorList = () => {
             boundaryCount={1}
           />
         </div>
-          </>
       </div>
     </div>
   );

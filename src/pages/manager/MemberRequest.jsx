@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle, Avatar, List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, CircularProgress, Menu, TablePagination, TableFooter } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle, Avatar, List, ListItem, ListItemText, FormControl, InputLabel, Select, MenuItem, CircularProgress, Menu, TablePagination, TableFooter, TextField } from "@mui/material";
 import SidebarManager from "./SidebarManager";
 import { getAllMedicalRequests, acceptMedicalRequest, rejectMedicalRequest } from "@/services/medicalRequestService";
 import { toast } from "react-toastify";
@@ -22,6 +22,7 @@ const MemberRequest = () => {
     // Pagination State
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [doctorSearch, setDoctorSearch] = useState(""); // Search term for doctor
 
   // Get ManagerId from localStorage
   useEffect(() => {
@@ -149,26 +150,55 @@ const MemberRequest = () => {
       console.error("Failed to reject request:", error);
     }
   };
-
+  useEffect(() => {
+    let filtered = requests;
+  
+    if (statusFilter) {
+      filtered = filtered.filter(req => req.Status === statusFilter);
+    }
+  
+    if (doctorSearch) {
+      filtered = filtered.filter(req =>
+        req.DoctorId?.username?.toLowerCase().includes(doctorSearch.toLowerCase())
+      );
+    }
+  
+    setFilteredRequests(filtered);
+  }, [statusFilter, doctorSearch, requests]);
+  
   return (
     <div className="flex">
       <SidebarManager />
       <div className="p-4 w-full">
         <h2 className="text-xl font-bold mb-4">Member Requests</h2>
-        <FormControl variant="outlined" className="mb-4" style={{ minWidth: 150 }}>
-          <InputLabel>Status</InputLabel>
-          <Select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            label="Status"
-          >
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="Pending">Pending</MenuItem>
-            <MenuItem value="Approved">Approved</MenuItem>
-            <MenuItem value="Rejected">Rejected</MenuItem>
-            <MenuItem value="Completed">Completed</MenuItem>
-          </Select>
-        </FormControl>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+          {/* Status Filter (Left) */}
+          <FormControl variant="outlined" style={{ minWidth: 150 }}>
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              label="Status"
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Approved">Approved</MenuItem>
+              <MenuItem value="Rejected">Rejected</MenuItem>  
+              <MenuItem value="Completed">Completed</MenuItem>
+            </Select>
+          </FormControl>
+
+          {/* Doctor Search (Right) */} 
+        <TextField
+          variant="outlined"
+          label="Search by Doctor"
+          value={doctorSearch}
+          onChange={(e) => setDoctorSearch(e.target.value)}
+          style={{ minWidth: 200, marginLeft: "auto" }}
+        />
+
+        </div>
+
         {loading ? (
           <div className="flex justify-center items-center">
             <LoadingScreen />
