@@ -120,7 +120,7 @@ const getDoctorResponseUsingMedicalRequestId = async (req, res) => {
       }
   
       // Ensure it's completed before fetching response
-      if (medicalRequest.Status !== "Completed") {
+      if (medicalRequest.Status !== "Completed" && medicalRequest.Status !== "Rated") {
         return res.status(400).json({ message: "Medical request is not completed yet" });
       }
   

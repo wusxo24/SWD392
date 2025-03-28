@@ -29,4 +29,19 @@ const deleteRating = async (req, res) => {
     }
 };
 
-module.exports = { rateDoctor, getAllDoctorRatings, deleteRating };
+const getDoctorRatingByMedicalRequestId = async (req, res) => {
+    try {
+        const { medicalRequestId } = req.params;
+        const rating = await DoctorRatingService.getDoctorRatingByMedicalRequestId(medicalRequestId);
+
+        if (!rating) {
+            return res.status(404).json({ message: "No rating found for this medical request" });
+        }
+
+        res.status(200).json(rating);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { rateDoctor, getAllDoctorRatings, deleteRating, getDoctorRatingByMedicalRequestId };

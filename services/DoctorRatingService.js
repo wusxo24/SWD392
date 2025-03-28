@@ -37,4 +37,14 @@ const deleteRating = async (ratingId) => {
     return deletedRating;
 };
 
-module.exports = { rateDoctor, getAllDoctorRatings, deleteRating };
+const getDoctorRatingByMedicalRequestId = async (medicalRequestId) => {
+    try {
+        const rating = await DoctorRating.findOne({ MedicalRequestId: medicalRequestId }).select("-__v -_id -CreatedDate");
+        return rating || null;
+    } catch (error) {
+        console.error("Error fetching doctor rating:", error);
+        throw new Error("Failed to retrieve doctor rating");
+    }
+};
+
+module.exports = { rateDoctor, getAllDoctorRatings, deleteRating, getDoctorRatingByMedicalRequestId };

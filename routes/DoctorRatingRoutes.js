@@ -78,4 +78,27 @@ router.get("/", authMiddleware, authorize(["Manager", "Doctor"]), doctorRatingCo
  */
 router.delete("/:id", authMiddleware, authorize(["Manager", "Doctor"]), doctorRatingController.deleteRating);
 
+/**
+ * @swagger
+ * /doctor-ratings/medical-request/{medicalRequestId}:
+ *   get:
+ *     summary: Get doctor rating by medical request ID
+ *     tags: [DoctorRatings]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: medicalRequestId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Medical Request ID
+ *     responses:
+ *       200:
+ *         description: Doctor rating found
+ *       404:
+ *         description: No rating found
+ */
+router.get("/medical-request/:medicalRequestId", authMiddleware, authorize(["Manager", "Doctor", "Member"]), doctorRatingController.getDoctorRatingByMedicalRequestId);
+
 module.exports = router;
